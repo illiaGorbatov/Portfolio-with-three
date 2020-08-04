@@ -1,12 +1,12 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import * as THREE from 'three';
 import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
-import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {shader} from "./shaderMaterial";
 import {BufferGeometryUtils} from "three/examples/jsm/utils/BufferGeometryUtils";
 import {useFrame} from "react-three-fiber";
 import {getState, subscribe, useStore} from "../../../utils/zustandStore";
 import {animated, useSpring} from 'react-spring/three';
+import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
 interface CustomMesh extends THREE.Mesh {
     geometry: THREE.BufferGeometry
@@ -199,6 +199,7 @@ const Model: React.FC = () => {
             }
         );
     }, []);
+
 //zustand Store
     const mouseCoords = useRef(getState().mouseCoords);
     const mouseX = useRef(0);

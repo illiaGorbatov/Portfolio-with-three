@@ -2,9 +2,10 @@ import React, {useEffect, useState} from 'react';
 import {createGlobalStyle} from "styled-components";
 import styled from "styled-components";
 import InitialCanvas from "./components/ThreeJSComponents/InitialCanvas";
-import Header from "./components/HTMLComponents/NavMenu/Header";
+import Interface from "./components/HTMLComponents/NavMenu/Interface";
 import {getState} from "./utils/zustandStore";
 import TestButton from "./components/HTMLComponents/test";
+import HTMLElementsContainer from "./components/HTMLComponents/HTMLElementsContainer";
 
 
 const GlobalStyles = createGlobalStyle`
@@ -18,14 +19,12 @@ const GlobalStyles = createGlobalStyle`
       outline: none;
       
     };
-   /* &::-webkit-scrollbar { 
-    display: none;
-    };
+    &::-webkit-scrollbar { 
+        display: none;
+        };
     html {
-    -ms-overflow-style: none; 
-    scrollbar-width: none; 
-    scrollbar-height: none; 
-    }*/
+        -ms-overflow-style: none; 
+    }
 `;
 
 const Wrapper = styled.div`
@@ -33,37 +32,35 @@ const Wrapper = styled.div`
     height: 100vh;
     position: absolute;
     z-index: -1;
+    background-color: black;
 `;
 
 const App = () => {
 
-  const [isNavMenuOpened, openAndCloseNavMenu] = useState(false);
-  const switchNavMenu = () => {
-    openAndCloseNavMenu(!isNavMenuOpened)
-  };
-  /*const onScrollHandler = (e, ref) => {
-      let scrolled = window.scrollY / (ref.current.scrollHeight - window.innerHeight);
-      getState().scroll(scrolled);
-  };*/
+    /*const onScrollHandler = (e, ref) => {
+        let scrolled = window.scrollY / (ref.current.scrollHeight - window.innerHeight);
+        getState().scroll(scrolled);
+    };*/
 
-  useEffect(() => {
-    const onMouseMoveHandler = (e:  MouseEvent)  => {
-      getState().mouseMove([e.clientX, e.clientY])
-    }
-    window.addEventListener('mousemove',onMouseMoveHandler);
-    return(() => window.removeEventListener('mousemove',onMouseMoveHandler))
-  }, []);
+    useEffect(() => {
+        const onMouseMoveHandler = (e: MouseEvent) => {
+            getState().mouseMove([e.clientX, e.clientY])
+        }
+        window.addEventListener('mousemove', onMouseMoveHandler);
+        return (() => window.removeEventListener('mousemove', onMouseMoveHandler))
+    }, []);
 
-  return (
-      <>
-        <GlobalStyles/>
-        <Wrapper>
-          <TestButton/>
-          <InitialCanvas/>
-        </Wrapper>
-        <Header switchNavMenu={switchNavMenu} isNavMenuOpened={isNavMenuOpened}/>
-      </>
-  );
+    return (
+        <>
+            <GlobalStyles/>
+            <Wrapper>
+                <HTMLElementsContainer/>
+                {/*<TestButton/>
+          <InitialCanvas/>*/}
+            </Wrapper>
+            <Interface/>
+        </>
+    );
 };
 
 export default App;

@@ -22,3 +22,15 @@
     font-weight: normal;
     src: url("./assets/fonts/garamond.ttf");
 }
+@font-face {
+    font-family: 'Relative-Book';
+    font-style: normal;
+    font-weight: normal;
+    src: url("./assets/fonts/Relative-Book.ttf");
+}
+@font-face {
+    font-family: 'MADE Evolve Bold';
+    font-style: normal;
+    font-weight: normal;
+    src: url("./assets/fonts/MADEEvolveSansBoldEVO.otf");
+}

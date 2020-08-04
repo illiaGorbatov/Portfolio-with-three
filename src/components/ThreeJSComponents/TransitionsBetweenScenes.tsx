@@ -12,6 +12,7 @@ import Controls from "../controls/controls";
 import {useFrame, useThree} from "react-three-fiber";
 import NewSun from "./StarSystem/NewSun";
 import {Bloom} from "./posteffects/Effects";
+import OldModel from "./Explosion/oldModel";
 
 const TransitionsBetweenScenes: React.FC = () => {
 

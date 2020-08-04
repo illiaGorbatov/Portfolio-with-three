@@ -1,0 +1,1 @@
+export const animatedSkillsStack = ['JavaScript', 'React', 'Redux', 'TypeScript', 'THREE.JS']
