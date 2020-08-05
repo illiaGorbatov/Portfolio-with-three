@@ -1,6 +1,6 @@
 import React, {Suspense, useCallback, useEffect, useLayoutEffect, useState} from 'react';
 import Model from "./Explosion/Model";
-import Stars from "./stars";
+import Stars from "./StarSystem/stars";
 import {useStore} from "../../utils/zustandStore";
 import MainCamera from "./MainCamera";
 import Trackball from "../controls/trackballControls";
@@ -11,13 +11,10 @@ import * as THREE from 'three';
 import Controls from "../controls/controls";
 import {useFrame, useThree} from "react-three-fiber";
 import NewSun from "./StarSystem/NewSun";
-import {Bloom} from "./posteffects/Effects";
-import OldModel from "./Explosion/oldModel";
 
 const TransitionsBetweenScenes: React.FC = () => {
 
     const scenes = useStore(state => state.scenes);
-    const explosionPosition = useStore(state => state.explosionPosition);
 
     const {scene, gl} = useThree();
     useLayoutEffect(() => {
@@ -29,20 +26,18 @@ const TransitionsBetweenScenes: React.FC = () => {
         setRenderedScene(scene)
     }, []);
 
-    console.log(explosionPosition)
     return (
         <Suspense fallback={null}>
             <group visible={renderedScene === 'landscape' || renderedScene === 'landscape & explosion'}>
                 <Land/>
                 <LandscapeSky changeRenderedScene={changeRenderedScene}/>
             </group>
-            <group position={explosionPosition || undefined}
-                   visible={renderedScene === 'explosion' || renderedScene === 'landscape & explosion'}>
+            <group visible={renderedScene === 'explosion' || renderedScene === 'landscape & explosion'}>
                 <Stars/>
                 <Model/>
-                <NewSun/>
+                {renderedScene !== 'landscape' && <NewSun/>}
             </group>
-            <MainCamera/>
+          <MainCamera/>
         </Suspense>
     )
 }

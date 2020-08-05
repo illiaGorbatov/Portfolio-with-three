@@ -3,7 +3,7 @@ import { useFrame } from "react-three-fiber"
 
 const lerp = (start: number, end: number, alpha: number) => start * (1 - alpha) + end * alpha;
 
-const Stars = ({ count = 1000, xOff = 0, yOff = 0, zOff = 50 }) => {
+const Stars = ({ count = 1000, xOff = 0, yOff = 0, zOff = 100 }) => {
 
     const [starOpacity, setStarOpacity] = useState(0.2)
 
@@ -26,8 +26,7 @@ const Stars = ({ count = 1000, xOff = 0, yOff = 0, zOff = 50 }) => {
             <bufferGeometry attach="geometry">
                 <bufferAttribute attachObject={["attributes", "position"]} count={count} array={starPositionArray} itemSize={3} />
             </bufferGeometry>
-
-            <pointsMaterial attach="material" size={1.5} sizeAttenuation color="white" transparent opacity={starOpacity} fog={false} />
+            <pointsMaterial attach="material" size={2.0} sizeAttenuation color="white" transparent opacity={starOpacity} fog={false} />
         </points>
     )
 }

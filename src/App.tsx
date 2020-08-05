@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {createGlobalStyle} from "styled-components";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import InitialCanvas from "./components/ThreeJSComponents/InitialCanvas";
 import Interface from "./components/HTMLComponents/NavMenu/Interface";
 import {getState} from "./utils/zustandStore";
@@ -54,9 +54,9 @@ const App = () => {
         <>
             <GlobalStyles/>
             <Wrapper>
-                <HTMLElementsContainer/>
-                {/*<TestButton/>
-          <InitialCanvas/>*/}
+                {/*<HTMLElementsContainer/>*/}
+                <TestButton/>
+                <InitialCanvas/>
             </Wrapper>
             <Interface/>
         </>

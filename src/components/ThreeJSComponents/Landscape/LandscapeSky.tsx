@@ -13,8 +13,6 @@ const LandscapeSky: React.FC<PropsType> = ({changeRenderedScene}) => {
 
     const scrolled = useRef(getState().scrolled);
     const scenes = useStore(state => state.scenes);
-    const setCameraPosition = useStore(state => state.setCameraPosition);
-    const setExplosionPosition = useStore(state => state.setExplosionPosition);
 
     useEffect(() => subscribe(scr => scrolled.current = scr as number, state => state.scrolled));
 
@@ -23,11 +21,6 @@ const LandscapeSky: React.FC<PropsType> = ({changeRenderedScene}) => {
     const [{opacity}, setOpacity] = useSpring(() => ({opacity: 1}));
     useEffect(() => {
         if (scenes.currentScene === 'explosion' && scenes.previousScene === 'landscape') {
-            const sunPosition: [number, number, number] = material.current.uniforms.sunPosition.value;
-            const cameraPosition: [number, number, number] = [sunPosition[0], sunPosition[1]+10, sunPosition[2]+30];
-            console.log(sunPosition, cameraPosition)
-            setExplosionPosition(sunPosition)
-            setCameraPosition(cameraPosition);
             setOpacity({opacity: 0, onRest: () => changeRenderedScene('explosion')});
             changeRenderedScene('landscape & explosion');
         }
@@ -61,7 +54,7 @@ const LandscapeSky: React.FC<PropsType> = ({changeRenderedScene}) => {
             <mesh>
                 <boxBufferGeometry attach="geometry" args={[450000, 450000, 450000]}/>
                 <animated.shaderMaterial ref={material} attach="material" args={[SkyShader]} side={THREE.BackSide}
-                                         uniforms-opacity-value={opacity} />
+                                         uniforms-opacity-value={opacity} transparent={true}/>
             </mesh>
         </>
     )

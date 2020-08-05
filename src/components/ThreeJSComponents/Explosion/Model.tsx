@@ -113,30 +113,19 @@ const processSurface = (object: CustomObject, index: number) => {
     return {surface, volume};
 };
 
+const texturesUrl = ['../textures/newsky/px.jpg', '../textures/newsky/nx.jpg', '../textures/newsky/py.jpg',
+    '../textures/newsky/ny.jpg', '../textures/newsky/pz.jpg', '../textures/newsky/nz.jpg']
+
 const sign = (number: number) => number === 0 ? 1 : number / Math.abs(number);
 
 
 const Model: React.FC = () => {
 
-    const texturesSource = () => {
-        let path = "img/newsky/";
-        let format = ".jpg";
-        let url = [
-            path + "px" + format,
-            path + "nx" + format,
-            path + "py" + format,
-            path + "ny" + format,
-            path + "pz" + format,
-            path + "nz" + format
-        ];
-        return url
-    };
-
-    const texturesUrl = texturesSource();
-    const textures = useMemo(() => new THREE.CubeTextureLoader().load(texturesUrl), [texturesUrl]);
+    const textures = useMemo(() => new THREE.CubeTextureLoader().load(texturesUrl), []);
     textures.minFilter = THREE.LinearFilter;
+    console.log(textures)
 
-    const innerShader = useMemo(() => {
+    const outerShader = useMemo(() => {
         let shaderMat = shader;
         shaderMat.uniforms.inside.value = 1;
         return shaderMat
@@ -236,7 +225,7 @@ const Model: React.FC = () => {
             </mesh>
             <mesh>
                 <bufferGeometry attach="geometry" {...outerMesh}/>
-                <animated.shaderMaterial uniforms-progress-value={progress} attach="material" args={[innerShader]}
+                <animated.shaderMaterial uniforms-progress-value={progress} attach="material" args={[outerShader]}
                                          uniforms-tCube-value={textures}/>
             </mesh>
         </group>

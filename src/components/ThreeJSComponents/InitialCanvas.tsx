@@ -13,7 +13,6 @@ const InitialCanvas = () => {
                 scene.background = new THREE.Color(0x333333);
             }}
             concurrent={true}>
-            {/*<ambientLight intensity={1} color={0xffffff}/>*/}
             <fog attach="fog" args={[0x333333, 10, 400]} />
             <TransitionsBetweenScenes/>
         </Canvas>

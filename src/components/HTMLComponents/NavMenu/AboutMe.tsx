@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import styled from 'styled-components/macro';
 import {animated, useChain, useSprings, useTrail} from 'react-spring'
 import {useStore} from "../../../utils/zustandStore";
@@ -68,7 +68,7 @@ const AboutMe: React.FC = () => {
     const [isMenuOpened, setMenuState] = useState(false);
 
     const switchNavMenuAfterAnimation = () => {
-            setNavMenuState(!isNavMenuOpened)
+        setNavMenuState(!isNavMenuOpened)
     };
 
     const onMenuClickHandler = () => {
@@ -114,6 +114,7 @@ const AboutMe: React.FC = () => {
             <Menu onClick={onMenuClickHandler}>
                 {isNavMenuOpened ? 'Close' : 'About Me'}
             </Menu>
+            {(isNavMenuOpened || isMenuOpened) &&
             <NavScreen>
                 {backgroundAnim.map((animations, i) =>
                     <BackgroundWrappers key={i} style={animations}/>
@@ -128,7 +129,7 @@ const AboutMe: React.FC = () => {
                         </NavLink>
                     )}
                 </NavBar>
-            </NavScreen>
+            </NavScreen>}
         </>
     )
 };
