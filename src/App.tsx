@@ -54,9 +54,9 @@ const App = () => {
         <>
             <GlobalStyles/>
             <Wrapper>
-                {/*<HTMLElementsContainer/>*/}
-                <TestButton/>
-                <InitialCanvas/>
+                <HTMLElementsContainer/>
+               {/* <TestButton/>
+                <InitialCanvas/>*/}
             </Wrapper>
             <Interface/>
         </>

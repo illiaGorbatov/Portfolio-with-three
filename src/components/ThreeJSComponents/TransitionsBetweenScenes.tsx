@@ -1,43 +1,39 @@
-import React, {Suspense, useCallback, useEffect, useLayoutEffect, useState} from 'react';
+import React, {Suspense, useLayoutEffect} from 'react';
 import Model from "./Explosion/Model";
 import Stars from "./StarSystem/stars";
 import {useStore} from "../../utils/zustandStore";
 import MainCamera from "./MainCamera";
-import Trackball from "../controls/trackballControls";
-import {useSpring, animated} from "react-spring/three";
 import Land from './Landscape/Land';
 import LandscapeSky from './Landscape/LandscapeSky';
-import * as THREE from 'three';
-import Controls from "../controls/controls";
-import {useFrame, useThree} from "react-three-fiber";
+import {useThree} from "react-three-fiber";
 import NewSun from "./StarSystem/NewSun";
+import Effects from "./posteffects/Effects";
+import {shallow} from "zustand/shallow";
+import {EXPLOSION, LANDSCAPE} from "../../utils/StringVariablesAndTypes";
 
 const TransitionsBetweenScenes: React.FC = () => {
 
-    const scenes = useStore(state => state.scenes);
+    const currentScene = useStore(state => state.scene, shallow);
 
     const {scene, gl} = useThree();
     useLayoutEffect(() => {
         console.log(gl)
     }, [])
 
-    const [renderedScene, setRenderedScene] = useState('landscape');
-    const changeRenderedScene = useCallback((scene) => {
-        setRenderedScene(scene)
-    }, []);
 
     return (
         <Suspense fallback={null}>
-            <group visible={renderedScene === 'landscape' || renderedScene === 'landscape & explosion'}>
+            <group visible={currentScene === LANDSCAPE}>
                 <Land/>
-                <LandscapeSky changeRenderedScene={changeRenderedScene}/>
+                <LandscapeSky />
             </group>
-            <group visible={renderedScene === 'explosion' || renderedScene === 'landscape & explosion'}>
-                <Stars/>
+            <group visible={currentScene === EXPLOSION}>
                 <Model/>
-                {renderedScene !== 'landscape' && <NewSun/>}
+                {currentScene === EXPLOSION && <NewSun/>}
             </group>
-          <MainCamera/>
+            <Stars/>
+            <MainCamera/>
+            <Effects/>
         </Suspense>
     )
 }

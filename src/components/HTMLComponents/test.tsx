@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from "styled-components/macro";
 import {useStore} from "../../utils/zustandStore";
+import {TRANSITION_TO_EXPLOSION} from "../../utils/StringVariablesAndTypes";
 
 const ButtonsWrapper = styled.div`
   position: absolute;
@@ -17,10 +18,13 @@ const Button = styled.div<{ $color: string }>`
 
 const TestButton = () => {
 
-    const setCurrentScene = useStore(state => state.setCurrentScene);
+    const setCameraState = useStore(state => state.setCameraState);
     const setExploded = useStore(state => state.setExploded);
+    const setStarsAndSkyState = useStore(state => state.setStarsAndSkyState);
+
     const test = () => {
-        setCurrentScene({currentScene: 'explosion', previousScene: 'landscape'})
+        setCameraState(TRANSITION_TO_EXPLOSION);
+        setStarsAndSkyState(TRANSITION_TO_EXPLOSION)
     }
 
     const setProgress = () => {

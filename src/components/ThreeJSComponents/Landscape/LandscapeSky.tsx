@@ -4,27 +4,32 @@ import {SkyShader} from "./shaders/SkyShader";
 import {useFrame} from "react-three-fiber";
 import {getState, subscribe, useStore} from "../../../utils/zustandStore";
 import {useSpring, animated} from "react-spring/three";
+import {shallow} from "zustand/shallow";
+import {TRANSITION_TO_EXPLOSION, TRANSITION_TO_LANDSCAPE} from '../../../utils/StringVariablesAndTypes';
 
-type PropsType ={
-    changeRenderedScene: (scene: string) => void
-}
 
-const LandscapeSky: React.FC<PropsType> = ({changeRenderedScene}) => {
+const LandscapeSky: React.FC = () => {
 
     const scrolled = useRef(getState().scrolled);
-    const scenes = useStore(state => state.scenes);
+    const starsAndSkyState = useStore(state => state.starsAndSkyState, shallow);
 
-    useEffect(() => subscribe(scr => scrolled.current = scr as number, state => state.scrolled));
+    useEffect(() => subscribe(scr => scrolled.current = scr as number, state => state.scrolled), []);
 
     const material = useRef(new THREE.ShaderMaterial());
 
-    const [{opacity}, setOpacity] = useSpring(() => ({opacity: 1}));
+    const [{opacity}, setOpacity] = useSpring(() => ({
+        opacity: 1,
+        config: {tension: 100, friction: 38}
+    }));
+
     useEffect(() => {
-        if (scenes.currentScene === 'explosion' && scenes.previousScene === 'landscape') {
-            setOpacity({opacity: 0, onRest: () => changeRenderedScene('explosion')});
-            changeRenderedScene('landscape & explosion');
+        if (starsAndSkyState === TRANSITION_TO_EXPLOSION) {
+            setOpacity({opacity: 0, delay: 400});
         }
-    }, [scenes])
+        if (starsAndSkyState === TRANSITION_TO_LANDSCAPE) {
+            setOpacity({opacity: 1, delay: 400});
+        }
+    }, [starsAndSkyState]);
 
     const render = useCallback(() => {
         const theta = Math.PI * (-0.002 - 0.048 * scrolled.current);
