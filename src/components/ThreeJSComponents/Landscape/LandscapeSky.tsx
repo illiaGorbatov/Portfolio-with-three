@@ -2,18 +2,15 @@ import React, {useCallback, useEffect, useRef} from 'react';
 import * as THREE from 'three';
 import {SkyShader} from "./shaders/SkyShader";
 import {useFrame} from "react-three-fiber";
-import {getState, subscribe, useStore} from "../../../utils/zustandStore";
-import {useSpring, animated} from "react-spring/three";
-import {shallow} from "zustand/shallow";
+import {animated, useSpring} from "react-spring/three";
 import {TRANSITION_TO_EXPLOSION, TRANSITION_TO_LANDSCAPE} from '../../../utils/StringVariablesAndTypes';
+import {shallowEqual, useSelector} from "react-redux";
+import {AppStateType} from "../../../store/store";
 
 
 const LandscapeSky: React.FC = () => {
 
-    const scrolled = useRef(getState().scrolled);
-    const starsAndSkyState = useStore(state => state.starsAndSkyState, shallow);
-
-    useEffect(() => subscribe(scr => scrolled.current = scr as number, state => state.scrolled), []);
+    const starsAndSkyState = useSelector((state: AppStateType) => state.appState.starsAndSkyState, shallowEqual);
 
     const material = useRef(new THREE.ShaderMaterial());
 
@@ -32,17 +29,17 @@ const LandscapeSky: React.FC = () => {
     }, [starsAndSkyState]);
 
     const render = useCallback(() => {
-        const theta = Math.PI * (-0.002 - 0.048 * scrolled.current);
+        const theta = Math.PI * (-0.002 - 0.048 * 0);
         const phi = 2 * Math.PI * (-.25);
         const sunPosition = [
             225000 * Math.cos(phi),
-            2500 + 200000 * scrolled.current,
+            2500 + 200000 * 0,
             225000 * Math.sin(phi) * Math.cos(theta)
         ];
-        material.current.uniforms.turbidity.value = 13 - scrolled.current * 12;
-        material.current.uniforms.rayleigh.value = 1.2 - scrolled.current * 1.19;
-        material.current.uniforms.mieCoefficient.value = 0.1 - scrolled.current * 0.09997;
-        material.current.uniforms.mieDirectionalG.value = 0.58 - 0.1 * scrolled.current;
+        material.current.uniforms.turbidity.value = 13 - 0 * 12;
+        material.current.uniforms.rayleigh.value = 1.2 - 0 * 1.19;
+        material.current.uniforms.mieCoefficient.value = 0.1 - 0 * 0.09997;
+        material.current.uniforms.mieDirectionalG.value = 0.58 - 0.1 * 0;
         material.current.uniforms.sunPosition.value = sunPosition;
     }, []);
 

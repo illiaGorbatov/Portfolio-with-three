@@ -2,6 +2,8 @@ import React from 'react';
 import styled from "styled-components/macro";
 import {useStore} from "../../utils/zustandStore";
 import {TRANSITION_TO_EXPLOSION} from "../../utils/StringVariablesAndTypes";
+import {useDispatch} from "react-redux";
+import {actions} from "../../store/reducer";
 
 const ButtonsWrapper = styled.div`
   position: absolute;
@@ -18,18 +20,17 @@ const Button = styled.div<{ $color: string }>`
 
 const TestButton = () => {
 
-    const setCameraState = useStore(state => state.setCameraState);
-    const setExploded = useStore(state => state.setExploded);
-    const setStarsAndSkyState = useStore(state => state.setStarsAndSkyState);
+    const dispatch = useDispatch();
 
     const test = () => {
-        setCameraState(TRANSITION_TO_EXPLOSION);
-        setStarsAndSkyState(TRANSITION_TO_EXPLOSION)
+        dispatch(actions.setCameraState(TRANSITION_TO_EXPLOSION));
+        dispatch(actions.setStarsAndSkyState(TRANSITION_TO_EXPLOSION));
     }
 
     const setProgress = () => {
-        setExploded(true)
+        dispatch(actions.setExploded(true));
     }
+    console.log('buttonRender')
 
     return (
         <ButtonsWrapper>

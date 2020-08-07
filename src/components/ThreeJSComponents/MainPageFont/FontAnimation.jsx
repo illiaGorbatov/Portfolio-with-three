@@ -1,5 +1,5 @@
 import React from 'react';
-import BasicFont from "../MainPageFont/BasicFont";
+import BasicFont from "./BasicFont";
 import LandscapeCamera from "../Landscape/LandscapeCamera";
 
 const FontAnimation = () => {

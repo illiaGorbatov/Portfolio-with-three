@@ -1,14 +1,15 @@
 import React, {useEffect, useRef} from "react";
 import {useFrame, useThree} from "react-three-fiber";
 import {animated, useSpring} from "react-spring/three";
-import {useStore} from "../../utils/zustandStore";
-import {shallow} from "zustand/shallow";
 import {
     EXPLOSION,
     TRANSITION_TO_EXPLOSION,
     TRANSITION_TO_LANDSCAPE,
     Vector3Type
 } from "../../utils/StringVariablesAndTypes";
+import {shallowEqual, useDispatch, useSelector} from "react-redux";
+import {AppStateType} from "../../store/store";
+import {actions} from "../../store/reducer";
 
 const cameraSettings = {
     landscape: [0, 10, 4] as Vector3Type,
@@ -21,10 +22,8 @@ const cameraSettings = {
 
 const MainCamera = () => {
 
-    const cameraState = useStore(state => state.cameraState, shallow);
-
-    const setCurrentScene = useStore(state => state.setCurrentScene, shallow);
-    const setCameraState = useStore(state => state.setCameraState, shallow);
+    const cameraState = useSelector((state: AppStateType) => state.appState.cameraState, shallowEqual);
+    const dispatch = useDispatch();
 
     const ref = useRef();
     const {setDefaultCamera, camera} = useThree();
@@ -61,7 +60,7 @@ const MainCamera = () => {
                 position: cameraSettings.transitionToExplosion,
                 lokAtArray: cameraSettings.lookAtStars,
                 onRest: () => {
-                    setCurrentScene(EXPLOSION)
+                    dispatch(actions.setCurrentScene(EXPLOSION))
                     setCameraPosition({
                         position: cameraSettings.explosion,
                         lokAtArray: cameraSettings.lookAtCenter,
@@ -82,7 +81,7 @@ const MainCamera = () => {
         }
     }, [cameraState]);
 
-
+console.log(cameraState)
 
     useFrame(() => {
         /*console.log(camera.position)*/

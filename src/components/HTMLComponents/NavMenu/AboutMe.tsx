@@ -1,14 +1,16 @@
 import React, {useRef, useState} from 'react';
 import styled from 'styled-components/macro';
 import {animated, useChain, useSprings, useTrail} from 'react-spring'
-import {useStore} from "../../../utils/zustandStore";
+import {shallowEqual, useDispatch, useSelector} from "react-redux";
+import {AppStateType} from "../../../store/store";
+import {actions} from "../../../store/reducer";
 
 const NavScreen = styled.div`
   position: absolute;
   top: 0;
   color: white;
-  min-height: 100%;
-  min-width: 100%;
+  width: 100vw;
+  height: 100vh;
   font-family: 'Poppins', sans-serif;
   box-sizing: border-box;
   z-index: 997;
@@ -41,7 +43,7 @@ const NavLink = styled(animated.div)`
   margin-bottom: 10px;
 `;
 
-const Menu = styled.div`
+const Menu = styled(animated.div)`
   position: absolute;
   z-index: 999;
   top: 50%;
@@ -62,13 +64,13 @@ const config = {tension: 200, clamp: true};
 
 const AboutMe: React.FC = () => {
 
-    const setNavMenuState = useStore(state => state.setNavMenuState);
-    const isNavMenuOpened = useStore(state => state.isNavMenuOpened);
+    const isNavMenuOpened = useSelector((state: AppStateType) => state.appState.isNavMenuOpened, shallowEqual);
+    const dispatch = useDispatch();
 
     const [isMenuOpened, setMenuState] = useState(false);
 
     const switchNavMenuAfterAnimation = () => {
-        setNavMenuState(!isNavMenuOpened)
+        dispatch(actions.setNavMenuState(!isNavMenuOpened))
     };
 
     const onMenuClickHandler = () => {
@@ -101,8 +103,8 @@ const AboutMe: React.FC = () => {
     const linksAppearingRef = useRef(null);
     const linksAppearing = useTrail(navLinks.length, {
         ref: linksAppearingRef,
-        from: {left: -window.innerWidth/2},
-        left: isMenuOpened ? 0 : -window.innerWidth/2,
+        from: {left: -window.innerWidth / 2},
+        left: isMenuOpened ? 0 : -window.innerWidth / 2,
         config
     });
 

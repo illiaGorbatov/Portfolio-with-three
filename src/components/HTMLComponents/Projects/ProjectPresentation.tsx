@@ -26,7 +26,6 @@ const ProjectPresentation: React.FC = () => {
     const regulation = useHover(({hovering}) => {
         if (hovering) videoRef.current!.play();
         if (!hovering) videoRef.current!.pause()
-        console.log(hovering, videoRef.current)
     })
 
     return(

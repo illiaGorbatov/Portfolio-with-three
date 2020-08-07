@@ -1,19 +1,18 @@
 import React, {useLayoutEffect, useRef} from 'react';
 import * as THREE from 'three';
-import {useStore} from "../../../utils/zustandStore";
-import {shallow} from "zustand/shallow";
+import {useDispatch} from "react-redux";
+import {actions} from "../../../store/reducer";
 
 
 const NewSun: React.FC = () => {
 
     const sun = useRef(new THREE.Mesh());
-    const setSun = useStore(state => state.setSun, shallow);
-
+    const dispatch = useDispatch();
 
     useLayoutEffect(() => {
-        setSun(sun.current)
+        dispatch(actions.setSun(sun.current))
         return () => {
-            setSun(null)
+            dispatch(actions.setSun(null))
         }
     }, [])
 

@@ -1,24 +1,26 @@
-import {useMemo, useEffect} from 'react'
-import {useThree, useFrame} from 'react-three-fiber'
+import {useEffect, useMemo} from 'react'
+import {useFrame, useThree} from 'react-three-fiber'
 import {
     BloomEffect,
+    ColorAverageEffect,
     EffectComposer,
     EffectPass,
-    RenderPass,
     GodRaysEffect,
-    SepiaEffect,
-    NoiseEffect,
-    SMAAEffect, SMAAPreset,
     KernelSize,
-    ColorAverageEffect
-    // @ts-ignore
+    NoiseEffect,
+    RenderPass,
+    SepiaEffect,
+    SMAAEffect,
+    SMAAPreset
+    //@ts-ignore
 } from 'postprocessing'
-import {useStore} from "../../../utils/zustandStore";
+import {shallowEqual, useSelector} from "react-redux";
+import {AppStateType} from "../../../store/store";
 
 
 const Effects = () => {
 
-    const sun = useStore(state => state.sun);
+    const sun = useSelector((state: AppStateType) => state.appState.sun, shallowEqual);
 
     const {gl, scene, camera, size} = useThree();
 

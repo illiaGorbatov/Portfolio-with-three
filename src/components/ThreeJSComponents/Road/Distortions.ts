@@ -46,7 +46,7 @@ const deepUniforms = {
   uPowY: new THREE.Uniform(new THREE.Vector2(20, 2))
 };
 
-let nsin = val => Math.sin(val) * 0.5 + 0.5;
+let nsin = (val: number) => Math.sin(val) * 0.5 + 0.5;
 
 export const mountainDistortion = {
   uniforms: mountainUniforms,
@@ -71,7 +71,7 @@ export const mountainDistortion = {
             );
         }
 `,
-  getJS: (progress, time) => {
+  getJS: (progress: number, time: number) => {
     let movementProgressFix = 0.02;
 
     let uFreq = mountainUniforms.uFreq.value;
@@ -111,7 +111,7 @@ export const xyDistortion = {
 						);
 					}
 			`,
-  getJS: (progress, time) => {
+  getJS: (progress: number, time: number) => {
     let movementProgressFix = 0.02;
 
     let uFreq = xyUniforms.uFreq.value;
@@ -149,7 +149,7 @@ export const LongRaceDistortion = {
 						);
 					}
         `,
-  getJS: (progress, time) => {
+  getJS: (progress: number, time: number) => {
     let camProgress = 0.0125;
 
     let uFreq = LongRaceUniforms.uFreq.value;
@@ -204,18 +204,18 @@ export const turbulentDistortion = {
             );
         }
     `,
-  getJS: (progress, time) => {
+  getJS: (progress: number, time: number) => {
     const uFreq = turbulentUniforms.uFreq.value;
     const uAmp = turbulentUniforms.uAmp.value;
 
-    const getX = p =>
+    const getX = (p : number) =>
       Math.cos(Math.PI * p * uFreq.x + time) * uAmp.x +
       Math.pow(
         Math.cos(Math.PI * p * uFreq.y + time * (uFreq.y / uFreq.x)),
         2
       ) *
         uAmp.y;
-    const getY = p =>
+    const getY = (p: number) =>
       -nsin(Math.PI * p * uFreq.z + time) * uAmp.z -
       Math.pow(nsin(Math.PI * p * uFreq.w + time / (uFreq.z / uFreq.w)), 5) *
         uAmp.w;
@@ -299,13 +299,13 @@ export const deepDistortion = {
             );
         }
     `,
-  getJS: (progress, time) => {
+  getJS: (progress: number, time: number) => {
     const uFreq = deepUniforms.uFreq.value;
     const uAmp = deepUniforms.uAmp.value;
     const uPowY = deepUniforms.uPowY.value;
 
-    const getX = p => Math.sin(p * Math.PI * uFreq.x + time) * uAmp.x;
-    const getY = p =>
+    const getX = (p: number) => Math.sin(p * Math.PI * uFreq.x + time) * uAmp.x;
+    const getY = (p: number) =>
       Math.pow(p * uPowY.x, uPowY.y) +
       Math.sin(p * Math.PI * uFreq.y + time) * uAmp.y;
 

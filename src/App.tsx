@@ -6,6 +6,11 @@ import Interface from "./components/HTMLComponents/NavMenu/Interface";
 import {getState} from "./utils/zustandStore";
 import TestButton from "./components/HTMLComponents/test";
 import HTMLElementsContainer from "./components/HTMLComponents/HTMLElementsContainer";
+import {library} from "@fortawesome/fontawesome-svg-core";
+import {far} from "@fortawesome/free-regular-svg-icons";
+import {fas} from "@fortawesome/free-solid-svg-icons";
+
+library.add(far, fas);
 
 
 const GlobalStyles = createGlobalStyle`
@@ -28,19 +33,14 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const Wrapper = styled.div`
-    width: 100vw;
-    height: 100vh;
     position: absolute;
     z-index: -1;
     background-color: black;
+    width: 100vw;
+    height: 100vh;
 `;
 
 const App = () => {
-
-    /*const onScrollHandler = (e, ref) => {
-        let scrolled = window.scrollY / (ref.current.scrollHeight - window.innerHeight);
-        getState().scroll(scrolled);
-    };*/
 
     useEffect(() => {
         const onMouseMoveHandler = (e: MouseEvent) => {
@@ -53,12 +53,11 @@ const App = () => {
     return (
         <>
             <GlobalStyles/>
+            {/*<HTMLElementsContainer/>*/}
             <Wrapper>
-                <HTMLElementsContainer/>
-               {/* <TestButton/>
-                <InitialCanvas/>*/}
+                <TestButton/>
+                <InitialCanvas/>
             </Wrapper>
-            <Interface/>
         </>
     );
 };

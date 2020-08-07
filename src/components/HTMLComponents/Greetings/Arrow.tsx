@@ -40,6 +40,7 @@ const ArrowWrapper = styled.div`
 `;
 
 const Arrow: React.FC = () => {
+
     return(
         <ArrowWrapper>
             <ArrowLeft/>

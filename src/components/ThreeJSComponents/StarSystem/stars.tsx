@@ -1,13 +1,12 @@
-import React, {useEffect, useMemo, useState} from "react"
-import {ReactThreeFiber, useFrame} from "react-three-fiber"
+import React, {useEffect, useMemo} from "react"
 import {TRANSITION_TO_EXPLOSION, TRANSITION_TO_LANDSCAPE, Vector3Type} from "../../../utils/StringVariablesAndTypes";
-import {useStore} from "../../../utils/zustandStore";
-import {shallow} from "zustand/shallow";
 import {animated, useSpring} from "react-spring/three";
+import {shallowEqual, useSelector} from "react-redux";
+import {AppStateType} from "../../../store/store";
 
 const Stars = ({count = 1000, xOff = 0, yOff = 0, zOff = 100}) => {
 
-    const starsAndSkyState = useStore(state => state.starsAndSkyState, shallow);
+    const starsAndSkyState = useSelector((state: AppStateType) => state.appState.starsAndSkyState, shallowEqual);
 
     const [{opacity, position}, setSpring] = useSpring(() => ({
         opacity: 0,

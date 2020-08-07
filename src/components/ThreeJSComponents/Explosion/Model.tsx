@@ -4,9 +4,11 @@ import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
 import {shader} from "./shaderMaterial";
 import {BufferGeometryUtils} from "three/examples/jsm/utils/BufferGeometryUtils";
 import {useFrame} from "react-three-fiber";
-import {getState, subscribe, useStore} from "../../../utils/zustandStore";
+import {getState, subscribe} from "../../../utils/zustandStore";
 import {animated, useSpring} from 'react-spring/three';
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
+import {shallowEqual, useSelector} from "react-redux";
+import {AppStateType} from "../../../store/store";
 
 interface CustomMesh extends THREE.Mesh {
     geometry: THREE.BufferGeometry
@@ -196,7 +198,7 @@ const Model: React.FC = () => {
     useEffect(() => subscribe(scr => mouseCoords.current = scr as number[], state => state.mouseCoords), []);
 
 //explosion
-    const exploded = useStore(state => state.exploded)
+    const exploded = useSelector((state: AppStateType) => state.appState.exploded, shallowEqual);
     const {progress} = useSpring({
         progress: exploded ? 1 : 0
     });
