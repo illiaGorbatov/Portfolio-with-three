@@ -6,7 +6,7 @@ import {AppStateType} from "../../../store/store";
 
 const Stars = ({count = 1000, xOff = 0, yOff = 0, zOff = 100}) => {
 
-    const starsAndSkyState = useSelector((state: AppStateType) => state.appState.starsAndSkyState, shallowEqual);
+    const starsAndSkyState = useSelector((state: AppStateType) => state.interface.starsAndSkyState, shallowEqual);
 
     const [{opacity, position}, setSpring] = useSpring(() => ({
         opacity: 0,
@@ -38,7 +38,7 @@ const Stars = ({count = 1000, xOff = 0, yOff = 0, zOff = 100}) => {
                 <bufferAttribute attachObject={["attributes", "position"]} count={count} array={starPositionArray}
                                  itemSize={3}/>
             </bufferGeometry>
-            <animated.pointsMaterial attach="material" size={2.0} sizeAttenuation color="white" transparent fog={false}
+            <animated.pointsMaterial attach="material" size={2.0} sizeAttenuation={true} color="white" transparent fog={false}
                             opacity={opacity}/>
         </animated.points>
     )

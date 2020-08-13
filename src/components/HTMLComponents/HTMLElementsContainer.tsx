@@ -10,7 +10,8 @@ import {projectsInfo} from "./TextContent";
 import ProjectsCounter from "./NavMenu/ProjectsCounter";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../store/store";
-import {actions} from "../../store/reducer";
+import {actions} from "../../store/InterfaceReducer";
+import {MAIN_SCENE_STATIC, PROJECTS_SCROLLING, PROJECTS_STATIC} from '../../utils/StringVariablesAndTypes';
 
 const Wrapper = styled.div`
   position: absolute;
@@ -18,7 +19,7 @@ const Wrapper = styled.div`
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  background-color: black;
+  background: transparent;
 `;
 
 const ScrollableWrapper = styled(animated.div)`
@@ -29,7 +30,7 @@ const ScrollableWrapper = styled(animated.div)`
 
 const HTMLElementsContainer: React.FC = () => {
 
-    const scrollsCount = useSelector((state: AppStateType) => state.appState.scrollsCount, shallowEqual);
+    const scrollsCount = useSelector((state: AppStateType) => state.interface.scrollsCount, shallowEqual);
     const dispatch = useDispatch();
 
     const animationState = useRef<boolean>(false);
@@ -43,19 +44,30 @@ const HTMLElementsContainer: React.FC = () => {
     }));
 
     useWheel(({direction: [, y]}) => {
-        console.log(scrollsCount, y, animationState.current)
         if (animationState.current) return;
         if (y > 0 && scrollsCount < projectsInfo.length) {
             animationState.current = true;
+            if (scrollsCount === 0) dispatch(actions.setCameraState(PROJECTS_STATIC))
+            else dispatch(actions.setCameraState(PROJECTS_SCROLLING))
             setScroll({
                 top: -(scrollsCount + 1) * window.innerHeight + window.innerHeight,
+                onRest: () => {
+                    dispatch(actions.setCameraState(PROJECTS_STATIC));
+                    animationState.current = false
+                }
             });
             dispatch(actions.setScrollsCount(scrollsCount + 1))
         }
         if (y < 0 && scrollsCount !== 0) {
-            animationState.current = true
+            animationState.current = true;
+            if (scrollsCount === 1) dispatch(actions.setCameraState(MAIN_SCENE_STATIC))
+            else dispatch(actions.setCameraState(PROJECTS_SCROLLING))
             setScroll({
                 top: -(scrollsCount - 1) * window.innerHeight + window.innerHeight,
+                onRest: () => {
+                    dispatch(actions.setCameraState(PROJECTS_STATIC));
+                    animationState.current = false
+                }
             });
             dispatch(actions.setScrollsCount(scrollsCount - 1))
         }

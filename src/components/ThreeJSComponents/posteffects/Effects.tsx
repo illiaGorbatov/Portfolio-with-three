@@ -1,5 +1,6 @@
-import {useEffect, useMemo} from 'react'
-import {useFrame, useThree} from 'react-three-fiber'
+import React, {useEffect, useMemo} from 'react';
+import * as THREE from 'three';
+import {extend, useFrame, useThree} from 'react-three-fiber';
 import {
     BloomEffect,
     ColorAverageEffect,
@@ -11,16 +12,24 @@ import {
     RenderPass,
     SepiaEffect,
     SMAAEffect,
-    SMAAPreset
+    SMAAPreset,
+    VignetteEffect,
+    DotScreenEffect,
+    BlendFunction,
+    HueSaturationEffect
     //@ts-ignore
-} from 'postprocessing'
-import {shallowEqual, useSelector} from "react-redux";
-import {AppStateType} from "../../../store/store";
+} from 'postprocessing';
+import {ShaderPass} from "three/examples/jsm/postprocessing/ShaderPass";
+import { useSelector, shallowEqual } from 'react-redux';
+import { AppStateType } from '../../../store/store';
 
+extend({ShaderPass})
 
-const Effects = () => {
+type PropsType = { sun?: THREE.Mesh }
 
-    const sun = useSelector((state: AppStateType) => state.appState.sun, shallowEqual);
+const Effects: React.FC = () => {
+
+    const sun = useSelector((state: AppStateType) => state.interface.sun, shallowEqual);
 
     const {gl, scene, camera, size} = useThree();
 
@@ -42,13 +51,20 @@ const Effects = () => {
         bloom.blendMode.opacity.value = 2;
 
         //noise effect
-        const noise = new NoiseEffect({premultiply: true});
+        const noise = new NoiseEffect({premultiply: true, blendFunction: BlendFunction.ADD, opacity: 0.47});
 
         //sepia
         const sepia = new SepiaEffect({intensity: 1.0});
 
+        const hue = new HueSaturationEffect({hue: 3.11, saturation: 2.05})
+
         //monochrome
         const monochrome = new ColorAverageEffect();
+
+        const dotScreen = new DotScreenEffect({scale: 1});
+
+        const vignette = new VignetteEffect()
+
 
         //all effects pass
         let effectPass
@@ -56,18 +72,20 @@ const Effects = () => {
         if (sun !== null) {
             const godRays = new GodRaysEffect(
                 camera, sun, {
-                    height: 480,
+                    height: 300,
+                    width: 300,
                     kernelSize: KernelSize.SMALL,
                     density: 0.96,
                     decay: 0.92,
                     weight: 0.3,
-                    exposure: 0.54,
-                    samples: 60,
+                    exposure: 0.34,
+                    samples: 50,
+                    clampMax: 1,
                 });
-            effectPass = new EffectPass(camera, smaaEffect, godRays);
+            effectPass = new EffectPass(camera, smaaEffect, godRays, noise, hue, vignette);
             effectPass.renderToScreen = true;
         } else {
-            effectPass = new EffectPass(camera, smaaEffect);
+            effectPass = new EffectPass(camera, smaaEffect,  noise);
             effectPass.renderToScreen = true;
         }
 

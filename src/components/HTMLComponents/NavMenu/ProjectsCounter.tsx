@@ -5,7 +5,8 @@ import {useDrag} from "react-use-gesture";
 import {projectsInfo} from "../TextContent";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../../store/store";
-import {actions} from "../../../store/reducer";
+import {actions} from "../../../store/InterfaceReducer";
+import {PROJECTS_SCROLLING, PROJECTS_STATIC} from "../../../utils/StringVariablesAndTypes";
 
 const Wrapper = styled.div`
   position: absolute;
@@ -68,7 +69,7 @@ type PropsType = {
 
 const ProjectsCounter: React.FC<PropsType> = ({setScroll}) => {
 
-    const scrollsCount = useSelector((state: AppStateType) => state.appState.scrollsCount, shallowEqual);
+    const scrollsCount = useSelector((state: AppStateType) => state.interface.scrollsCount, shallowEqual);
     const dispatch = useDispatch();
 
     const [animation, setAnimation] = useSpring(() => ({
@@ -96,11 +97,12 @@ const ProjectsCounter: React.FC<PropsType> = ({setScroll}) => {
             currentTop.current = -scrollsCount * (window.innerHeight * 0.3) + (scrollsCount - 1) * (window.innerHeight * 0.3);
             setScroll({scale: 0.7});
             isDrugged.current = true;
+            dispatch(actions.setCameraState(PROJECTS_SCROLLING))
         }
         if (active) {
             currentY.current = currentY.current + y;
             const currentPercent = currentY.current / wrapperRef.current!.offsetHeight;
-            if (y > 0 && currentPercent > scrollsCount / projectsInfo.length) {
+            if (y > 0 && currentPercent > scrollsCount / projectsInfo.length && scrollsCount < projectsInfo.length) {
                 dispatch(actions.setScrollsCount(scrollsCount+1))
             } else if (y < 0 && currentPercent < (scrollsCount - 1) / projectsInfo.length && scrollsCount > 1) {
                 dispatch(actions.setScrollsCount(scrollsCount-1))
@@ -115,6 +117,7 @@ const ProjectsCounter: React.FC<PropsType> = ({setScroll}) => {
             currentY.current = staticY;
             setScroll({scale: 1, top: -currentBlockPercent * (projectsInfo.length-1) * window.innerHeight});
             setAnimation({y: staticY});
+            dispatch(actions.setCameraState(PROJECTS_STATIC))
         }
     })
 

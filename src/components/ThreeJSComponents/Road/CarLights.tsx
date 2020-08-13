@@ -72,7 +72,7 @@ const CarLights = () => {
         );
         let geometry = new THREE.TubeBufferGeometry(curve, 40, 1, 8, false);
         let instanced = new THREE.InstancedBufferGeometry().copy(geometry);
-        instanced.maxInstancedCount = options.lightPairsPerRoadWay * 2;  //lightPairsPerRoadWay * 2
+        instanced.instanceCount = options.lightPairsPerRoadWay * 2;  //lightPairsPerRoadWay * 2
 
         let laneWidth = options.roadWidth / options.lanesPerRoad;//options.roadWidth / options.lanesPerRoad;
 

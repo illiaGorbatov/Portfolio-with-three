@@ -13,13 +13,7 @@ import {AppStateType} from "../../store/store";
 
 const TransitionsBetweenScenes: React.FC = () => {
 
-    const currentScene = useSelector((state: AppStateType) => state.appState.scene, shallowEqual);
-
-    const {scene, gl} = useThree();
-    useLayoutEffect(() => {
-        console.log(gl)
-    }, [])
-
+    const currentScene = useSelector((state: AppStateType) => state.interface.scene, shallowEqual);
 
     return (
         <Suspense fallback={null}>

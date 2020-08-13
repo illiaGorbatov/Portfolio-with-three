@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/macro';
-import SingleProject from "./SingleProject";
+import ProjectPresentation from "./ProjectPresentation";
+import {projectsInfo} from "../TextContent";
 
 const AllProjectsWrapper = styled.div`
   width: 100%;
@@ -11,9 +12,8 @@ const AllProjectsWrapper = styled.div`
 const ProjectsContainer: React.FC = () => {
     return (
         <AllProjectsWrapper>
-            <SingleProject/>
-            <SingleProject/>
-            <SingleProject/>
+            {projectsInfo.map((project, index) =>
+            <ProjectPresentation key={index} projectIndex={index} project={project}/>)}
         </AllProjectsWrapper>
     )
 }

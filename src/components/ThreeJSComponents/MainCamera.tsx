@@ -9,7 +9,7 @@ import {
 } from "../../utils/StringVariablesAndTypes";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../store/store";
-import {actions} from "../../store/reducer";
+import {actions} from "../../store/InterfaceReducer";
 
 const cameraSettings = {
     landscape: [0, 10, 4] as Vector3Type,
@@ -22,7 +22,7 @@ const cameraSettings = {
 
 const MainCamera = () => {
 
-    const cameraState = useSelector((state: AppStateType) => state.appState.cameraState, shallowEqual);
+    const cameraState = useSelector((state: AppStateType) => state.interface.cameraState, shallowEqual);
     const dispatch = useDispatch();
 
     const ref = useRef();

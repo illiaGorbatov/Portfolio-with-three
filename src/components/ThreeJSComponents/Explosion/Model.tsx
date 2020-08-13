@@ -125,7 +125,6 @@ const Model: React.FC = () => {
 
     const textures = useMemo(() => new THREE.CubeTextureLoader().load(texturesUrl), []);
     textures.minFilter = THREE.LinearFilter;
-    console.log(textures)
 
     const outerShader = useMemo(() => {
         let shaderMat = shader;
@@ -143,7 +142,6 @@ const Model: React.FC = () => {
 
         loader.load("ico-more.glb",
             (gltf) => {
-            console.log(gltf)
                 let voronoiObj: THREE.Object3D[] = [];
                 gltf.scene.traverse((child) => {
                     if (child.name === "Voronoi_Fracture") {
@@ -198,9 +196,9 @@ const Model: React.FC = () => {
     useEffect(() => subscribe(scr => mouseCoords.current = scr as number[], state => state.mouseCoords), []);
 
 //explosion
-    const exploded = useSelector((state: AppStateType) => state.appState.exploded, shallowEqual);
+    const explosionProgress = useSelector((state: AppStateType) => state.interface.explosionProgress, shallowEqual);
     const {progress} = useSpring({
-        progress: exploded ? 1 : 0
+        progress: explosionProgress
     });
 
     const group = useRef<THREE.Group>(new THREE.Group());
@@ -215,7 +213,6 @@ const Model: React.FC = () => {
         group.current.rotation.x = Math.PI / 2 - taY * (2 - taY) * Math.PI * sign(mouseY.current);
         group.current.rotation.y = Math.PI / 2 - ta * (2 - ta) * Math.PI * sign(mouseX.current);
         group.current.rotation.z = Math.PI / 2 - ta * (2 - ta) * Math.PI * sign(mouseX.current);
-        /*console.log(group.current.position)*/
     });
 
     return (

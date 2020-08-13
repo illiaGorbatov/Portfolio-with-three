@@ -31,7 +31,7 @@ const WrapperForAppearing = styled.div`
 
 const MainPage: React.FC = () => {
 
-    const scrollsCount = useSelector((state: AppStateType) => state.appState.scrollsCount, shallowEqual);
+    const scrollsCount = useSelector((state: AppStateType) => state.interface.scrollsCount, shallowEqual);
 
     return (
         <MainPageWrapper>

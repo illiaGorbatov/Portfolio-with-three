@@ -4,7 +4,6 @@ import styled from "styled-components/macro";
 import InitialCanvas from "./components/ThreeJSComponents/InitialCanvas";
 import Interface from "./components/HTMLComponents/NavMenu/Interface";
 import {getState} from "./utils/zustandStore";
-import TestButton from "./components/HTMLComponents/test";
 import HTMLElementsContainer from "./components/HTMLComponents/HTMLElementsContainer";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {far} from "@fortawesome/free-regular-svg-icons";
@@ -53,9 +52,8 @@ const App = () => {
     return (
         <>
             <GlobalStyles/>
-            {/*<HTMLElementsContainer/>*/}
+            <HTMLElementsContainer/>
             <Wrapper>
-                <TestButton/>
                 <InitialCanvas/>
             </Wrapper>
         </>

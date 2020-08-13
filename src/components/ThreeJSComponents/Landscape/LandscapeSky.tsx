@@ -10,7 +10,7 @@ import {AppStateType} from "../../../store/store";
 
 const LandscapeSky: React.FC = () => {
 
-    const starsAndSkyState = useSelector((state: AppStateType) => state.appState.starsAndSkyState, shallowEqual);
+    const starsAndSkyState = useSelector((state: AppStateType) => state.interface.starsAndSkyState, shallowEqual);
 
     const material = useRef(new THREE.ShaderMaterial());
 

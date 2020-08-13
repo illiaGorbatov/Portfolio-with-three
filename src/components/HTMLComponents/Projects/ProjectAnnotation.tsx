@@ -4,7 +4,7 @@ import styled from 'styled-components/macro';
 const AnnotationWrapper = styled.div`
   position: absolute;
   top: 50%;
-  left: 10%;
+  left: -10%;
   transform: translateY(-50%);
   text-align: left;
   color: white;

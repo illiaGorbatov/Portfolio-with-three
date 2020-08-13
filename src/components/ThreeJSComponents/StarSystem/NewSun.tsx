@@ -1,7 +1,7 @@
 import React, {useLayoutEffect, useRef} from 'react';
 import * as THREE from 'three';
 import {useDispatch} from "react-redux";
-import {actions} from "../../../store/reducer";
+import {actions} from "../../../store/InterfaceReducer";
 
 
 const NewSun: React.FC = () => {

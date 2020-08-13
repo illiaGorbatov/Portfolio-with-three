@@ -3,7 +3,7 @@ import styled from 'styled-components/macro';
 import {animated, useChain, useSprings, useTrail} from 'react-spring'
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../../store/store";
-import {actions} from "../../../store/reducer";
+import {actions} from "../../../store/InterfaceReducer";
 
 const NavScreen = styled.div`
   position: absolute;
@@ -64,7 +64,7 @@ const config = {tension: 200, clamp: true};
 
 const AboutMe: React.FC = () => {
 
-    const isNavMenuOpened = useSelector((state: AppStateType) => state.appState.isNavMenuOpened, shallowEqual);
+    const isNavMenuOpened = useSelector((state: AppStateType) => state.interface.isNavMenuOpened, shallowEqual);
     const dispatch = useDispatch();
 
     const [isMenuOpened, setMenuState] = useState(false);

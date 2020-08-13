@@ -25,7 +25,7 @@ const Logo = styled.div<{$isMainPageOnScreen: boolean}>`
 
 const Interface: React.FC = () => {
 
-    const scrollsCount = useSelector((state: AppStateType) => state.appState.scrollsCount, shallowEqual);
+    const scrollsCount = useSelector((state: AppStateType) => state.interface.scrollsCount, shallowEqual);
 
     return (
         <>
