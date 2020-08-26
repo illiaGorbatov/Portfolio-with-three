@@ -24,6 +24,7 @@ const SingleBorder: React.FC<PropsType> = ({rotation, position, ...props}) => {
         hole.lineTo(32, 12.8);
         hole.lineTo(-32, 12.8);
         extrudeShape.holes.push(hole);
+        //width: 64, height: 25,6
 
         const extrudeSettings = {
             steps: 1,

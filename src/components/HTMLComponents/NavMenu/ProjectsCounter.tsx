@@ -8,7 +8,7 @@ import {AppStateType} from "../../../store/store";
 import {actions} from "../../../store/InterfaceReducer";
 import {PROJECTS_SCROLLING, PROJECTS_STATIC} from "../../../utils/StringVariablesAndTypes";
 
-const Wrapper = styled.div`
+const Wrapper = styled(animated.div)`
   position: absolute;
   top: 10%;
   right: 6%;
@@ -35,6 +35,9 @@ const ProgressBlock = styled(animated.div)<{$visible: boolean}>`
   color: white;
   cursor: grab;
   transition: ${props => props.$visible ? 'top .3s' : 'top .3s .3s'};
+  &:active {
+    cursor: grabbing
+  }
 `;
 
 const CurrentProject = styled.div`
@@ -63,17 +66,19 @@ const Border = styled.div`
 `;
 
 type PropsType = {
-    setScroll:  SpringStartFn<{top: number, scale: number}>
+    setScroll:  SpringStartFn<{top: number, scale: number, x: number}>
 }
 
 
 const ProjectsCounter: React.FC<PropsType> = ({setScroll}) => {
 
     const scrollsCount = useSelector((state: AppStateType) => state.interface.scrollsCount, shallowEqual);
+    const project = useSelector((state: AppStateType) => state.interface.currentlyLookedProject, shallowEqual);
     const dispatch = useDispatch();
 
-    const [animation, setAnimation] = useSpring(() => ({
+    const [{y, x, translateY}, setAnimation] = useSpring(() => ({
         y: 0,
+        x: 0,
         translateY: '-50%'
     }));
 
@@ -85,6 +90,11 @@ const ProjectsCounter: React.FC<PropsType> = ({setScroll}) => {
             setAnimation({y: newY})
         }
     }, [scrollsCount]);
+
+    useEffect(() => {
+        if (project !== null) setAnimation({x: window.innerWidth/2});
+        if (project === null) setAnimation({x: 0});
+    }, [project])
 
     const currentY = useRef<number>(0);
     const currentTop = useRef<number>(0)
@@ -122,9 +132,9 @@ const ProjectsCounter: React.FC<PropsType> = ({setScroll}) => {
     })
 
     return (
-        <Wrapper ref={wrapperRef}>
+        <Wrapper ref={wrapperRef} style={{x}}>
             <ProgressLine $visible={scrollsCount !== 0}/>
-            <ProgressBlock style={animation} {...onDrugHandler()} $visible={scrollsCount !== 0}>
+            <ProgressBlock style={{y, translateY}} {...onDrugHandler()} $visible={scrollsCount !== 0}>
                 <CurrentProject>
                     {scrollsCount === 0 ? 1 : scrollsCount}
                 </CurrentProject>

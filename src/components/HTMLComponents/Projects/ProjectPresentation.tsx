@@ -5,6 +5,7 @@ import ProjectAnnotation from "./ProjectAnnotation";
 import {useDispatch} from "react-redux";
 import {actions} from "../../../store/InterfaceReducer";
 import {ProjectType} from "../TextContent";
+import CloseLookButton from "./CloseLookButton";
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -57,6 +58,7 @@ const ProjectPresentation: React.FC<PropsType> = ({projectIndex}) => {
                     <source src='/videos/testVid.mp4' type="video/mp4"/>
                 </Video>
                 <ProjectAnnotation/>
+                <CloseLookButton projectIndex={projectIndex}/>
             </VideoWrapper>
         </Wrapper>
     )

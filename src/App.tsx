@@ -1,9 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {createGlobalStyle} from "styled-components";
 import styled from "styled-components/macro";
 import InitialCanvas from "./components/ThreeJSComponents/InitialCanvas";
-import Interface from "./components/HTMLComponents/NavMenu/Interface";
-import {getState} from "./utils/zustandStore";
 import HTMLElementsContainer from "./components/HTMLComponents/HTMLElementsContainer";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {far} from "@fortawesome/free-regular-svg-icons";
@@ -40,14 +38,6 @@ const Wrapper = styled.div`
 `;
 
 const App = () => {
-
-    useEffect(() => {
-        const onMouseMoveHandler = (e: MouseEvent) => {
-            getState().mouseMove([e.clientX, e.clientY])
-        }
-        window.addEventListener('mousemove', onMouseMoveHandler);
-        return (() => window.removeEventListener('mousemove', onMouseMoveHandler))
-    }, []);
 
     return (
         <>

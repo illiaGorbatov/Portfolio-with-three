@@ -1,5 +1,12 @@
 import React from 'react';
-import styled from 'styled-components/macro';
+import styled, {keyframes} from 'styled-components/macro';
+
+const hoverAnimation = keyframes`
+  0% {top: 0}
+  50% {top: 100%}
+  51% {top: -100%}
+  100% {top: 0}
+`;
 
 const ArrowCenter = styled.div`
   position: absolute;
@@ -26,6 +33,12 @@ const ArrowRight = styled(ArrowLeft)`
   transform: rotate(-45deg);
 `;
 
+const AnimatedWrapper = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+`;
+
 const ArrowWrapper = styled.div`
   position: absolute;
   left: 50%;
@@ -37,15 +50,19 @@ const ArrowWrapper = styled.div`
   &:hover ${ArrowCenter}, &:hover ${ArrowLeft} {
     width: 2px
   }
+  &:hover ${AnimatedWrapper} {animation: .5s ${hoverAnimation} ease-in-out;}
 `;
+
 
 const Arrow: React.FC = () => {
 
-    return(
+    return (
         <ArrowWrapper>
-            <ArrowLeft/>
-            <ArrowCenter/>
-            <ArrowRight/>
+            <AnimatedWrapper>
+                <ArrowLeft/>
+                <ArrowCenter/>
+                <ArrowRight/>
+            </AnimatedWrapper>
         </ArrowWrapper>
     )
 }

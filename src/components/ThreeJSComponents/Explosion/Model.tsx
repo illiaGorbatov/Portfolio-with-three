@@ -4,11 +4,12 @@ import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
 import {shader} from "./shaderMaterial";
 import {BufferGeometryUtils} from "three/examples/jsm/utils/BufferGeometryUtils";
 import {useFrame} from "react-three-fiber";
-import {getState, subscribe} from "../../../utils/zustandStore";
 import {animated, useSpring} from 'react-spring/three';
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
-import {shallowEqual, useSelector} from "react-redux";
+import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../../store/store";
+import {Vector3Type} from "../../../utils/StringVariablesAndTypes";
+import {actions} from "../../../store/InterfaceReducer";
 
 interface CustomMesh extends THREE.Mesh {
     geometry: THREE.BufferGeometry
@@ -104,11 +105,11 @@ const processSurface = (object: CustomObject, index: number) => {
         centroid1[i + 2] = centroidVector.z;
     }
     surface.setAttribute(
-        "centroid",
+        "centers",
         new THREE.BufferAttribute(new Float32Array(centroid), 3)
     );
     volume.setAttribute(
-        "centroid",
+        "centers",
         new THREE.BufferAttribute(new Float32Array(centroid1), 3)
     );
 
@@ -123,8 +124,15 @@ const sign = (number: number) => number === 0 ? 1 : number / Math.abs(number);
 
 const Model: React.FC = () => {
 
-    const textures = useMemo(() => new THREE.CubeTextureLoader().load(texturesUrl), []);
-    textures.minFilter = THREE.LinearFilter;
+    const isCrystalExploded = useSelector((state: AppStateType) => state.interface.isCrystalExploded, shallowEqual);
+
+    const dispatch = useDispatch();
+
+    const textures = useMemo(() => {
+        const textures = new THREE.CubeTextureLoader().load(texturesUrl);
+        textures.minFilter = THREE.LinearFilter;
+        return textures
+    }, []);
 
     const outerShader = useMemo(() => {
         let shaderMat = shader;
@@ -189,19 +197,42 @@ const Model: React.FC = () => {
         );
     }, []);
 
-//zustand Store
-    const mouseCoords = useRef(getState().mouseCoords);
-    const mouseX = useRef(0);
-    const mouseY = useRef(0);
-    useEffect(() => subscribe(scr => mouseCoords.current = scr as number[], state => state.mouseCoords), []);
-
 //explosion
-    const explosionProgress = useSelector((state: AppStateType) => state.interface.explosionProgress, shallowEqual);
-    const {progress} = useSpring({
-        progress: explosionProgress
-    });
+    const [{progress, position}, setAnimation] = useSpring(() => ({
+        progress: 0,
+        position: [0, 0, 0],
+        config: {
+            mass: 100,
+            tension: 400,
+            friction: 400,
+            clamp: true,
+        }
+    }));
 
     const group = useRef<THREE.Group>(new THREE.Group());
+
+    useEffect(() => {
+        if (!isCrystalExploded) setAnimation({progress: 0, position: [0, 0, 0]});
+        if (isCrystalExploded) setAnimation({
+            progress: 2,
+            position: [0, 0, 30],
+            onRest: () => dispatch(actions.setMainPageState(false))
+        });
+    }, [isCrystalExploded]);
+
+    //mouseEvent
+    const mouseCoords = useRef<number[]>([0, 0]);
+    const mouseX = useRef(0);
+    const mouseY = useRef(0);
+    useEffect(() => {
+        const onMouseMoveHandler = (e: MouseEvent) => mouseCoords.current = [e.clientX, e.clientY];
+        if (!isCrystalExploded) {
+            window.addEventListener('mousemove', onMouseMoveHandler);
+        }
+        return (() => {
+                window.removeEventListener('mousemove', onMouseMoveHandler)
+        })
+    }, [isCrystalExploded]);
 
     useFrame(() => {
         let targetMouseX = 2 * (mouseCoords.current[0] - window.innerWidth / 2) / window.innerWidth;
@@ -216,7 +247,7 @@ const Model: React.FC = () => {
     });
 
     return (
-        <group ref={group} position={[0, 0, 0]}>
+        <animated.group ref={group} position={position as unknown as Vector3Type}>
             <mesh>
                 <bufferGeometry attach="geometry" {...innerMesh}/>
                 <animated.shaderMaterial uniforms-progress-value={progress} attach="material" args={[shader]}
@@ -227,7 +258,7 @@ const Model: React.FC = () => {
                 <animated.shaderMaterial uniforms-progress-value={progress} attach="material" args={[outerShader]}
                                          uniforms-tCube-value={textures}/>
             </mesh>
-        </group>
+        </animated.group>
     )
 };
 

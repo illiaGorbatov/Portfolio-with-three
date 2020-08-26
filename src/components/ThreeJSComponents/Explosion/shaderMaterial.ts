@@ -26,7 +26,7 @@ export const shader = {
 
 
 
-        attribute vec3 center;
+        attribute vec3 centers;
         attribute vec3 axis;
         attribute float offset;
 
@@ -69,13 +69,13 @@ export const shader = {
 
         vec3 newposition = position;
 
-        float vTemp =  1. - ((center.x + center.y)*0.5 + 1.)/2.;
+        float vTemp =  1. - ((centers.x + centers.y)*0.5 + 1.)/2.;
 
         float tProgress = max(0.0, (progress - vTemp*0.4) /0.6);
         vec3 newnormal = rotate(normal,axis,tProgress*(3. + offset*10.));
         vNormal = newnormal;
 
-        newposition += newposition + center*(tProgress)*(3. + offset*7.);
+        newposition += newposition + centers*(tProgress)*(3. + offset*7.);
 
         eye = normalize( vec3( modelViewMatrix * vec4( newposition, 1.0 ) ) );
         vec4 worldPosition = modelMatrix * vec4( newposition, 1.0 );
@@ -108,7 +108,6 @@ export const shader = {
             vec3 light1 = normalize(vec3(-12.,-10.,-10.));
             float l = clamp(dot(light, vNormal),0.5,1.);
             l += clamp(dot(light1, vNormal),0.5,1.)/2.;
-            // l /= 2.;
             
             if(inside>0.5){
                 gl_FragColor = vec4(l,l,l,1.)*vec4(surfaceColor,1.);

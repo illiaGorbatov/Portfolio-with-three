@@ -3,16 +3,14 @@ import * as THREE from 'three';
 import {MainShader} from "./shaders/mainShader";
 import {useFrame, useLoader} from "react-three-fiber";
 import palette from '../textures/land/pallete.png';
-import {getState, subscribe} from "../../../utils/zustandStore";
 
 const Land: React.FC= () => {
 
     const landTexture = useLoader(THREE.TextureLoader, palette);
 
-    const mouseCoordinates = useRef(getState().mouseCoords);
+    const mouseCoordinates = useRef([0, 0]);
     const yDamped = useRef(0);
     const xDamped = useRef(0);
-    useEffect(() => subscribe(scr => mouseCoordinates.current = scr as number[], state => state.mouseCoords), []);
 
     const map = useCallback((value: number, start1: number, stop1: number, start2: number, stop2: number) => {
         return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1))

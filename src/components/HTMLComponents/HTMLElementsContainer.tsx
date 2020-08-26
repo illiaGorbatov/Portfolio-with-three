@@ -31,6 +31,9 @@ const ScrollableWrapper = styled(animated.div)`
 const HTMLElementsContainer: React.FC = () => {
 
     const scrollsCount = useSelector((state: AppStateType) => state.interface.scrollsCount, shallowEqual);
+    const project = useSelector((state: AppStateType) => state.interface.currentlyLookedProject, shallowEqual);
+    const isProjectsAvailable = useSelector((state: AppStateType) => state.interface.isProjectsAvailable, shallowEqual);
+
     const dispatch = useDispatch();
 
     const animationState = useRef<boolean>(false);
@@ -39,16 +42,18 @@ const HTMLElementsContainer: React.FC = () => {
     const [animation, setScroll] = useSpring(() => ({
         top: window.innerHeight,
         scale: 1,
+        x: 0,
         config: {tension: 100, friction: 25, clamp: true},
         onRest: () => animationState.current = false
     }));
 
-    useWheel(({direction: [, y]}) => {
-        if (animationState.current) return;
-        if (y > 0 && scrollsCount < projectsInfo.length) {
-            animationState.current = true;
-            if (scrollsCount === 0) dispatch(actions.setCameraState(PROJECTS_STATIC))
-            else dispatch(actions.setCameraState(PROJECTS_SCROLLING))
+    useEffect(() => {
+        if (project !== null) setScroll({x: window.innerWidth});
+        if (project === null) setScroll({x: 0});
+    }, [project]);
+
+    useEffect(() => {
+        if (isProjectsAvailable) {
             setScroll({
                 top: -(scrollsCount + 1) * window.innerHeight + window.innerHeight,
                 onRest: () => {
@@ -58,14 +63,37 @@ const HTMLElementsContainer: React.FC = () => {
             });
             dispatch(actions.setScrollsCount(scrollsCount + 1))
         }
+    }, [isProjectsAvailable])
+
+    useWheel(({direction: [, y]}) => {
+        if (animationState.current || project !== null) return;
+        if (y > 0 && scrollsCount < projectsInfo.length) {
+            animationState.current = true;
+            if (scrollsCount === 0) {
+                dispatch(actions.setCrystalExplosionState(true))
+            }
+            else {
+                dispatch(actions.setCameraState(PROJECTS_SCROLLING))
+                setScroll({
+                    top: -(scrollsCount + 1) * window.innerHeight + window.innerHeight,
+                    onRest: () => {
+                        dispatch(actions.setCameraState(PROJECTS_STATIC));
+                        animationState.current = false
+                    }
+                });
+                dispatch(actions.setScrollsCount(scrollsCount + 1))
+            }
+        }
         if (y < 0 && scrollsCount !== 0) {
             animationState.current = true;
-            if (scrollsCount === 1) dispatch(actions.setCameraState(MAIN_SCENE_STATIC))
+            if (scrollsCount === 1) {
+                dispatch(actions.setMainPageState(true))
+            }
             else dispatch(actions.setCameraState(PROJECTS_SCROLLING))
             setScroll({
                 top: -(scrollsCount - 1) * window.innerHeight + window.innerHeight,
                 onRest: () => {
-                    dispatch(actions.setCameraState(PROJECTS_STATIC));
+                    dispatch(actions.setCameraState(scrollsCount === 1 ? MAIN_SCENE_STATIC : PROJECTS_STATIC));
                     animationState.current = false
                 }
             });
@@ -73,8 +101,8 @@ const HTMLElementsContainer: React.FC = () => {
         }
     }, {domTarget: window});
 
-    useDrag(({direction: [, y]}) => {
-        if (!isMobile) return;
+    useDrag(({swipe: [, y]}) => {
+        if (!isMobile || project !== null) return;
 
     }, {domTarget: window, filterTaps: true, eventOptions: {passive: false}});
 

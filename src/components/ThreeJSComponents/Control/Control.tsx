@@ -11,6 +11,8 @@ import Model from "../Explosion/Model";
 import ControlCamera from "../ControlCamera";
 import Postprocessing from "../posteffects/Postprocessing";
 import Effects2 from "../posteffects/Effects2";
+import VideoCubesArray from "./Cubes/VideoCubesArray";
+import Trackball from "../../controls/trackballControls";
 
 const ControlLikeScene: React.FC = () => {
 
@@ -19,9 +21,9 @@ const ControlLikeScene: React.FC = () => {
             <Suspense fallback={null}>
                 <BordersArray/>
                 <ControlLights/>
-                {/*<CubeArray/>*/}
                 <Model/>
                 <Postprocessing/>
+                <VideoCubesArray/>
             </Suspense>
             <ControlCamera/>
         </>

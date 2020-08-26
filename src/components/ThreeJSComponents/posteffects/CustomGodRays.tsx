@@ -30,8 +30,6 @@ const GodRays = forwardRef<null, PropsType>(({ sun }, forwardRef) => {
         return godRaysEffect;
     }, [camera, sun]);
 
-    console.log(effect)
-
     return <primitive ref={forwardRef} object={effect} dispose={null} />;
 });
 
