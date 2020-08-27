@@ -20,7 +20,7 @@ const blink = keyframes`
 const Wrapper = styled.div`
   text-align:center;
   font-family: 'Relative-Book';
-  color: white;
+  color: black;
   letter-spacing: 2px;
   font-size: 20px;
   &::after {

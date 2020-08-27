@@ -1,15 +1,8 @@
 import React from 'react';
 import styled from 'styled-components/macro';
-import AboutMe from "./AboutMe";
 import {shallowEqual, useSelector} from "react-redux";
 import {AppStateType} from "../../../store/store";
-
-const InterfaceWrapper = styled.div`
-  position: absolute;
-  width: 100vw;
-  height: 100vh;
-  top: 0
-`;
+import AboutMe from './AboutMe';
 
 const Logo = styled.div<{$isMainPageOnScreen: boolean}>`
   position: absolute;

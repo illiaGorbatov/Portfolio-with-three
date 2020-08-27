@@ -7,17 +7,17 @@ import {Provider} from "react-redux";
 import CarLights from "./Road/CarLights";
 import Effects from "./posteffects/Effects";
 import ControlLikeScene from "./Control/Control";
-import AstralPlane from "./Control/AstralPlane/AstralPlaneTest";
+import AstralPlane from "./Control/AstralPlane/AstralPlane";
 
 const InitialCanvas = () => {
 
     return (
         <Canvas
-            style={{background: 'white'}}
+            style={{background: '#EAE6E5'}}
             shadowMap
             colorManagement
             onCreated={({scene}) => {
-                scene.background = new THREE.Color('white');
+                scene.background = new THREE.Color('#EAE6E5');
             }}
             gl={{
                 alpha: false,
@@ -30,8 +30,7 @@ const InitialCanvas = () => {
                 {/*<ambientLight color={'white'} intensity={1.0} />*/}
                 {/*<fog attach="fog" args={[0x333333, 10, 400]}/>*/}
                 {/*<TransitionsBetweenScenes/>*/}
-                {/*<ControlLikeScene/>*/}
-                <AstralPlane/>
+                <ControlLikeScene/>
             </Provider>
         </Canvas>
     );

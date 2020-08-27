@@ -1,10 +1,9 @@
-import React, {useMemo, useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import * as THREE from 'three';
-import {shallowEqual, useDispatch, useSelector} from "react-redux";
+import {shallowEqual, useSelector} from "react-redux";
 import {AppStateType} from "../../../../store/store";
 import {Vector3Type} from "../../../../utils/StringVariablesAndTypes";
-import {useSprings, animated} from "react-spring/three";
-import {actions} from "../../../../store/InterfaceReducer";
+import {animated, useSprings} from "react-spring/three";
 
 
 const change_uvs = (geometry: THREE.BoxBufferGeometry, unitX: number, unitY: number, offsetX: number, offsetY: number) => {
@@ -29,10 +28,8 @@ const VideoCubesArray: React.FC = () => {
 
     const videos = useSelector((state: AppStateType) => state.interface.videos, shallowEqual);
     const isMainPageFocused = useSelector((state: AppStateType) => state.interface.isMainPageFocused, shallowEqual);
+    const isAboutMenuOpened = useSelector((state: AppStateType) => state.interface.isAboutMenuOpened, shallowEqual);
     const project = useSelector((state: AppStateType) => state.interface.currentlyLookedProject, shallowEqual);
-    const isProjectsAvailable = useSelector((state: AppStateType) => state.interface.isProjectsAvailable, shallowEqual);
-
-    const dispatch = useDispatch();
 
     const geometries = useMemo(() => {
         let geometries = [];
@@ -85,24 +82,59 @@ const VideoCubesArray: React.FC = () => {
         const zDistance = (150 - 4) / (xGrid * yGrid);
         let positions: Vector3Type[] = [];
         for (let i = 0; i < xGrid * yGrid; i++) {
-            const x = Math.random() * 35 - 17.5;
-            const y = Math.random() * 16 - 8;
+            const x = Math.random() * 20 - 10;
+            const y = Math.random() * 13 - 6.5;
             const z = i * zDistance + 0.7 * zDistance * Math.random();
             positions.push([x, y, z])
         }
         return positions
     }, []);
 
+    const {positionsInAstralPlane, scaleInAstralPlane} = useMemo(() => {
+        let positionsInAstralPlane: Vector3Type[] = [];
+        let scaleInAstralPlane: Vector3Type[] = [];
+        let currentColumn = 1;
+
+        for (let i = 1; i <= xGrid * yGrid; i++) {
+            const row = i%5;
+            let column: number;
+            if (currentColumn < 4) {
+                column = currentColumn;
+                currentColumn++
+            } else {
+                column = currentColumn;
+                currentColumn = 1
+            }
+            const x = THREE.MathUtils.lerp(-60, 80, row/5);
+            const z = THREE.MathUtils.lerp(-250, -370,column/4);
+            positionsInAstralPlane.push([x, -50, z]);
+
+            const scaleX = 5;
+            const scaleY = 5;
+            const scaleZ = 5;
+            scaleInAstralPlane.push([scaleX, scaleY, scaleZ])
+        }
+        return {positionsInAstralPlane, scaleInAstralPlane}
+    }, []);
+
     const rotationDirections = useMemo(() => {
         const rotationArray = []
         for (let i = 0; i < xGrid * yGrid; i++) {
-            rotationArray.push([Math.PI*Math.random(), Math.PI*Math.random(), Math.PI*Math.random()])
+            rotationArray.push([Math.PI * Math.random(), Math.PI * Math.random(), Math.PI * Math.random()])
         }
         return rotationArray
+    }, []);
+
+    const randomScale = useMemo(() => {
+        let scale: Vector3Type[] = [];
+        for (let i = 0; i < xGrid * yGrid; i++) {
+            scale.push([Math.random() * 6, Math.random() * 6, Math.random() * 6])
+        }
+        return scale
     }, [])
 
     const [animation, setAnimation] = useSprings(xGrid * yGrid, i => ({
-        position: [0, 0, 170],
+        position: projectsObservationPositions[i],
         scale: [0.3, 0.3, 0.3],
         rotation: rotationDirections[i],
         config: {
@@ -114,6 +146,32 @@ const VideoCubesArray: React.FC = () => {
     }));
 
     const [isVideoReadyToPlay, setReadyState] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (isAboutMenuOpened) {
+            setAnimation(i => ({
+                position: positionsInAstralPlane[i],
+                rotation: [0, 0, Math.PI/2],
+                scale: scaleInAstralPlane[i]
+            }))/*.then(() => setAnimation(i => ({
+                to: async (next) => {
+                    await next({scale: [1, 1, randomScale[i][2]], config: {duration: 1000}});
+                    await next({scale: [1, randomScale[i][1], randomScale[i][2]], config: {duration: 1000}});
+                    await next({scale: [randomScale[i][0], randomScale[i][1], randomScale[i][2]], config: {duration: 1000}});
+                    },
+                loop: true,
+            })))*/
+        }
+        if (!isAboutMenuOpened && !isMainPageFocused && project === null) {
+            setAnimation(i => ({
+                cancel: true
+            })).then(() =>
+            setAnimation(i => ({
+                position: projectsObservationPositions[i],
+                scale: [0.3, 0.3, 0.3],
+            })))
+        }
+    }, [isAboutMenuOpened])
 
     useEffect(() => {
         if (project !== null) {
@@ -145,17 +203,17 @@ const VideoCubesArray: React.FC = () => {
                 position: projectsObservationPositions[i],
                 scale: [0.3, 0.3, 0.3],
             })).then(() => {
-                if (!isProjectsAvailable) dispatch(actions.setProjectsAvailability(true))
                 if (isVideoReadyToPlay) setReadyState(false);
                 setAnimation(i => ({
                     from: {rotation: rotationDirections[i]},
-                    to: {rotation: rotationDirections[i].map(item => item + 2*Math.PI)},
+                    to: {rotation: rotationDirections[i].map(item => item + 2 * Math.PI)},
                     loop: true,
-                    config: {duration: 20000}
+                    config:(prop) =>
+                        prop === 'rotation' ? {duration: 20000} : {}
                 }))
             })
         }
-        if (isMainPageFocused) {
+        /*if (isMainPageFocused) {
             setAnimation(i => ({
                 cancel: true
             }));
@@ -164,10 +222,8 @@ const VideoCubesArray: React.FC = () => {
                 rotation: rotationDirections[i],
                 delay: 300
             })).then(() => dispatch(actions.setCrystalExplosionState(false)))
-        }
+        }*/
     }, [project, isMainPageFocused]);
-
-    console.log(isVideoReadyToPlay)
 
     return (
         <group position={[0, 0, -150]}>
@@ -182,4 +238,4 @@ const VideoCubesArray: React.FC = () => {
     )
 }
 
-export default VideoCubesArray
+export default React.memo(VideoCubesArray)

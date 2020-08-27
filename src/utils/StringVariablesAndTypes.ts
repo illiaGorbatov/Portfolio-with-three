@@ -6,10 +6,11 @@ export const RADIAL_EXPLOSION = 'redial explosion';
 export const TRANSITION_TO_LANDSCAPE = 'transition to landscape';
 
 export const MAIN_SCENE_STATIC = 'static main scene';
+export const TRANSITION_FROM_MAIN_TO_PROJECTS = 'transition from main to project';
 export const PROJECTS_STATIC = 'static projects scene';
 export const PROJECTS_SCROLLING = 'scrolling projects scene';
 export const CLOSE_LOOK = 'close look';
-export const MADNESS = 'It is the mthfckng MADNESS';
+export const TRANSITION_TO_INFO = 'about me'
 
 //scenes
 export const LANDSCAPE = 'landscape';

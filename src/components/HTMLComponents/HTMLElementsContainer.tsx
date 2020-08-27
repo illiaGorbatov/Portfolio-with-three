@@ -11,7 +11,12 @@ import ProjectsCounter from "./NavMenu/ProjectsCounter";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../store/store";
 import {actions} from "../../store/InterfaceReducer";
-import {MAIN_SCENE_STATIC, PROJECTS_SCROLLING, PROJECTS_STATIC} from '../../utils/StringVariablesAndTypes';
+import {
+    MAIN_SCENE_STATIC,
+    PROJECTS_SCROLLING,
+    PROJECTS_STATIC,
+    TRANSITION_FROM_MAIN_TO_PROJECTS
+} from '../../utils/StringVariablesAndTypes';
 
 const Wrapper = styled.div`
   position: absolute;
@@ -63,17 +68,18 @@ const HTMLElementsContainer: React.FC = () => {
             });
             dispatch(actions.setScrollsCount(scrollsCount + 1))
         }
-    }, [isProjectsAvailable])
+    }, [isProjectsAvailable]);
 
     useWheel(({direction: [, y]}) => {
         if (animationState.current || project !== null) return;
         if (y > 0 && scrollsCount < projectsInfo.length) {
             animationState.current = true;
             if (scrollsCount === 0) {
-                dispatch(actions.setCrystalExplosionState(true))
+                dispatch(actions.setCrystalExplosionState(true));
+                dispatch(actions.setCameraState(TRANSITION_FROM_MAIN_TO_PROJECTS))
             }
             else {
-                dispatch(actions.setCameraState(PROJECTS_SCROLLING))
+                dispatch(actions.setCameraState(PROJECTS_SCROLLING));
                 setScroll({
                     top: -(scrollsCount + 1) * window.innerHeight + window.innerHeight,
                     onRest: () => {

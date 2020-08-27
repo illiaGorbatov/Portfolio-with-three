@@ -3,22 +3,28 @@ import {Mesh} from 'three';
 import {shallowEqual, useSelector} from "react-redux";
 import {animated, useSpring} from 'react-spring/three';
 import {AppStateType} from "../../../../store/store";
+import {Vector3Type} from "../../../../utils/StringVariablesAndTypes";
 
 
 const ControlSun = forwardRef<Mesh, {}>((props, forwardRef) => {
 
-    const isMainPageFocused = useSelector((state: AppStateType) => state.interface.isMainPageFocused, shallowEqual);
+    const isCrystalExploded = useSelector((state: AppStateType) => state.interface.isCrystalExploded, shallowEqual);
 
-    const {opacity} = useSpring({
-        opacity: !isMainPageFocused ? 1 : 0,
-        delay: !isMainPageFocused ? 1000 : 0,
+    const {scale} = useSpring({
+        scale: isCrystalExploded ? [15, 15, 15] : [0.1, 0.1, 0.1],
+        config: {
+            mass: 100,
+            tension: 400,
+            friction: 400,
+            clamp: true,
+        }
     })
 
     return (
-        <mesh ref={forwardRef} position={[0, 0, -160]}>
-            <circleBufferGeometry attach="geometry" args={[30, 10]}/>
-            <animated.meshBasicMaterial attach="material" color={"#FF0000"} opacity={opacity}/>
-        </mesh>
+        <animated.mesh ref={forwardRef} position={[0, 0, -310]} scale={scale as unknown as Vector3Type}>
+            <sphereBufferGeometry attach="geometry" args={[5, 10, 10]}/>
+            <meshBasicMaterial attach="material" color={"#FF0000"} />
+        </animated.mesh>
     );
 });
 

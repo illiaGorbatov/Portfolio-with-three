@@ -18,7 +18,6 @@ import {
 } from "../utils/StringVariablesAndTypes";
 
 type InitialStateType = {
-    isNavMenuOpened: boolean,
     scrollsCount: number,
     explosionProgress: number,
     scene: string,
@@ -34,7 +33,6 @@ type InitialStateType = {
 };
 
 const initialState = {
-    isNavMenuOpened: false,
     scrollsCount: 0,
     explosionProgress: 0,
     scene: LANDSCAPE,
@@ -51,11 +49,6 @@ const initialState = {
 
 const MainReducer = (state: InitialStateType = initialState, action: ActionsTypes): InitialStateType => {
     switch (action.type) {
-        case 'REDUX/SET_NAV_MENU_STATE':
-            return {
-                ...state,
-                isNavMenuOpened: action.isNavMenuOpened
-            }
         case 'REDUX/SET_SCENE':
             return {
                 ...state,
@@ -119,7 +112,6 @@ const MainReducer = (state: InitialStateType = initialState, action: ActionsType
 type ActionsTypes = InferActionTypes<typeof actions>;
 
 export const actions = {
-    setNavMenuState: (isNavMenuOpened: boolean) => ({type: SET_NAV_MENU_STATE, isNavMenuOpened}) as const,
     setCurrentScene: (scene: string) => ({type: SET_SCENE, scene}) as const,
     setSun: (sun: THREE.Mesh | null) => ({type: SET_SUN, sun}) as const,
     setCameraState: (cameraState: string) => ({type: SET_CAMERA_STATE, cameraState}) as const,

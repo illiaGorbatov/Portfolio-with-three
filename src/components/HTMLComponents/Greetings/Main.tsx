@@ -20,7 +20,7 @@ const MyInfoWrapper = styled.div`
 const MyName = styled.div<{ $visible: boolean }>`
   font-size: 50px;
   font-family: "Anders";
-  color: white;
+  color: black;
   transform: translateY(${props => props.$visible ? '0%' : '-100%'});
   transition: transform .5s cubic-bezier(.19,.78,.4,.84);
 `;

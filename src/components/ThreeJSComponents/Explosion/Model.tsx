@@ -200,22 +200,22 @@ const Model: React.FC = () => {
 //explosion
     const [{progress, position}, setAnimation] = useSpring(() => ({
         progress: 0,
-        position: [0, 0, 0],
-        config: {
+        position: [0, 0, -310],
+        /*config: {
             mass: 100,
             tension: 400,
             friction: 400,
             clamp: true,
-        }
+        }*/
     }));
 
     const group = useRef<THREE.Group>(new THREE.Group());
 
     useEffect(() => {
-        if (!isCrystalExploded) setAnimation({progress: 0, position: [0, 0, 0]});
+        if (!isCrystalExploded) setAnimation({progress: 0, /*position: [0, 0, 0]*/});
         if (isCrystalExploded) setAnimation({
-            progress: 2,
-            position: [0, 0, 30],
+            progress: 5,
+            /*position: [0, 0, 30],*/
             onRest: () => dispatch(actions.setMainPageState(false))
         });
     }, [isCrystalExploded]);
@@ -262,4 +262,4 @@ const Model: React.FC = () => {
     )
 };
 
-export default Model
+export default React.memo(Model)

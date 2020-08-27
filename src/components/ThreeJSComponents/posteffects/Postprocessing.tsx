@@ -1,9 +1,9 @@
-import React, {createRef} from "react";
+import React from "react";
 import {EffectComposer, HueSaturation, Noise, Vignette} from "react-postprocessing";
 import GodRays from "./CustomGodRays";
 /*@ts-ignore*/
 import {BlendFunction} from 'postprocessing';
-import {useResource, useThree} from "react-three-fiber";
+import {useResource} from "react-three-fiber";
 import ControlSun from "../Control/Lights/ControlSun";
 import {Mesh} from "three";
 
@@ -26,4 +26,4 @@ const Postprocessing: React.FC = () => {
     );
 }
 
-export default Postprocessing
+export default React.memo(Postprocessing)

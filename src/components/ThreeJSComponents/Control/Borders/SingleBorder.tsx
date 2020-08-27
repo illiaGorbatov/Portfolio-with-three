@@ -2,6 +2,7 @@ import React, {useMemo} from 'react';
 import * as THREE from 'three';
 import {animated, SpringValue} from 'react-spring/three';
 import {Vector3Type} from "../../../../utils/StringVariablesAndTypes";
+import isEqual from "react-fast-compare";
 
 type PropsType = {
     scale: [number, number, number],
@@ -43,4 +44,4 @@ const SingleBorder: React.FC<PropsType> = ({rotation, position, ...props}) => {
     );
 }
 
-export default SingleBorder
+export default React.memo(SingleBorder, isEqual)
