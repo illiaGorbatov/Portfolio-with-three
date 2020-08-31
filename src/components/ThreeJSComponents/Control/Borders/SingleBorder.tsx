@@ -39,7 +39,7 @@ const SingleBorder: React.FC<PropsType> = ({rotation, position, ...props}) => {
     return (
         <animated.mesh {...props} rotation-z={rotation} position={position as unknown as Vector3Type} castShadow receiveShadow>
             <extrudeBufferGeometry attach="geometry" args={[extrudeShape, extrudeSettings]}/>
-            <meshStandardMaterial attach="material" color="white" roughness={0.7} shadowSide={THREE.FrontSide}/>
+            <meshStandardMaterial attach="material" color="#999" roughness={0.7} shadowSide={THREE.FrontSide}/>
         </animated.mesh>
     );
 }

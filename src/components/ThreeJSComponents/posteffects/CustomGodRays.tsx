@@ -1,22 +1,19 @@
-import React, {useMemo, forwardRef, RefObject} from "react";
-import {
-    GodRaysEffect,
-    KernelSize,
-    //@ts-ignore
-} from 'postprocessing';
+import React, {forwardRef, useMemo} from "react";
+//@ts-ignore
+import {GodRaysEffect, KernelSize,} from 'postprocessing';
 import {useThree} from "react-three-fiber";
-import { Mesh } from "three";
+import {Mesh} from "three";
 
 type PropsType = {
-    sun: RefObject<Mesh>
+    sun: Mesh
 }
 
 const GodRays = forwardRef<null, PropsType>(({ sun }, forwardRef) => {
 
     const { camera } = useThree();
-
+    console.log('render', sun)
     const effect = useMemo(() => {
-        const godRaysEffect = new GodRaysEffect(camera, sun.current, {
+        return new GodRaysEffect(camera, sun, {
             height: 300,
             width: 300,
             kernelSize: KernelSize.SMALL,
@@ -27,10 +24,9 @@ const GodRays = forwardRef<null, PropsType>(({ sun }, forwardRef) => {
             samples: 50,
             clampMax: 1,
         });
-        return godRaysEffect;
     }, [camera, sun]);
 
     return <primitive ref={forwardRef} object={effect} dispose={null} />;
 });
 
-export default GodRays
+export default React.memo(GodRays)

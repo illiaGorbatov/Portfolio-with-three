@@ -1,10 +1,13 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState, useRef} from "react";
 import * as THREE from 'three';
 import {shallowEqual, useSelector} from "react-redux";
 import {AppStateType} from "../../../../store/store";
 import {Vector3Type} from "../../../../utils/StringVariablesAndTypes";
-import {animated, useSprings} from "react-spring/three";
+import {animated, useSprings, SpringStartFn} from "react-spring/three";
+import {AnimationResult} from "@react-spring/core";
 
+
+type AsyncResult<T = any> = Promise<AnimationResult<T>>
 
 const change_uvs = (geometry: THREE.BoxBufferGeometry, unitX: number, unitY: number, offsetX: number, offsetY: number) => {
     let uvs = geometry.attributes.uv.array;
@@ -16,7 +19,7 @@ const change_uvs = (geometry: THREE.BoxBufferGeometry, unitX: number, unitY: num
     }
 };
 
-const xGrid = 4, yGrid = 5;
+const xGrid = 5, yGrid = 5;
 
 const ux = 1 / xGrid;
 const uy = 1 / yGrid;
@@ -62,7 +65,10 @@ const VideoCubesArray: React.FC = () => {
         }
     }, [project]);
 
-    const ordinaryMaterial = useMemo(() => new THREE.MeshStandardMaterial({color: "#333", roughness: 0.7}), []);
+    const ordinaryMaterial = useMemo(() => new THREE.MeshStandardMaterial({
+        color: "#333",
+        roughness: 0.7,
+    }), []);
 
     const closeLookPositions = useMemo(() => {
         let positions: Vector3Type[] = [];
@@ -93,25 +99,17 @@ const VideoCubesArray: React.FC = () => {
     const {positionsInAstralPlane, scaleInAstralPlane} = useMemo(() => {
         let positionsInAstralPlane: Vector3Type[] = [];
         let scaleInAstralPlane: Vector3Type[] = [];
-        let currentColumn = 1;
-
         for (let i = 1; i <= xGrid * yGrid; i++) {
-            const row = i%5;
-            let column: number;
-            if (currentColumn < 4) {
-                column = currentColumn;
-                currentColumn++
-            } else {
-                column = currentColumn;
-                currentColumn = 1
-            }
-            const x = THREE.MathUtils.lerp(-60, 80, row/5);
-            const z = THREE.MathUtils.lerp(-250, -370,column/4);
-            positionsInAstralPlane.push([x, -50, z]);
-
-            const scaleX = 5;
-            const scaleY = 5;
-            const scaleZ = 5;
+            const row = i % 5;
+            const column = Math.ceil(i / 5) - 1;
+            const x = THREE.MathUtils.lerp(-28.75, 28.75, row / 4);
+            const z = THREE.MathUtils.lerp(-281.25, -338.75, column / 4);
+            positionsInAstralPlane.push([x, -125, z]);
+            console.log(row, column)
+            const scaleX = Math.random() * 2 + (column === 2 && row === 2 ? 18 :
+                (row === 0 || row === 4) || (column === 0 || column === 4) ? 8 : 12);
+            const scaleY = 2.3 + Math.random() * 0.5;
+            const scaleZ = 2.3 + Math.random() * 0.5;
             scaleInAstralPlane.push([scaleX, scaleY, scaleZ])
         }
         return {positionsInAstralPlane, scaleInAstralPlane}
@@ -125,14 +123,6 @@ const VideoCubesArray: React.FC = () => {
         return rotationArray
     }, []);
 
-    const randomScale = useMemo(() => {
-        let scale: Vector3Type[] = [];
-        for (let i = 0; i < xGrid * yGrid; i++) {
-            scale.push([Math.random() * 6, Math.random() * 6, Math.random() * 6])
-        }
-        return scale
-    }, [])
-
     const [animation, setAnimation] = useSprings(xGrid * yGrid, i => ({
         position: projectsObservationPositions[i],
         scale: [0.3, 0.3, 0.3],
@@ -145,33 +135,104 @@ const VideoCubesArray: React.FC = () => {
         }
     }));
 
+    const cancelsForAnimations = useRef<(() => void)[]>([]);
     const [isVideoReadyToPlay, setReadyState] = useState<boolean>(false);
 
     useEffect(() => {
         if (isAboutMenuOpened) {
             setAnimation(i => ({
-                position: positionsInAstralPlane[i],
-                rotation: [0, 0, Math.PI/2],
-                scale: scaleInAstralPlane[i]
-            }))/*.then(() => setAnimation(i => ({
-                to: async (next) => {
-                    await next({scale: [1, 1, randomScale[i][2]], config: {duration: 1000}});
-                    await next({scale: [1, randomScale[i][1], randomScale[i][2]], config: {duration: 1000}});
-                    await next({scale: [randomScale[i][0], randomScale[i][1], randomScale[i][2]], config: {duration: 1000}});
-                    },
-                loop: true,
-            })))*/
-        }
-        if (!isAboutMenuOpened && !isMainPageFocused && project === null) {
-            setAnimation(i => ({
                 cancel: true
-            })).then(() =>
+            })).then(() => setAnimation(i => ({
+                to: async (next) => {
+                    await next({
+                        position: positionsInAstralPlane[i],
+                        rotation: [0, 0, Math.PI / 2],
+                        config: {
+                            friction: 200,
+                        }
+                    });
+                    await next({
+                        scale: [0.3, scaleInAstralPlane[i][1], scaleInAstralPlane[i][2]],
+                        immediate: true
+                    });
+                    await next({
+                        scale: scaleInAstralPlane[i],
+                    });
+                }
+            }))).then(() => setAnimation(i => {
+                const row = (i + 1) % 5;
+                const column = Math.ceil((i + 1) / 5) - 1;
+                if (row === 2 && column === 2) return {to: false};
+                const scaleX = scaleInAstralPlane[i][0] + Math.random() * 2.5;
+                const scaleY = scaleInAstralPlane[i][1] + Math.random() * 1.3;
+                const scaleZ = scaleInAstralPlane[i][2] + Math.random() * 1.3;
+                return {
+                    to: async (next) => {
+                        let cancelled = false;
+                        const cancel = () => cancelled = true;
+                        cancelsForAnimations.current.push(cancel)
+                        !cancelled && await next({
+                            scale: [scaleInAstralPlane[i][0], scaleInAstralPlane[i][1], scaleInAstralPlane[i][2]],
+                            config: {duration: 1000},
+                            delay: 300 + Math.random() * 500
+                        });
+                        !cancelled && await next({
+                            scale: [scaleX,
+                                scaleInAstralPlane[i][1],
+                                scaleInAstralPlane[i][2]],
+                            config: {duration: 800 + Math.random() * 2000},
+                            delay: Math.random() * 500
+                        });
+                        !cancelled && await next({
+                            scale: [scaleX,
+                                scaleY,
+                                scaleInAstralPlane[i][2]],
+                            config: {duration: 500 + Math.random() * 500},
+                            delay: Math.random() * 500
+                        });
+                        !cancelled && await next({
+                            scale: [scaleX,
+                                scaleY,
+                                scaleZ],
+                            config: {duration: 500 + Math.random() * 500},
+                            delay: Math.random() * 500
+                        });
+                        !cancelled && await next({
+                            scale: [scaleX,
+                                scaleY,
+                                scaleInAstralPlane[i][2]],
+                            config: {duration: 500 + Math.random() * 500},
+                            delay: Math.random() * 500
+                        });
+                        !cancelled && await next({
+                            scale: [scaleX,
+                                scaleInAstralPlane[i][1],
+                                scaleInAstralPlane[i][2]],
+                            config: {duration: 500 + Math.random() * 500},
+                            delay: Math.random() * 500
+                        });
+                    },
+                    loop: true,
+                }
+            }))
+        }
+        if (!isAboutMenuOpened && project === null) {
+            cancelsForAnimations.current.forEach(cancel => cancel())
             setAnimation(i => ({
+                cancel: true,
+            })).then(() => !isAboutMenuOpened ? setAnimation(i => ({
                 position: projectsObservationPositions[i],
                 scale: [0.3, 0.3, 0.3],
+                rotation: rotationDirections[i]
+            })) : undefined).then(() => !isAboutMenuOpened && setAnimation(i => ({
+                to: {rotation: rotationDirections[i].map(item => item + 2 * Math.PI)},
+                loop: true,
+                config: (prop) =>
+                    prop === 'rotation' ? {duration: 20000} : {}
             })))
         }
-    }, [isAboutMenuOpened])
+        console.log(isAboutMenuOpened)
+    }, [isAboutMenuOpened]);
 
     useEffect(() => {
         if (project !== null) {
@@ -200,29 +261,22 @@ const VideoCubesArray: React.FC = () => {
         }
         if (!isMainPageFocused && project === null) {
             setAnimation(i => ({
+                cancel: true
+            })).then(() => !isAboutMenuOpened ? setAnimation(i => ({
                 position: projectsObservationPositions[i],
                 scale: [0.3, 0.3, 0.3],
-            })).then(() => {
+                rotation: rotationDirections[i]
+            })): undefined).then(() => {
                 if (isVideoReadyToPlay) setReadyState(false);
-                setAnimation(i => ({
-                    from: {rotation: rotationDirections[i]},
+                if (!isAboutMenuOpened) setAnimation(i => ({
                     to: {rotation: rotationDirections[i].map(item => item + 2 * Math.PI)},
                     loop: true,
-                    config:(prop) =>
+                    config: (prop) =>
                         prop === 'rotation' ? {duration: 20000} : {}
                 }))
             })
         }
-        /*if (isMainPageFocused) {
-            setAnimation(i => ({
-                cancel: true
-            }));
-            setAnimation(i => ({
-                position: [0, 0, 170],
-                rotation: rotationDirections[i],
-                delay: 300
-            })).then(() => dispatch(actions.setCrystalExplosionState(false)))
-        }*/
+        console.log(project, isMainPageFocused)
     }, [project, isMainPageFocused]);
 
     return (

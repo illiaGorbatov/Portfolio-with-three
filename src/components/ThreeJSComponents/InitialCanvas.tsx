@@ -16,9 +16,6 @@ const InitialCanvas = () => {
             style={{background: '#EAE6E5'}}
             shadowMap
             colorManagement
-            onCreated={({scene}) => {
-                scene.background = new THREE.Color('#EAE6E5');
-            }}
             gl={{
                 alpha: false,
                 antialias: false,

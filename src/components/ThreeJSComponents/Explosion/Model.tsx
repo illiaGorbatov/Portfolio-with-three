@@ -215,7 +215,6 @@ const Model: React.FC = () => {
         if (!isCrystalExploded) setAnimation({progress: 0, /*position: [0, 0, 0]*/});
         if (isCrystalExploded) setAnimation({
             progress: 5,
-            /*position: [0, 0, 30],*/
             onRest: () => dispatch(actions.setMainPageState(false))
         });
     }, [isCrystalExploded]);

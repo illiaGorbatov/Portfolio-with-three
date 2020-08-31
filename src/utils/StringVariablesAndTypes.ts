@@ -10,7 +10,9 @@ export const TRANSITION_FROM_MAIN_TO_PROJECTS = 'transition from main to project
 export const PROJECTS_STATIC = 'static projects scene';
 export const PROJECTS_SCROLLING = 'scrolling projects scene';
 export const CLOSE_LOOK = 'close look';
-export const TRANSITION_TO_INFO = 'about me'
+export const RETURNING_FROM_CLOSE_LOOK = 'returning from close look';
+export const TRANSITION_TO_INFO = 'about me';
+export const TRANSITION_FROM_INFO_TO_PROJECTS_STATIC = 'closing info';
 
 //scenes
 export const LANDSCAPE = 'landscape';
@@ -33,6 +35,7 @@ export const SET_ABOUT_MENU_STATE = 'REDUX/SET_ABOUT_MENU_STATE';
 
 export const SWITCH_ANIMATION_STATE = 'REDUX/SWITCH_ANIMATION_STATE';
 export const SET_VIDEO = `REDUX/SET_VIDEO`;
-export const SET_CURRENTLY_LOOKED_PROJECT = 'REDUX/SET_CURRENTLY_LOOKED_PROJECT'
+export const SET_CURRENTLY_LOOKED_PROJECT = 'REDUX/SET_CURRENTLY_LOOKED_PROJECT';
+export const SET_VIDEO_PLAYER_STATE = 'REDUX/SET_VIDEO_PLAYER_STATE';
 
 

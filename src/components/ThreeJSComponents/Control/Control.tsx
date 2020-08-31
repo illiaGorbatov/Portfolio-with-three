@@ -4,8 +4,9 @@ import ControlLights from "./Lights/ControlLights";
 import Model from "../Explosion/Model";
 import ControlCamera from "../ControlCamera";
 import Postprocessing from "../posteffects/Postprocessing";
-import VideoCubesArray from "./Cubes/VideoCubesArray";
 import AstralPlane from "./AstralPlane/AstralPlane";
+import CubesArray from "./Cubes/CubesArray";
+import VideoPanel from "./Videopanel/Videopanel";
 
 //colors
 
@@ -18,8 +19,9 @@ const ControlLikeScene: React.FC = () => {
                 <ControlLights/>
                 <Model/>
                 <Postprocessing/>
-                <VideoCubesArray/>
+                <CubesArray/>
                 <AstralPlane/>
+                <VideoPanel/>
             </Suspense>
             <ControlCamera/>
         </>

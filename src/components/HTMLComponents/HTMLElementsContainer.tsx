@@ -38,6 +38,7 @@ const HTMLElementsContainer: React.FC = () => {
     const scrollsCount = useSelector((state: AppStateType) => state.interface.scrollsCount, shallowEqual);
     const project = useSelector((state: AppStateType) => state.interface.currentlyLookedProject, shallowEqual);
     const isProjectsAvailable = useSelector((state: AppStateType) => state.interface.isProjectsAvailable, shallowEqual);
+    const isAboutMenuOpened = useSelector((state: AppStateType) => state.interface.isAboutMenuOpened, shallowEqual);
 
     const dispatch = useDispatch();
 
@@ -58,11 +59,16 @@ const HTMLElementsContainer: React.FC = () => {
     }, [project]);
 
     useEffect(() => {
+        if (isAboutMenuOpened) setScroll({x: window.innerWidth});
+        if (!isAboutMenuOpened) setScroll({x: 0});
+    }, [isAboutMenuOpened]);
+
+    useEffect(() => {
         if (isProjectsAvailable) {
+            dispatch(actions.setCameraState(PROJECTS_STATIC));
             setScroll({
                 top: -(scrollsCount + 1) * window.innerHeight + window.innerHeight,
                 onRest: () => {
-                    dispatch(actions.setCameraState(PROJECTS_STATIC));
                     animationState.current = false
                 }
             });
@@ -71,7 +77,7 @@ const HTMLElementsContainer: React.FC = () => {
     }, [isProjectsAvailable]);
 
     useWheel(({direction: [, y]}) => {
-        if (animationState.current || project !== null) return;
+        if (animationState.current || project !== null || isAboutMenuOpened) return;
         if (y > 0 && scrollsCount < projectsInfo.length) {
             animationState.current = true;
             if (scrollsCount === 0) {
@@ -119,7 +125,8 @@ const HTMLElementsContainer: React.FC = () => {
                 <ProjectsContainer/>
             </ScrollableWrapper>
             <Interface/>
-            <ProjectsCounter setScroll={setScroll}/>
+            <ProjectsCounter setScroll={setScroll} scrollsCount={scrollsCount} isAboutMenuOpened={isAboutMenuOpened}
+                             project={project} />
         </Wrapper>
     )
 }

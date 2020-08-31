@@ -1,16 +1,16 @@
 import React, {useEffect} from 'react';
 import {useSpring, animated} from "@react-spring/three";
 import {Vector3Type} from "../../../../utils/StringVariablesAndTypes";
+import * as THREE from "three";
 
 type PropsType = {
-    isBlack: boolean,
     opened: boolean
 }
 
-const Pyramid: React.FC<PropsType> = ({isBlack, opened}) => {
+const Pyramid: React.FC<PropsType> = ({opened}) => {
 
     const [{position}, setSpring] = useSpring(() => ({
-        position: isBlack ? [0, 400, -300] : [0, -340, -300],
+        position: [0, 400, -300],
         config: {
             mass: 100,
             tension: 400,
@@ -20,16 +20,16 @@ const Pyramid: React.FC<PropsType> = ({isBlack, opened}) => {
     }))
 
     useEffect(() => {
-        if (opened) setSpring({position: isBlack ? [0, 210, -300] : [0, -160, -300]});
-        if (!opened) setSpring({position: isBlack ? [0, 400, -300] : [0, -340, -300]});
+        if (opened) setSpring({position: [0, 205, -300]});
+        if (!opened) setSpring({position: [0, 400, -300]});
     }, [opened])
 
     return (
-        <animated.mesh scale={isBlack ? [40, 40, 40] : [30, 30, 30]}
+        <animated.mesh scale={[40, 40, 40]}
                        position={position as unknown as Vector3Type}
-                       rotation={isBlack ? [Math.PI, 0, 0] : [0, 0, 0]}>
+                       rotation={[Math.PI, 0, 0]}>
             <coneBufferGeometry attach="geometry" args={[5, 10, 4]}/>
-            <meshBasicMaterial attach="material" color={isBlack ? '#000B11' : '#7B776E'} />
+            <meshStandardMaterial attach="material" roughness={0.7} shadowSide={THREE.FrontSide} color={'#000B11'} metalness={0.6}/>
         </animated.mesh>
     )
 

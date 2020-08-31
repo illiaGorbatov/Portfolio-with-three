@@ -2,7 +2,6 @@ import {InferActionTypes} from "./store";
 import * as THREE from "three";
 import {
     LANDSCAPE,
-    SET_NAV_MENU_STATE,
     STATIC_LANDSCAPE,
     SET_SCENE,
     SET_SUN,
@@ -14,7 +13,7 @@ import {
     SET_MAIN_PAGE_STATE,
     SET_PROJECTS_AVAILABILITY,
     SET_CRYSTAL_STATE,
-    SET_ABOUT_MENU_STATE
+    SET_ABOUT_MENU_STATE, SET_VIDEO_PLAYER_STATE
 } from "../utils/StringVariablesAndTypes";
 
 type InitialStateType = {
@@ -29,7 +28,8 @@ type InitialStateType = {
     isMainPageFocused: boolean,
     isProjectsAvailable: boolean,
     isCrystalExploded: boolean,
-    isAboutMenuOpened: boolean
+    isAboutMenuOpened: boolean,
+    videoPlayerState: boolean
 };
 
 const initialState = {
@@ -44,7 +44,8 @@ const initialState = {
     isMainPageFocused: true,
     isProjectsAvailable: false,
     isCrystalExploded: false,
-    isAboutMenuOpened: false
+    isAboutMenuOpened: false,
+    videoPlayerState: false
 };
 
 const MainReducer = (state: InitialStateType = initialState, action: ActionsTypes): InitialStateType => {
@@ -104,6 +105,11 @@ const MainReducer = (state: InitialStateType = initialState, action: ActionsType
                 ...state,
                 isAboutMenuOpened: action.state
             }
+        case "REDUX/SET_VIDEO_PLAYER_STATE":
+            return {
+                ...state,
+                videoPlayerState: action.play
+            }
         default:
             return state;
     }
@@ -122,7 +128,8 @@ export const actions = {
     setMainPageState: (isFocused: boolean) => ({type: SET_MAIN_PAGE_STATE, isFocused}) as const,
     setProjectsAvailability: (isAvailable: boolean) => ({type: SET_PROJECTS_AVAILABILITY, isAvailable}) as const,
     setCrystalExplosionState: (exploded: boolean) => ({type: SET_CRYSTAL_STATE, exploded}) as const,
-    setAboutMenuState: (state: boolean) => ({type: SET_ABOUT_MENU_STATE, state}) as const
+    setAboutMenuState: (state: boolean) => ({type: SET_ABOUT_MENU_STATE, state}) as const,
+    setVideoPlayerState: (play: boolean) => ({type: SET_VIDEO_PLAYER_STATE, play}) as const,
 }
 
 export default MainReducer

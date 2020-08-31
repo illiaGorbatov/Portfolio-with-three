@@ -4,7 +4,11 @@ import {animated} from 'react-spring'
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../../store/store";
 import {actions} from "../../../store/InterfaceReducer";
-import {TRANSITION_TO_INFO, PROJECTS_STATIC} from "../../../utils/StringVariablesAndTypes";
+import {
+    TRANSITION_TO_INFO,
+    PROJECTS_STATIC,
+    TRANSITION_FROM_INFO_TO_PROJECTS_STATIC
+} from "../../../utils/StringVariablesAndTypes";
 
 const AboutMeWrapper = styled.div`
   position: absolute;
@@ -43,7 +47,7 @@ const AboutMe: React.FC = () => {
 
     const closeInformation = () => {
         dispatch(actions.setAboutMenuState(false));
-        dispatch(actions.setCameraState(PROJECTS_STATIC))
+        dispatch(actions.setCameraState(TRANSITION_FROM_INFO_TO_PROJECTS_STATIC))
     };
 
 

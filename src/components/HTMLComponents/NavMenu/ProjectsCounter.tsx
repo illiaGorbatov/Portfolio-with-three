@@ -3,8 +3,7 @@ import styled from 'styled-components/macro';
 import {animated, SpringStartFn, useSpring} from 'react-spring';
 import {useDrag} from "react-use-gesture";
 import {projectsInfo} from "../TextContent";
-import {shallowEqual, useDispatch, useSelector} from "react-redux";
-import {AppStateType} from "../../../store/store";
+import {useDispatch} from "react-redux";
 import {actions} from "../../../store/InterfaceReducer";
 import {PROJECTS_SCROLLING, PROJECTS_STATIC} from "../../../utils/StringVariablesAndTypes";
 
@@ -66,14 +65,15 @@ const Border = styled.div`
 `;
 
 type PropsType = {
-    setScroll:  SpringStartFn<{top: number, scale: number, x: number}>
+    setScroll:  SpringStartFn<{top: number, scale: number, x: number}>,
+    scrollsCount: number,
+    project: number | null,
+    isAboutMenuOpened: boolean
 }
 
 
-const ProjectsCounter: React.FC<PropsType> = ({setScroll}) => {
+const ProjectsCounter: React.FC<PropsType> = ({setScroll, isAboutMenuOpened, project, scrollsCount}) => {
 
-    const scrollsCount = useSelector((state: AppStateType) => state.interface.scrollsCount, shallowEqual);
-    const project = useSelector((state: AppStateType) => state.interface.currentlyLookedProject, shallowEqual);
     const dispatch = useDispatch();
 
     const [{y, x, translateY}, setAnimation] = useSpring(() => ({
@@ -94,7 +94,12 @@ const ProjectsCounter: React.FC<PropsType> = ({setScroll}) => {
     useEffect(() => {
         if (project !== null) setAnimation({x: window.innerWidth/2});
         if (project === null) setAnimation({x: 0});
-    }, [project])
+    }, [project]);
+
+    useEffect(() => {
+        if (isAboutMenuOpened) setAnimation({x: window.innerWidth/2});
+        if (!isAboutMenuOpened ) setAnimation({x: 0});
+    }, [isAboutMenuOpened]);
 
     const currentY = useRef<number>(0);
     const currentTop = useRef<number>(0)
