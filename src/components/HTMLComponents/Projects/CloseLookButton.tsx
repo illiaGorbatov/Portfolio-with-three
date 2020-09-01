@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components/macro';
 import {useDispatch} from "react-redux";
 import {actions} from "../../../store/InterfaceReducer";
-import {CLOSE_LOOK} from "../../../utils/StringVariablesAndTypes";
 
 const ButtonWrapper = styled.div`
   position: absolute;
@@ -39,8 +38,7 @@ const CloseLookButton: React.FC<PropsType> = ({projectIndex}) => {
     const dispatch = useDispatch();
 
     const lookAtProject = () => {
-        dispatch(actions.setCurrentProject(projectIndex));
-        dispatch(actions.setCameraState(CLOSE_LOOK))
+        dispatch(actions.openProject(projectIndex));
     };
 
     return (

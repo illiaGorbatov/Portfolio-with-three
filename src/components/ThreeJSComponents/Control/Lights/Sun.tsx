@@ -1,4 +1,4 @@
-import React, {forwardRef, useLayoutEffect, useRef} from 'react';
+import React, {useLayoutEffect, useRef} from 'react';
 import * as THREE from 'three';
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {animated, useSpring} from 'react-spring/three';
@@ -7,7 +7,7 @@ import {Vector3Type} from "../../../../utils/StringVariablesAndTypes";
 import {actions} from "../../../../store/InterfaceReducer";
 
 
-const ControlSun = () => {
+const Sun = () => {
 
     const isCrystalExploded = useSelector((state: AppStateType) => state.interface.isCrystalExploded, shallowEqual);
     const dispatch = useDispatch();
@@ -25,7 +25,7 @@ const ControlSun = () => {
     });
 
     useLayoutEffect(() => {
-        dispatch(actions.setSun(sunRef.current))
+        setTimeout(() => dispatch(actions.setSun(sunRef.current)), 50)
     }, [])
 
     return (
@@ -36,4 +36,4 @@ const ControlSun = () => {
     );
 };
 
-export default React.memo(ControlSun)
+export default React.memo(Sun)

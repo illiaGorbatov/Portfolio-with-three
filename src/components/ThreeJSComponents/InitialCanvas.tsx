@@ -1,13 +1,9 @@
-import React, {Suspense} from 'react';
+import React from 'react';
 import {Canvas} from "react-three-fiber";
-import * as THREE from "three";
-import TransitionsBetweenScenes from "./TransitionsBetweenScenes";
 import store from "../../store/store";
 import {Provider} from "react-redux";
-import CarLights from "./Road/CarLights";
-import Effects from "./posteffects/Effects";
-import ControlLikeScene from "./Control/Control";
-import AstralPlane from "./Control/AstralPlane/AstralPlane";
+import MainScene from "./Control/MainScene";
+import {RectAreaLightUniformsLib} from "three/examples/jsm/lights/RectAreaLightUniformsLib";
 
 const InitialCanvas = () => {
 
@@ -16,6 +12,7 @@ const InitialCanvas = () => {
             style={{background: '#EAE6E5'}}
             shadowMap
             colorManagement
+            onCreated={RectAreaLightUniformsLib.init}
             gl={{
                 alpha: false,
                 antialias: false,
@@ -24,10 +21,8 @@ const InitialCanvas = () => {
             }}
             concurrent={true}>
             <Provider store={store}>
-                {/*<ambientLight color={'white'} intensity={1.0} />*/}
                 {/*<fog attach="fog" args={[0x333333, 10, 400]}/>*/}
-                {/*<TransitionsBetweenScenes/>*/}
-                <ControlLikeScene/>
+                <MainScene/>
             </Provider>
         </Canvas>
     );

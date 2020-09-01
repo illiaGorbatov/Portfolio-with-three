@@ -1,22 +1,17 @@
 import React, {useEffect, useRef} from 'react';
-import MainPage from "./Greetings/Main";
+import MainPageContainer from "./Greetings/MainPageContainer";
 import ProjectsContainer from "./Projects/ProjectsContainer";
-import Interface from "./NavMenu/Interface";
+import Interface from "./Interface/InterfaceContainer";
 import styled from "styled-components/macro";
 import {animated, useSpring} from "react-spring";
 import {useDrag, useWheel} from 'react-use-gesture';
 import {isMobile} from 'react-device-detect'
 import {projectsInfo} from "./TextContent";
-import ProjectsCounter from "./NavMenu/ProjectsCounter";
+import ProjectsCounter from "./Projects/ProjectsCounter";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../store/store";
 import {actions} from "../../store/InterfaceReducer";
-import {
-    MAIN_SCENE_STATIC,
-    PROJECTS_SCROLLING,
-    PROJECTS_STATIC,
-    TRANSITION_FROM_MAIN_TO_PROJECTS
-} from '../../utils/StringVariablesAndTypes';
+import {MAIN_SCENE_STATIC, PROJECTS_SCROLLING, PROJECTS_STATIC,} from '../../utils/StringVariablesAndTypes';
 
 const Wrapper = styled.div`
   position: absolute;
@@ -37,8 +32,9 @@ const HTMLElementsContainer: React.FC = () => {
 
     const scrollsCount = useSelector((state: AppStateType) => state.interface.scrollsCount, shallowEqual);
     const project = useSelector((state: AppStateType) => state.interface.currentlyLookedProject, shallowEqual);
-    const isProjectsAvailable = useSelector((state: AppStateType) => state.interface.isProjectsAvailable, shallowEqual);
+    const isInterfaceAvailable = useSelector((state: AppStateType) => state.interface.isInterfaceAvailable, shallowEqual);
     const isAboutMenuOpened = useSelector((state: AppStateType) => state.interface.isAboutMenuOpened, shallowEqual);
+    const isMainPageFocused = useSelector((state: AppStateType) => state.interface.isMainPageFocused, shallowEqual);
 
     const dispatch = useDispatch();
 
@@ -54,18 +50,9 @@ const HTMLElementsContainer: React.FC = () => {
     }));
 
     useEffect(() => {
-        if (project !== null) setScroll({x: window.innerWidth});
-        if (project === null) setScroll({x: 0});
-    }, [project]);
-
-    useEffect(() => {
-        if (isAboutMenuOpened) setScroll({x: window.innerWidth});
-        if (!isAboutMenuOpened) setScroll({x: 0});
-    }, [isAboutMenuOpened]);
-
-    useEffect(() => {
-        if (isProjectsAvailable) {
-            dispatch(actions.setCameraState(PROJECTS_STATIC));
+        if (!isInterfaceAvailable && !isMainPageFocused) setScroll({x: window.innerWidth});
+        if (isInterfaceAvailable && !isMainPageFocused && scrollsCount !== 0 && !isAboutMenuOpened) setScroll({x: 0});
+        if (isInterfaceAvailable && !isMainPageFocused && scrollsCount === 0) {
             setScroll({
                 top: -(scrollsCount + 1) * window.innerHeight + window.innerHeight,
                 onRest: () => {
@@ -74,15 +61,15 @@ const HTMLElementsContainer: React.FC = () => {
             });
             dispatch(actions.setScrollsCount(scrollsCount + 1))
         }
-    }, [isProjectsAvailable]);
+    }, [isInterfaceAvailable]);
+
 
     useWheel(({direction: [, y]}) => {
         if (animationState.current || project !== null || isAboutMenuOpened) return;
         if (y > 0 && scrollsCount < projectsInfo.length) {
             animationState.current = true;
             if (scrollsCount === 0) {
-                dispatch(actions.setCrystalExplosionState(true));
-                dispatch(actions.setCameraState(TRANSITION_FROM_MAIN_TO_PROJECTS))
+                dispatch(actions.transitionFromMainPaige());
             }
             else {
                 dispatch(actions.setCameraState(PROJECTS_SCROLLING));
@@ -120,13 +107,13 @@ const HTMLElementsContainer: React.FC = () => {
 
     return (
         <Wrapper>
-            <MainPage/>
+            <MainPageContainer/>
             <ScrollableWrapper style={animation} ref={wrapperRef}>
                 <ProjectsContainer/>
             </ScrollableWrapper>
             <Interface/>
-            <ProjectsCounter setScroll={setScroll} scrollsCount={scrollsCount} isAboutMenuOpened={isAboutMenuOpened}
-                             project={project} />
+            <ProjectsCounter setScroll={setScroll} scrollsCount={scrollsCount} isMainPageFocused={isMainPageFocused}
+                             project={project} visible={isInterfaceAvailable && !isAboutMenuOpened && project === null}/>
         </Wrapper>
     )
 }

@@ -20,14 +20,14 @@ const blink = keyframes`
 const Wrapper = styled.div`
   text-align:center;
   font-family: 'Relative-Book';
-  color: black;
+  color: red;
   letter-spacing: 2px;
   font-size: 20px;
   &::after {
       content: '';
       display: inline-block;
       margin-left: 3px;
-      background-color: white;
+      background-color: red;
       animation-name: ${blink};
       animation-duration: 0.5s;
       animation-iteration-count: infinite;
@@ -36,9 +36,11 @@ const Wrapper = styled.div`
   }
 `;
 
+type PropsType = {
+    visible: boolean,
+}
 
-
-const TextTypingElement: React.FC = () => {
+const TextTypingElement: React.FC<PropsType> = ({visible}) => {
 
     const textArray = animatedSkillsStack;
 
@@ -46,39 +48,46 @@ const TextTypingElement: React.FC = () => {
     const [isDeleting, setDeleting] = useState<boolean>(false);
     const [loopNumber, setLoopNumber] = useState<number>(0);
     const [typingSpeed, setTypingSpeed] = useState<number>(150);
+    const [invisible, setInvisible] = useState<boolean>(false);
 
     const handleType = () => {
         const i = loopNumber % textArray.length;
         const fullText = textArray[i];
 
-        if (isDeleting) {
+        if (visible) {
+            if (isDeleting) {
+                setText(fullText.substring(0, text.length - 1));
+                setTypingSpeed(30)
+            } else {
+                setText(fullText.substring(0, text.length + 1));
+                setTypingSpeed(150)
+            }
+
+            if (!isDeleting && text === fullText) {
+                setTimeout(() => setDeleting(true), 500);
+            } else if (isDeleting && text === '') {
+                setDeleting(false)
+                setLoopNumber(loopNumber + 1)
+            }
+        } else {
             setText(fullText.substring(0, text.length - 1));
             setTypingSpeed(30)
-        } else {
-            setText(fullText.substring(0, text.length + 1));
-            setTypingSpeed(150)
-        }
-
-        if (!isDeleting && text === fullText) {
-            setTimeout(() => setDeleting(true), 500);
-        } else if (isDeleting && text === '') {
-            setDeleting(false)
-            setLoopNumber(loopNumber+1)
+            if (text === '') setInvisible(true)
         }
     };
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            handleType()
-        }, typingSpeed)
+        let timer: number
+        if (!invisible) timer = setTimeout(() => handleType(), typingSpeed)
         return () => clearTimeout(timer)
-    })
+    });
 
-    return(
+    if (invisible) return null
+
+    return (
         <Wrapper>
             {text}
         </Wrapper>
-
     )
 }
 

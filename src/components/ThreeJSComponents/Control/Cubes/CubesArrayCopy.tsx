@@ -1,74 +1,23 @@
-import React, {useCallback, useEffect, useMemo, useState, useRef} from "react";
+import React, {useEffect, useMemo, useRef} from "react";
 import * as THREE from 'three';
-import {shallowEqual, useSelector} from "react-redux";
+import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../../../store/store";
 import {Vector3Type} from "../../../../utils/StringVariablesAndTypes";
-import {animated, useSprings, SpringStartFn} from "react-spring/three";
-import {AnimationResult} from "@react-spring/core";
+import {animated, useSprings} from "react-spring/three";
+import {actions} from "../../../../store/InterfaceReducer";
 
-
-type AsyncResult<T = any> = Promise<AnimationResult<T>>
-
-const change_uvs = (geometry: THREE.BoxBufferGeometry, unitX: number, unitY: number, offsetX: number, offsetY: number) => {
-    let uvs = geometry.attributes.uv.array;
-    for (let i = 0; i < uvs.length; i += 2) {
-        // @ts-ignore
-        uvs[i] = (uvs[i] + offsetX) * unitX;
-        // @ts-ignore
-        uvs[i + 1] = (uvs[i + 1] + offsetY) * unitY;
-    }
-};
 
 const xGrid = 5, yGrid = 5;
-
-const ux = 1 / xGrid;
-const uy = 1 / yGrid;
-
 const xSize = 58.3 / xGrid;
 const ySize = 31.7 / yGrid;
 
-const VideoCubesArray: React.FC = () => {
+const CubesArrayCopy: React.FC = () => {
 
-    const videos = useSelector((state: AppStateType) => state.interface.videos, shallowEqual);
     const isMainPageFocused = useSelector((state: AppStateType) => state.interface.isMainPageFocused, shallowEqual);
     const isAboutMenuOpened = useSelector((state: AppStateType) => state.interface.isAboutMenuOpened, shallowEqual);
     const project = useSelector((state: AppStateType) => state.interface.currentlyLookedProject, shallowEqual);
 
-    const geometries = useMemo(() => {
-        let geometries = [];
-        for (let i = 0; i < xGrid; i++)
-            for (let j = 0; j < yGrid; j++) {
-                const ox = i;
-                const oy = j;
-                let geometry = new THREE.BoxBufferGeometry(xSize, ySize, ySize, 5, 5, 5);
-                change_uvs(geometry, ux, uy, ox, oy);
-                geometries.push(geometry)
-            }
-        return geometries
-    }, []);
-
-    const videoMaterial = useMemo(() => {
-        if (project !== null) {
-            const texture = new THREE.VideoTexture(videos.find(item => item.projectIndex === project)!.video);
-            texture.minFilter = THREE.LinearFilter;
-            texture.magFilter = THREE.LinearFilter;
-            texture.format = THREE.RGBFormat;
-            let materials = [];
-            for (let i = 0; i < xGrid; i++)
-                for (let j = 0; j < yGrid; j++) {
-                    let material = new THREE.MeshBasicMaterial({color: 0xffffff, map: texture});
-                    material.transparent = false;
-                    material.depthWrite = true
-                    materials.push(material)
-                }
-            return materials
-        }
-    }, [project]);
-
-    const ordinaryMaterial = useMemo(() => new THREE.MeshStandardMaterial({
-        color: "#333",
-        roughness: 0.7,
-    }), []);
+    const dispatch = useDispatch();
 
     const closeLookPositions = useMemo(() => {
         let positions: Vector3Type[] = [];
@@ -77,7 +26,7 @@ const VideoCubesArray: React.FC = () => {
                 const position: Vector3Type = [
                     (i - xGrid / 2) * xSize,
                     (j - yGrid / 2) * ySize,
-                    0
+                    Math.random()*2
                 ];
                 positions.push(position)
             }
@@ -136,10 +85,11 @@ const VideoCubesArray: React.FC = () => {
     }));
 
     const cancelsForAnimations = useRef<(() => void)[]>([]);
-    const [isVideoReadyToPlay, setReadyState] = useState<boolean>(false);
 
     useEffect(() => {
         if (isAboutMenuOpened) {
+            cancelsForAnimations.current.forEach(cancel => cancel());
+            cancelsForAnimations.current = [];
             setAnimation(i => ({
                 cancel: true
             })).then(() => setAnimation(i => ({
@@ -163,14 +113,17 @@ const VideoCubesArray: React.FC = () => {
                 const row = (i + 1) % 5;
                 const column = Math.ceil((i + 1) / 5) - 1;
                 if (row === 2 && column === 2) return {to: false};
+
                 const scaleX = scaleInAstralPlane[i][0] + Math.random() * 2.5;
                 const scaleY = scaleInAstralPlane[i][1] + Math.random() * 1.3;
                 const scaleZ = scaleInAstralPlane[i][2] + Math.random() * 1.3;
+
+                let cancelled = false;
+                const cancel = () => cancelled = true;
+                cancelsForAnimations.current.push(cancel)
+
                 return {
                     to: async (next) => {
-                        let cancelled = false;
-                        const cancel = () => cancelled = true;
-                        cancelsForAnimations.current.push(cancel)
                         !cancelled && await next({
                             scale: [scaleInAstralPlane[i][0], scaleInAstralPlane[i][1], scaleInAstralPlane[i][2]],
                             config: {duration: 1000},
@@ -216,25 +169,34 @@ const VideoCubesArray: React.FC = () => {
                 }
             }))
         }
-        if (!isAboutMenuOpened && project === null) {
-            cancelsForAnimations.current.forEach(cancel => cancel())
+        if (!isAboutMenuOpened && project === null && !isMainPageFocused) {
+            console.log(cancelsForAnimations.current)
+            cancelsForAnimations.current.forEach(cancel => cancel());
+            cancelsForAnimations.current = [];
             setAnimation(i => ({
                 cancel: true,
-            })).then(() => !isAboutMenuOpened ? setAnimation(i => ({
-                position: projectsObservationPositions[i],
+            })).then(() => setAnimation(i => ({
                 scale: [0.3, 0.3, 0.3],
-                rotation: rotationDirections[i]
-            })) : undefined).then(() => !isAboutMenuOpened && setAnimation(i => ({
-                to: {rotation: rotationDirections[i].map(item => item + 2 * Math.PI)},
-                loop: true,
-                config: (prop) =>
-                    prop === 'rotation' ? {duration: 20000} : {}
-            })))
+            }))).then(() => setAnimation(i => ({
+                position: projectsObservationPositions[i],
+                rotation: rotationDirections[i],
+                scale: [0.3, 0.3, 0.3],
+            }))).then(() => setAnimation(i => {
+                let cancelled = false;
+                const cancel = () => cancelled = true;
+                cancelsForAnimations.current.push(cancel)
+                return {
+                    to: async next => {
+                        !cancelled && await next ({rotation: rotationDirections[i]})
+                        !cancelled && await next ({rotation: rotationDirections[i].map(item => item + 2*Math.PI)})
+                        !cancelled && await next ({rotation: rotationDirections[i], immediate: true})
+                    },
+                    loop: true,
+                    config: (prop) =>
+                        prop === 'rotation' ? {duration: 10000} : {}
+                }
+            }))
         }
-        console.log(isAboutMenuOpened)
-    }, [isAboutMenuOpened]);
-
-    useEffect(() => {
         if (project !== null) {
             setAnimation(i => ({
                 cancel: true
@@ -255,41 +217,43 @@ const VideoCubesArray: React.FC = () => {
                         clamp: true,
                     }
             }))).then(() => {
-                setReadyState(true);
-                videos[project].video.play()
+                dispatch(actions.setVideoPlayerState(true));
+                cancelsForAnimations.current.forEach(cancel => cancel());
+                cancelsForAnimations.current = [];
+                setAnimation(i => ({
+                    to: async (next) => {
+                        let cancelled = false;
+                        const cancel = () => cancelled = true;
+                        cancelsForAnimations.current.push(cancel)
+                        !cancelled && await next({
+                            position: [closeLookPositions[i][0], closeLookPositions[i][1], Math.random()*3],
+                            config: {duration: 200 + Math.random() * 300},
+                            delay: Math.random() * 500
+                        });
+                        !cancelled && await next({
+                            position: [closeLookPositions[i][0], closeLookPositions[i][1], Math.random()*3],
+                            config: {duration: 200 + Math.random() * 300},
+                            delay: Math.random() * 500
+                        })
+                    },
+                    loop: true
+                }))
             });
         }
-        if (!isMainPageFocused && project === null) {
-            setAnimation(i => ({
-                cancel: true
-            })).then(() => !isAboutMenuOpened ? setAnimation(i => ({
-                position: projectsObservationPositions[i],
-                scale: [0.3, 0.3, 0.3],
-                rotation: rotationDirections[i]
-            })): undefined).then(() => {
-                if (isVideoReadyToPlay) setReadyState(false);
-                if (!isAboutMenuOpened) setAnimation(i => ({
-                    to: {rotation: rotationDirections[i].map(item => item + 2 * Math.PI)},
-                    loop: true,
-                    config: (prop) =>
-                        prop === 'rotation' ? {duration: 20000} : {}
-                }))
-            })
-        }
-        console.log(project, isMainPageFocused)
-    }, [project, isMainPageFocused]);
+    }, [isAboutMenuOpened, isMainPageFocused, project]);
 
     return (
         <group position={[0, 0, -150]}>
             {animation.map(({scale, position, rotation}, i) =>
-                <animated.mesh key={i} position={position as unknown as Vector3Type} castShadow={true}
+                <animated.mesh key={i} position={position as unknown as Vector3Type} castShadow receiveShadow
                                scale={scale as unknown as Vector3Type}
-                               geometry={geometries[i]}
-                               material={isVideoReadyToPlay ? videoMaterial![i] : ordinaryMaterial}
-                               rotation={rotation as unknown as Vector3Type}/>
+                               rotation={rotation as unknown as Vector3Type}>
+                    <boxBufferGeometry attach="geometry" args={[xSize, ySize, ySize, 5, 5, 5]}/>
+                    <meshStandardMaterial attach="material" color="#6a040f" roughness={0.7} shadowSide={THREE.FrontSide}/>
+                </animated.mesh>
             )}
         </group>
     )
 }
 
-export default React.memo(VideoCubesArray)
+export default React.memo(CubesArrayCopy)

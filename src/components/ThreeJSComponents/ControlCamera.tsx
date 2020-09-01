@@ -1,4 +1,5 @@
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
+import * as THREE from 'three';
 import {useFrame, useThree} from "react-three-fiber";
 import {animated, useSpring} from "react-spring/three";
 import {
@@ -8,8 +9,8 @@ import {
     PROJECTS_SCROLLING,
     CLOSE_LOOK,
     TRANSITION_FROM_MAIN_TO_PROJECTS,
-    TRANSITION_TO_INFO,
-    TRANSITION_FROM_INFO_TO_PROJECTS_STATIC,
+    TRANSITION_ABOUT_SECTION,
+    TRANSITION_FROM_ABOUT_SECTION_TO_PROJECTS_STATIC,
     RETURNING_FROM_CLOSE_LOOK
 } from "../../utils/StringVariablesAndTypes";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
@@ -20,13 +21,13 @@ export const cameraPosition = {
     mainDisplay: [0, 0, -300] as Vector3Type,
     staticProjects: [0, 0, 15] as Vector3Type,
     scrollProjects: [0, 0, 35] as Vector3Type,
-    closeLook: [-10, -5, -100] as Vector3Type,
+    closeLook: [-10, 5, 65] as Vector3Type,
     aboutMe: [0, 0, -240] as Vector3Type
 };
 
 const cameraLookAt = {
     ordinaryPos: [0, 0, -500],
-    lookAtProject: [10, 0, -150]
+    lookAtProject: [10, 0, 0]
 }
 
 
@@ -36,10 +37,12 @@ const ControlCamera: React.FC = () => {
 
     const dispatch = useDispatch();
 
-    const ref = useRef();
+    const ref = useRef(new THREE.PerspectiveCamera());
     const {setDefaultCamera, camera} = useThree();
-    // Make the camera known to the system
-    useEffect(() => void setDefaultCamera(ref.current!), []);
+
+    useEffect(() => {
+        setDefaultCamera(ref.current!);
+    }, []);
 
     const [{position, lookAt}, setCameraPosition] = useSpring(() => ({
         position: cameraPosition.mainDisplay,
@@ -66,13 +69,16 @@ const ControlCamera: React.FC = () => {
             lookAt: cameraLookAt.lookAtProject,
             config: {
                 mass: 100,
-                tension: 400,
-                friction: 400,
+                tension: 300,
+                friction: 300,
                 clamp: true,
             }
+        }).then(() => {
+            dispatch(actions.setVideoPlayerState(true));
+            dispatch(actions.setInterfaceAvailability(true))
         });
         if (cameraState === RETURNING_FROM_CLOSE_LOOK) setCameraPosition({
-            position: cameraPosition.closeLook,
+            position: cameraPosition.staticProjects,
             lookAt: cameraLookAt.ordinaryPos,
             config: {
                 mass: 100,
@@ -80,7 +86,7 @@ const ControlCamera: React.FC = () => {
                 friction: 400,
                 clamp: true,
             }
-        });
+        }).then(() => dispatch(actions.setInterfaceAvailability(true)));
         if (cameraState === TRANSITION_FROM_MAIN_TO_PROJECTS) setCameraPosition({
             position: cameraPosition.staticProjects,
             config: {
@@ -90,10 +96,10 @@ const ControlCamera: React.FC = () => {
                 clamp: true,
             }
         }).then(() => {
-            dispatch(actions.setMainPageState(false));
-            dispatch(actions.setProjectsAvailability(true))
+            dispatch(actions.setInterfaceAvailability(true));
+            dispatch(actions.setMainPageState(false))
         });
-        if (cameraState === TRANSITION_TO_INFO) {
+        if (cameraState === TRANSITION_ABOUT_SECTION) {
             setCameraPosition({
                 position: cameraPosition.aboutMe,
                 config: {
@@ -102,13 +108,15 @@ const ControlCamera: React.FC = () => {
                     friction: 400,
                     clamp: true,
                 }
-            });
+            }).then(() => dispatch(actions.setInterfaceAvailability(true)));
             setTimeout(() => dispatch(actions.setCrystalExplosionState(false)), 300)
         }
-        if (cameraState === TRANSITION_FROM_INFO_TO_PROJECTS_STATIC) {
+        if (cameraState === TRANSITION_FROM_ABOUT_SECTION_TO_PROJECTS_STATIC) {
             setCameraPosition({position: cameraPosition.staticProjects})
+                .then(() => dispatch(actions.setInterfaceAvailability(true)))
             setTimeout(() => dispatch(actions.setCrystalExplosionState(true)), 300)
         }
+        console.log(cameraState)
     }, [cameraState]);
 
     useFrame(() => {

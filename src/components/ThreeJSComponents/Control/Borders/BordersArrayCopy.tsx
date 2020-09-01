@@ -3,20 +3,16 @@ import {useSprings} from 'react-spring/three';
 import SingleBorder from "./SingleBorder";
 import {shallowEqual, useSelector} from "react-redux";
 import {AppStateType} from "../../../../store/store";
-import {
-    GEOMETRIES_TRANSITION_FROM_ABOUT_SECTION,
-    GEOMETRIES_TRANSITION_FROM_CLOSE_LOOK,
-    GEOMETRIES_TRANSITION_TO_ABOUT_SECTION,
-    GEOMETRIES_TRANSITION_TO_CLOSE_LOOK
-} from "../../../../utils/StringVariablesAndTypes";
 
 
-const BordersArray: React.FC = () => {
+const BordersArrayCopy: React.FC = () => {
 
-    const transition = useSelector((state: AppStateType) => state.interface.geometriesTransition, shallowEqual);
+    const isMainPageFocused = useSelector((state: AppStateType) => state.interface.isMainPageFocused, shallowEqual);
+    const project = useSelector((state: AppStateType) => state.interface.currentlyLookedProject, shallowEqual);
 
     const [springs, setSprings] = useSprings(40, i => ({
         theta: 0,
+        position: [0, 0, 3 - i * 4],
         config: {
             mass: 100,
             tension: 400,
@@ -28,8 +24,7 @@ const BordersArray: React.FC = () => {
     const cancelsForAnimations = useRef<(() => void)[]>([]);
 
     useEffect(() => {
-        if (transition === GEOMETRIES_TRANSITION_FROM_CLOSE_LOOK || transition === GEOMETRIES_TRANSITION_FROM_ABOUT_SECTION
-            || transition === null) {
+        if (!isMainPageFocused && project === null) {
             cancelsForAnimations.current.forEach(cancel => cancel());
             cancelsForAnimations.current = [];
             setSprings(i => ({
@@ -53,7 +48,7 @@ const BordersArray: React.FC = () => {
                 loop: true,
             }))
         }
-        if (transition === GEOMETRIES_TRANSITION_TO_CLOSE_LOOK || transition === GEOMETRIES_TRANSITION_TO_ABOUT_SECTION) {
+        if (isMainPageFocused) {
             cancelsForAnimations.current.forEach(cancel => cancel());
             cancelsForAnimations.current = [];
             setSprings(i => ({
@@ -64,7 +59,35 @@ const BordersArray: React.FC = () => {
                 config: {duration: undefined}
             })))
         }
-    }, [transition]);
+        if (project !== null) {
+            cancelsForAnimations.current.forEach(cancel => cancel());
+            cancelsForAnimations.current = [];
+            setSprings(i => ({
+                cancel: true,
+                loop: false
+            })).then(() => setSprings(i => ({
+                theta: 0,
+                config: {duration: undefined}
+            }))).then(() => setSprings(i => ({
+                to: async (next) => {
+                    let cancelled = false;
+                    const cancel = () => cancelled = true;
+                    cancelsForAnimations.current.push(cancel)
+                    !cancelled && await next({
+                        position: [Math.random() * 2, Math.random() * 2, 3 - i * 4],
+                        config: {duration: 200 + Math.random() * 300},
+                        delay: Math.random() * 500
+                    });
+                    !cancelled && await next({
+                        position: [Math.random() * 2, Math.random() * 2, 3 - i * 4],
+                        config: {duration: 200 + Math.random() * 300},
+                        delay: Math.random() * 500
+                    })
+                },
+                loop: true
+            })))
+        }
+    }, [isMainPageFocused, project]);
 
     return (
         <>
@@ -80,4 +103,4 @@ const BordersArray: React.FC = () => {
     );
 }
 
-export default React.memo(BordersArray)
+export default React.memo(BordersArrayCopy)

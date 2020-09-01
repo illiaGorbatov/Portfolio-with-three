@@ -29,26 +29,32 @@ const VideoPanel: React.FC = () => {
     }, [project]);
 
     const [{position}, setAnimation] = useSpring(() => ({
-        position: [80, 0, -150]
+        position: [80, 0, 100]
     }));
 
+    const projectMemo = useRef<null | number>(null);
+
     useEffect(() => {
-        console.log(videoPlayerState)
         if (videoPlayerState && project !== null) {
-            setAnimation({position: [0, 0, -130]})
-            videos[project].video.play()
+            setAnimation({position: [3, 0, 45]})
+            videos[project].video.play();
+            projectMemo.current = project
         }
-    }, [videoPlayerState]);
+        if (videoPlayerState && project === null) {
+            setAnimation({position: [80, 0, 100]})
+            videos[projectMemo.current!].video.pause()
+        }
+    }, [videoPlayerState, project]);
 
     useFrame(() => {
-        ref.current.lookAt(...[-10, -8, -100] as Vector3Type)
+        ref.current.lookAt(...[-10, 5, 65] as Vector3Type)
     })
 
     return (
         <animated.group position={position as unknown as Vector3Type} ref={ref}>
-            <VideoPlaneLight/>
+            {videoPlayerState && <VideoPlaneLight/>}
             <mesh material={videoMaterial}>
-                <planeBufferGeometry attach="geometry" args={[20, 10]}/>
+                <planeBufferGeometry attach="geometry" args={[14, 7]}/>
             </mesh>
         </animated.group>
     )

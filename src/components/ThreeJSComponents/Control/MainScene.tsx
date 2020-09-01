@@ -1,31 +1,37 @@
 import React, {Suspense} from 'react';
 import BordersArray from "./Borders/BordersArray";
-import ControlLights from "./Lights/ControlLights";
+import Lights from "./Lights/Lights";
 import Model from "../Explosion/Model";
 import ControlCamera from "../ControlCamera";
-import Postprocessing from "../posteffects/Postprocessing";
 import AstralPlane from "./AstralPlane/AstralPlane";
 import CubesArray from "./Cubes/CubesArray";
 import VideoPanel from "./Videopanel/Videopanel";
+import Sun from "./Lights/Sun";
+import AnimatedLight from "./Lights/AnimatedLight";
+import Room from "./Room/Room";
+import Postprocessing from "../posteffects/Postprocessing";
 
 //colors
 
-const ControlLikeScene: React.FC = () => {
+const MainScene: React.FC = () => {
 
     return (
         <>
             <Suspense fallback={null}>
                 <BordersArray/>
-                <ControlLights/>
+                <Lights/>
+                <Sun/>
                 <Model/>
-                <Postprocessing/>
                 <CubesArray/>
                 <AstralPlane/>
                 <VideoPanel/>
+                <Postprocessing/>
+                <AnimatedLight/>
+                <Room/>
             </Suspense>
             <ControlCamera/>
         </>
     )
 }
 
-export default React.memo(ControlLikeScene)
+export default React.memo(MainScene)

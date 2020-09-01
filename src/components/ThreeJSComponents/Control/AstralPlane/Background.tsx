@@ -15,7 +15,8 @@ const Background: React.FC<PropsType> = ({opened}) => {
             tension: 400,
             friction: 400,
             clamp: true
-        }
+        },
+        delay: opened ? 1000 : 0
     })
 
     return(

@@ -1,20 +1,13 @@
 import React, {useEffect, useMemo} from 'react';
-import * as THREE from 'three';
 import {extend, useFrame, useThree} from 'react-three-fiber';
 import {
-    BloomEffect,
-    ColorAverageEffect,
     EffectComposer,
     EffectPass,
     GodRaysEffect,
     KernelSize,
     NoiseEffect,
     RenderPass,
-    SepiaEffect,
-    SMAAEffect,
-    SMAAPreset,
     VignetteEffect,
-    DotScreenEffect,
     BlendFunction,
     HueSaturationEffect
     //@ts-ignore
@@ -25,8 +18,6 @@ import { AppStateType } from '../../../store/store';
 
 extend({ShaderPass})
 
-type PropsType = { sun?: THREE.Mesh }
-
 const Effects: React.FC = () => {
 
     const sun = useSelector((state: AppStateType) => state.interface.sun, shallowEqual);
@@ -34,38 +25,12 @@ const Effects: React.FC = () => {
     const {gl, scene, camera, size} = useThree();
 
     const composer = useMemo(() => {
-
-        //SMAA
-        const areaImage = new Image();
-        areaImage.src = SMAAEffect.areaImageDataURL;
-        const searchImage = new Image();
-        searchImage.src = SMAAEffect.searchImageDataURL;
-        const smaaEffect = new SMAAEffect(searchImage, areaImage, SMAAPreset.MEDIUM);
-
-        //bloom
-        const bloom = new BloomEffect({
-            luminanceThreshold: 0.2,
-            luminanceSmoothing: 0,
-            resolutionScale: 1
-        });
-        bloom.blendMode.opacity.value = 2;
-
         //noise effect
-        const noise = new NoiseEffect({premultiply: true, blendFunction: BlendFunction.ADD, opacity: 0.47});
-
-        //sepia
-        const sepia = new SepiaEffect({intensity: 1.0});
+        const noise = new NoiseEffect({premultiply: true, blendFunction: BlendFunction.ADD, opacity: 0.6});
 
         const hue = new HueSaturationEffect({hue: 3.11, saturation: 2.05})
 
-        //monochrome
-        const monochrome = new ColorAverageEffect();
-
-        const dotScreen = new DotScreenEffect({scale: 1});
-
         const vignette = new VignetteEffect()
-
-
         //all effects pass
         let effectPass
 
@@ -82,15 +47,15 @@ const Effects: React.FC = () => {
                     samples: 50,
                     clampMax: 1,
                 });
-            effectPass = new EffectPass(camera, smaaEffect, godRays, noise, hue, vignette);
+            effectPass = new EffectPass(camera, godRays, noise, hue, vignette);
             effectPass.renderToScreen = true;
         } else {
-            effectPass = new EffectPass(camera, smaaEffect,  noise);
+            effectPass = new EffectPass(camera, noise, hue, vignette);
             effectPass.renderToScreen = true;
         }
 
         //composer
-        const composer = new EffectComposer(gl);
+        const composer = new EffectComposer(gl, {multisampling: 3});
         composer.addPass(new EffectPass(camera));
         composer.addPass(new RenderPass(scene, camera));
         composer.addPass(effectPass);
@@ -99,10 +64,10 @@ const Effects: React.FC = () => {
 
     }, [camera, gl, scene, sun]);
 
-    useEffect(() => void composer.setSize(size.width, size.height), [composer, size]);
+    useEffect(() => composer.setSize(size.width, size.height), [composer, size]);
 
     return useFrame((_, delta) => composer.render(delta), 1)
 };
 
-export default Effects;
+export default React.memo(Effects);
 

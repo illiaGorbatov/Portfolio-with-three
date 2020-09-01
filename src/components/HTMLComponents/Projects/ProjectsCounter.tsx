@@ -68,11 +68,13 @@ type PropsType = {
     setScroll:  SpringStartFn<{top: number, scale: number, x: number}>,
     scrollsCount: number,
     project: number | null,
-    isAboutMenuOpened: boolean
+    visible: boolean,
+    isMainPageFocused: boolean
 }
 
 
-const ProjectsCounter: React.FC<PropsType> = ({setScroll, isAboutMenuOpened, project, scrollsCount}) => {
+const ProjectsCounter: React.FC<PropsType> = ({setScroll, visible, project,
+                                                  isMainPageFocused, scrollsCount}) => {
 
     const dispatch = useDispatch();
 
@@ -92,14 +94,9 @@ const ProjectsCounter: React.FC<PropsType> = ({setScroll, isAboutMenuOpened, pro
     }, [scrollsCount]);
 
     useEffect(() => {
-        if (project !== null) setAnimation({x: window.innerWidth/2});
-        if (project === null) setAnimation({x: 0});
-    }, [project]);
-
-    useEffect(() => {
-        if (isAboutMenuOpened) setAnimation({x: window.innerWidth/2});
-        if (!isAboutMenuOpened ) setAnimation({x: 0});
-    }, [isAboutMenuOpened]);
+        if (!visible && !isMainPageFocused) setAnimation({x: window.innerWidth/2});
+        if (visible && !isMainPageFocused) setAnimation({x: 0});
+    }, [visible]);
 
     const currentY = useRef<number>(0);
     const currentTop = useRef<number>(0)
@@ -138,8 +135,8 @@ const ProjectsCounter: React.FC<PropsType> = ({setScroll, isAboutMenuOpened, pro
 
     return (
         <Wrapper ref={wrapperRef} style={{x}}>
-            <ProgressLine $visible={scrollsCount !== 0}/>
-            <ProgressBlock style={{y, translateY}} {...onDrugHandler()} $visible={scrollsCount !== 0}>
+            <ProgressLine $visible={visible}/>
+            <ProgressBlock style={{y, translateY}} {...onDrugHandler()} $visible={visible}>
                 <CurrentProject>
                     {scrollsCount === 0 ? 1 : scrollsCount}
                 </CurrentProject>

@@ -5,7 +5,7 @@ import {useThree} from "react-three-fiber";
 import {Mesh} from "three";
 
 type PropsType = {
-    sun: Mesh
+    sun: Mesh | null
 }
 
 const GodRays = forwardRef<null, PropsType>(({ sun }, forwardRef) => {

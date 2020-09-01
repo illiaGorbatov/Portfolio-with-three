@@ -33,32 +33,39 @@ const ArrowRight = styled(ArrowLeft)`
   transform: rotate(-45deg);
 `;
 
-const AnimatedWrapper = styled.div`
+const AnimatedWrapper = styled.div<{ $visible: boolean}>`
   position: absolute;
   width: 100%;
   height: 100%;
+  transition: top 0.3s ease-in-out;
+  top: ${props => !props.$visible ? '100%' : 0}
 `;
 
-const ArrowWrapper = styled.div`
+const ArrowWrapper = styled.div<{ $visible: boolean}>`
   position: absolute;
   left: 50%;
   width: 20px;
   height: 80px;
   bottom: 10px;
+  overflow: hidden;
   transform: translateX(-50%);
-  cursor: pointer;
+  cursor: ${props => props.$visible ? 'pointer' : 'inherit'};
   &:hover ${ArrowCenter}, &:hover ${ArrowLeft} {
     width: 2px
   }
   &:hover ${AnimatedWrapper} {animation: .5s ${hoverAnimation} ease-in-out;}
 `;
 
+type PropsType = {
+    visible: boolean,
+    onArrowClickHandler: () => void
+}
 
-const Arrow: React.FC = () => {
+const Arrow: React.FC<PropsType> = ({visible, onArrowClickHandler}) => {
 
     return (
-        <ArrowWrapper>
-            <AnimatedWrapper>
+        <ArrowWrapper onClick={visible ? onArrowClickHandler : undefined} $visible={visible}>
+            <AnimatedWrapper $visible={visible}>
                 <ArrowLeft/>
                 <ArrowCenter/>
                 <ArrowRight/>

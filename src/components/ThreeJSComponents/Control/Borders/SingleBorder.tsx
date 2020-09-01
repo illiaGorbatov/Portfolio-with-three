@@ -1,12 +1,11 @@
 import React, {useMemo} from 'react';
 import * as THREE from 'three';
 import {animated, SpringValue} from 'react-spring/three';
-import {Vector3Type} from "../../../../utils/StringVariablesAndTypes";
 import isEqual from "react-fast-compare";
 
 type PropsType = {
     scale: [number, number, number],
-    position:  SpringValue<number[]>,
+    position:  [number, number, number],
     rotation: SpringValue<number>
 }
 
@@ -37,9 +36,9 @@ const SingleBorder: React.FC<PropsType> = ({rotation, position, ...props}) => {
     }, []);
 
     return (
-        <animated.mesh {...props} rotation-z={rotation} position={position as unknown as Vector3Type} castShadow receiveShadow>
+        <animated.mesh {...props} rotation-z={rotation} position={position} castShadow receiveShadow>
             <extrudeBufferGeometry attach="geometry" args={[extrudeShape, extrudeSettings]}/>
-            <meshStandardMaterial attach="material" color="#999" roughness={0.7} shadowSide={THREE.FrontSide}/>
+            <meshStandardMaterial attach="material" color="#6a040f" roughness={0.7} shadowSide={THREE.FrontSide}/>
         </animated.mesh>
     );
 }
