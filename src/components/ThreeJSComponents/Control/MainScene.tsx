@@ -4,7 +4,7 @@ import Lights from "./Lights/Lights";
 import Model from "../Explosion/Model";
 import ControlCamera from "../ControlCamera";
 import AstralPlane from "./AstralPlane/AstralPlane";
-import CubesArray from "./Cubes/CubesArray";
+import CubesArray from "./Cubes/AnimatedCubesArray";
 import VideoPanel from "./Videopanel/Videopanel";
 import Sun from "./Lights/Sun";
 import AnimatedLight from "./Lights/AnimatedLight";
