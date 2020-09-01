@@ -4,12 +4,12 @@ import Lights from "./Lights/Lights";
 import Model from "../Explosion/Model";
 import ControlCamera from "../ControlCamera";
 import AstralPlane from "./AstralPlane/AstralPlane";
-import CubesArray from "./Cubes/AnimatedCubesArray";
 import VideoPanel from "./Videopanel/Videopanel";
 import Sun from "./Lights/Sun";
 import AnimatedLight from "./Lights/AnimatedLight";
 import Room from "./Room/Room";
 import Postprocessing from "../posteffects/Postprocessing";
+import AnimatedCubes from "./Cubes/AnimatedCubes";
 
 //colors
 
@@ -22,7 +22,7 @@ const MainScene: React.FC = () => {
                 <Lights/>
                 <Sun/>
                 <Model/>
-                <CubesArray/>
+                <AnimatedCubes/>
                 <AstralPlane/>
                 <VideoPanel/>
                 <Postprocessing/>
