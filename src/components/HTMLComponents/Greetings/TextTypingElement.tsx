@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import styled, {keyframes} from 'styled-components/macro';
-import {animatedSkillsStack} from "../TextContent";
+import {animatedSkillsStack} from "../../../textContent/TextContent";
 
 const blink = keyframes`
   0% {

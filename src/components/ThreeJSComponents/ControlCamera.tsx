@@ -1,17 +1,17 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef} from "react";
 import * as THREE from 'three';
 import {useFrame, useThree} from "react-three-fiber";
 import {animated, useSpring} from "react-spring/three";
 import {
-    Vector3Type,
-    MAIN_SCENE_STATIC,
-    PROJECTS_STATIC,
-    PROJECTS_SCROLLING,
     CLOSE_LOOK,
-    TRANSITION_FROM_MAIN_TO_PROJECTS,
-    TRANSITION_ABOUT_SECTION,
+    MAIN_SCENE_STATIC,
+    PROJECTS_SCROLLING,
+    PROJECTS_STATIC,
+    RETURNING_FROM_CLOSE_LOOK,
     TRANSITION_FROM_ABOUT_SECTION_TO_PROJECTS_STATIC,
-    RETURNING_FROM_CLOSE_LOOK
+    TRANSITION_FROM_MAIN_TO_PROJECTS,
+    TRANSITION_TO_ABOUT_SECTION,
+    Vector3Type
 } from "../../utils/StringVariablesAndTypes";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../store/store";
@@ -55,7 +55,7 @@ const ControlCamera: React.FC = () => {
 
     useEffect(() => {
         if (cameraState === MAIN_SCENE_STATIC) {
-            setCameraPosition({position: cameraPosition.mainDisplay});
+            setCameraPosition({position: cameraPosition.mainDisplay}).then(() => dispatch(actions.stopAnyAnimation()));
             setTimeout(() => dispatch(actions.setCrystalExplosionState(false)), 300)
         }
         if (cameraState === PROJECTS_STATIC) setCameraPosition({position: cameraPosition.staticProjects});
@@ -75,7 +75,7 @@ const ControlCamera: React.FC = () => {
             }
         }).then(() => {
             dispatch(actions.setVideoPlayerState(true));
-            dispatch(actions.setInterfaceAvailability(true))
+            dispatch(actions.stopAnyAnimation())
         });
         if (cameraState === RETURNING_FROM_CLOSE_LOOK) setCameraPosition({
             position: cameraPosition.staticProjects,
@@ -86,7 +86,7 @@ const ControlCamera: React.FC = () => {
                 friction: 400,
                 clamp: true,
             }
-        }).then(() => dispatch(actions.setInterfaceAvailability(true)));
+        }).then(() => dispatch(actions.stopAnyAnimation()));
         if (cameraState === TRANSITION_FROM_MAIN_TO_PROJECTS) setCameraPosition({
             position: cameraPosition.staticProjects,
             config: {
@@ -96,10 +96,10 @@ const ControlCamera: React.FC = () => {
                 clamp: true,
             }
         }).then(() => {
-            dispatch(actions.setInterfaceAvailability(true));
-            dispatch(actions.setMainPageState(false))
+            dispatch(actions.stopAnyAnimation());
+            dispatch(actions.setMainPageState(false));
         });
-        if (cameraState === TRANSITION_ABOUT_SECTION) {
+        if (cameraState === TRANSITION_TO_ABOUT_SECTION) {
             setCameraPosition({
                 position: cameraPosition.aboutMe,
                 config: {
@@ -108,16 +108,16 @@ const ControlCamera: React.FC = () => {
                     friction: 400,
                     clamp: true,
                 }
-            }).then(() => dispatch(actions.setInterfaceAvailability(true)));
+            }).then(() => dispatch(actions.stopAnyAnimation()));
             setTimeout(() => dispatch(actions.setCrystalExplosionState(false)), 300)
         }
         if (cameraState === TRANSITION_FROM_ABOUT_SECTION_TO_PROJECTS_STATIC) {
             setCameraPosition({position: cameraPosition.staticProjects})
-                .then(() => dispatch(actions.setInterfaceAvailability(true)))
+                .then(() => dispatch(actions.stopAnyAnimation()))
             setTimeout(() => dispatch(actions.setCrystalExplosionState(true)), 300)
         }
         console.log(cameraState)
-    }, [cameraState]);
+    }, [cameraState, setCameraPosition, dispatch]);
 
     useFrame(() => {
         camera.lookAt(...lookAt.get() as Vector3Type)

@@ -3,8 +3,8 @@ import styled from 'styled-components/macro';
 import {useHover} from "react-use-gesture";
 import ProjectAnnotation from "./ProjectAnnotation";
 import {useDispatch} from "react-redux";
-import {actions} from "../../../store/InterfaceReducer";
-import {ProjectType} from "../TextContent";
+import {actions} from "../../../../store/InterfaceReducer";
+import {ProjectType} from "../../../../textContent/TextContent";
 import CloseLookButton from "./CloseLookButton";
 
 const Wrapper = styled.div`
@@ -33,10 +33,12 @@ const Video = styled.video`
 
 type PropsType = {
     projectIndex: number,
-    project: ProjectType
+    project: ProjectType,
+    isDrugging: boolean,
+    isScrolling: boolean
 }
 
-const ProjectPresentation: React.FC<PropsType> = ({projectIndex}) => {
+const ProjectPresentation: React.FC<PropsType> = ({projectIndex, isDrugging, isScrolling, project}) => {
 
     const dispatch = useDispatch();
 
@@ -49,7 +51,7 @@ const ProjectPresentation: React.FC<PropsType> = ({projectIndex}) => {
 
     useEffect(() => {
         dispatch(actions.setVideo(videoRef.current!, projectIndex))
-    }, [])
+    }, [dispatch, projectIndex])
 
     return (
         <Wrapper>
@@ -57,11 +59,11 @@ const ProjectPresentation: React.FC<PropsType> = ({projectIndex}) => {
                 <Video muted loop ref={videoRef}>
                     <source src='/videos/testVid.mp4' type="video/mp4"/>
                 </Video>
-                <ProjectAnnotation/>
-                <CloseLookButton projectIndex={projectIndex}/>
+                <ProjectAnnotation isDrugging={isDrugging} isScrolling={isScrolling}/>
+                <CloseLookButton projectIndex={projectIndex} visible={!isScrolling && !isDrugging}/>
             </VideoWrapper>
         </Wrapper>
     )
 }
 
-export default ProjectPresentation
+export default React.memo(ProjectPresentation)

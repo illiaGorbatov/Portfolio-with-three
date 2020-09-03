@@ -2,9 +2,9 @@ import React, {useCallback} from 'react';
 import styled from 'styled-components/macro';
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../../store/store";
-import AboutMe from './AboutMeButton';
+import AboutMe from './AboutMe/AboutMeButton';
 import {actions} from "../../../store/InterfaceReducer";
-import ProjectCloseLook from "../Projects/ProjectCloseLook";
+import CloseLook from "../Projects/CloseLook/ProjectCloseLook";
 
 const LogoWrapper = styled.div<{ $visible: boolean }>`
   position: absolute;
@@ -27,11 +27,11 @@ const InterfaceContainer: React.FC = () => {
 
     const openInformation = useCallback(() => {
         dispatch(actions.openAboutMeSection());
-    }, []);
+    }, [dispatch]);
 
     const closeInformation = useCallback(() => {
         dispatch(actions.closeAboutMeSection());
-    }, []);
+    }, [dispatch]);
 
     return (
         <>
@@ -42,7 +42,6 @@ const InterfaceContainer: React.FC = () => {
                 </LogoWrapper>
                 <AboutMe closeInformation={closeInformation} openInformation={openInformation}
                          isNavMenuOpened={isNavMenuOpened}/>
-               <ProjectCloseLook/>
             </>
             }
         </>

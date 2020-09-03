@@ -148,7 +148,7 @@ const Model: React.FC = () => {
         dracoLoader.setDecoderPath('/draco-gltf/');
         loader.setDRACOLoader(dracoLoader);
 
-        loader.load("ico-more.glb",
+        loader.load("model/ico-more.glb",
             (gltf) => {
                 let voronoiObj: THREE.Object3D[] = [];
                 gltf.scene.traverse((child) => {
@@ -201,23 +201,17 @@ const Model: React.FC = () => {
     const [{progress, position}, setAnimation] = useSpring(() => ({
         progress: 0,
         position: [0, 0, -310],
-        /*config: {
-            mass: 100,
-            tension: 400,
-            friction: 400,
-            clamp: true,
-        }*/
     }));
 
     const group = useRef<THREE.Group>(new THREE.Group());
 
     useEffect(() => {
-        if (!isCrystalExploded) setAnimation({progress: 0, /*position: [0, 0, 0]*/});
+        if (!isCrystalExploded) setAnimation({progress: 0});
         if (isCrystalExploded) setAnimation({
             progress: 5,
             onRest: () => dispatch(actions.setMainPageState(false))
         });
-    }, [isCrystalExploded]);
+    }, [isCrystalExploded, dispatch, setAnimation]);
 
     //mouseEvent
     const mouseCoords = useRef<number[]>([0, 0]);

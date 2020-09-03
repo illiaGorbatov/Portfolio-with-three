@@ -6,12 +6,12 @@ import styled from "styled-components/macro";
 import {animated, useSpring} from "react-spring";
 import {useDrag, useWheel} from 'react-use-gesture';
 import {isMobile} from 'react-device-detect'
-import {projectsInfo} from "./TextContent";
-import ProjectsCounter from "./Projects/ProjectsCounter";
+import {projectsInfo} from "../../textContent/TextContent";
+import ProjectsCounter from "./Interface/ProjectsCounter";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../store/store";
 import {actions} from "../../store/InterfaceReducer";
-import {MAIN_SCENE_STATIC, PROJECTS_SCROLLING, PROJECTS_STATIC,} from '../../utils/StringVariablesAndTypes';
+import InfoBlock from "./Interface/AboutMe/InfoBlock";
 
 const Wrapper = styled.div`
   position: absolute;
@@ -35,10 +35,11 @@ const HTMLElementsContainer: React.FC = () => {
     const isInterfaceAvailable = useSelector((state: AppStateType) => state.interface.isInterfaceAvailable, shallowEqual);
     const isAboutMenuOpened = useSelector((state: AppStateType) => state.interface.isAboutMenuOpened, shallowEqual);
     const isMainPageFocused = useSelector((state: AppStateType) => state.interface.isMainPageFocused, shallowEqual);
+    const druggingState = useSelector((state: AppStateType) => state.interface.druggingState, shallowEqual);
+    const scrollingState = useSelector((state: AppStateType) => state.interface.scrollingState, shallowEqual);
 
     const dispatch = useDispatch();
 
-    const animationState = useRef<boolean>(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     const [animation, setScroll] = useSpring(() => ({
@@ -46,57 +47,42 @@ const HTMLElementsContainer: React.FC = () => {
         scale: 1,
         x: 0,
         config: {tension: 100, friction: 25, clamp: true},
-        onRest: () => animationState.current = false
     }));
 
     useEffect(() => {
-        if (!isInterfaceAvailable && !isMainPageFocused) setScroll({x: window.innerWidth});
+        if (!isInterfaceAvailable && !isMainPageFocused && scrollsCount !== 0) setScroll({x: window.innerWidth});
         if (isInterfaceAvailable && !isMainPageFocused && scrollsCount !== 0 && !isAboutMenuOpened) setScroll({x: 0});
         if (isInterfaceAvailable && !isMainPageFocused && scrollsCount === 0) {
+            dispatch(actions.setScrollsCount(1))
             setScroll({
-                top: -(scrollsCount + 1) * window.innerHeight + window.innerHeight,
-                onRest: () => {
-                    animationState.current = false
-                }
-            });
-            dispatch(actions.setScrollsCount(scrollsCount + 1))
+                top: 0,
+            }).then(() => dispatch(actions.stopScrolling()))
         }
-    }, [isInterfaceAvailable]);
+    }, [isInterfaceAvailable, isAboutMenuOpened, isMainPageFocused, setScroll, dispatch, scrollsCount]);
 
 
     useWheel(({direction: [, y]}) => {
-        if (animationState.current || project !== null || isAboutMenuOpened) return;
+        if (scrollingState || scrollingState || project !== null || isAboutMenuOpened || druggingState) return;
         if (y > 0 && scrollsCount < projectsInfo.length) {
-            animationState.current = true;
             if (scrollsCount === 0) {
                 dispatch(actions.transitionFromMainPaige());
-            }
-            else {
-                dispatch(actions.setCameraState(PROJECTS_SCROLLING));
+            } else {
+                dispatch(actions.startScrolling(true));
                 setScroll({
                     top: -(scrollsCount + 1) * window.innerHeight + window.innerHeight,
-                    onRest: () => {
-                        dispatch(actions.setCameraState(PROJECTS_STATIC));
-                        animationState.current = false
-                    }
-                });
-                dispatch(actions.setScrollsCount(scrollsCount + 1))
+                }).then(() => dispatch(actions.stopScrolling()))
             }
         }
         if (y < 0 && scrollsCount !== 0) {
-            animationState.current = true;
             if (scrollsCount === 1) {
-                dispatch(actions.setMainPageState(true))
+                dispatch(actions.transitionToMainPaige());
+                setScroll({top: window.innerHeight})
+            } else {
+                dispatch(actions.startScrolling(false));
+                setScroll({
+                    top: -(scrollsCount - 1) * window.innerHeight + window.innerHeight,
+                }).then(() => dispatch(actions.stopScrolling()))
             }
-            else dispatch(actions.setCameraState(PROJECTS_SCROLLING))
-            setScroll({
-                top: -(scrollsCount - 1) * window.innerHeight + window.innerHeight,
-                onRest: () => {
-                    dispatch(actions.setCameraState(scrollsCount === 1 ? MAIN_SCENE_STATIC : PROJECTS_STATIC));
-                    animationState.current = false
-                }
-            });
-            dispatch(actions.setScrollsCount(scrollsCount - 1))
         }
     }, {domTarget: window});
 
@@ -113,7 +99,9 @@ const HTMLElementsContainer: React.FC = () => {
             </ScrollableWrapper>
             <Interface/>
             <ProjectsCounter setScroll={setScroll} scrollsCount={scrollsCount} isMainPageFocused={isMainPageFocused}
-                             project={project} visible={isInterfaceAvailable && !isAboutMenuOpened && project === null}/>
+                             visible={isInterfaceAvailable && !isAboutMenuOpened && project === null}
+                             isDrugging={druggingState}/>
+            <InfoBlock visible={isAboutMenuOpened && isInterfaceAvailable}/>
         </Wrapper>
     )
 }

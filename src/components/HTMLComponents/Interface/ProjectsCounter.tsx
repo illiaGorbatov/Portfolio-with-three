@@ -2,10 +2,9 @@ import React, {useEffect, useRef} from 'react';
 import styled from 'styled-components/macro';
 import {animated, SpringStartFn, useSpring} from 'react-spring';
 import {useDrag} from "react-use-gesture";
-import {projectsInfo} from "../TextContent";
+import {projectsInfo} from "../../../textContent/TextContent";
 import {useDispatch} from "react-redux";
 import {actions} from "../../../store/InterfaceReducer";
-import {PROJECTS_SCROLLING, PROJECTS_STATIC} from "../../../utils/StringVariablesAndTypes";
 
 const Wrapper = styled(animated.div)`
   position: absolute;
@@ -20,6 +19,7 @@ const ProgressLine = styled.div<{$visible: boolean}>`
   left: 50%;
   transform: translateX(-50%);
   width: 1px;
+  line-height: 1px;
   height: ${props => props.$visible ? '100%' : '0%'};
   background-color: white;
   transition: ${props => props.$visible ? 'height .3s .3s' : 'height .3s'};
@@ -67,13 +67,13 @@ const Border = styled.div`
 type PropsType = {
     setScroll:  SpringStartFn<{top: number, scale: number, x: number}>,
     scrollsCount: number,
-    project: number | null,
     visible: boolean,
-    isMainPageFocused: boolean
+    isMainPageFocused: boolean,
+    isDrugging: boolean
 }
 
 
-const ProjectsCounter: React.FC<PropsType> = ({setScroll, visible, project,
+const ProjectsCounter: React.FC<PropsType> = ({setScroll, visible, isDrugging,
                                                   isMainPageFocused, scrollsCount}) => {
 
     const dispatch = useDispatch();
@@ -85,22 +85,21 @@ const ProjectsCounter: React.FC<PropsType> = ({setScroll, visible, project,
     }));
 
     useEffect(() => {
-        if (!isDrugged.current) {
+        if (!isDrugging) {
             const currentPercent = (scrollsCount - 1) / (projectsInfo.length - 1);
             const newY = wrapperRef.current!.offsetHeight * currentPercent;
             currentY.current = newY;
             setAnimation({y: newY})
         }
-    }, [scrollsCount]);
+    }, [scrollsCount, setAnimation, isDrugging]);
 
     useEffect(() => {
         if (!visible && !isMainPageFocused) setAnimation({x: window.innerWidth/2});
         if (visible && !isMainPageFocused) setAnimation({x: 0});
-    }, [visible]);
+    }, [visible, setAnimation, isMainPageFocused]);
 
     const currentY = useRef<number>(0);
     const currentTop = useRef<number>(0)
-    const isDrugged = useRef<boolean>(false);
 
     const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -108,8 +107,7 @@ const ProjectsCounter: React.FC<PropsType> = ({setScroll, visible, project,
         if (down && first) {
             currentTop.current = -scrollsCount * (window.innerHeight * 0.3) + (scrollsCount - 1) * (window.innerHeight * 0.3);
             setScroll({scale: 0.7});
-            isDrugged.current = true;
-            dispatch(actions.setCameraState(PROJECTS_SCROLLING))
+            dispatch(actions.startDrugging())
         }
         if (active) {
             currentY.current = currentY.current + y;
@@ -123,13 +121,12 @@ const ProjectsCounter: React.FC<PropsType> = ({setScroll, visible, project,
             setScroll({top: currentTop.current - window.innerHeight * (projectsInfo.length-1) * 0.7 * currentPercent})
         }
         if (!down) {
-            isDrugged.current = false;
             const currentBlockPercent = (scrollsCount - 1) / (projectsInfo.length - 1);
             const staticY = currentBlockPercent * wrapperRef.current!.offsetHeight;
             currentY.current = staticY;
             setScroll({scale: 1, top: -currentBlockPercent * (projectsInfo.length-1) * window.innerHeight});
             setAnimation({y: staticY});
-            dispatch(actions.setCameraState(PROJECTS_STATIC))
+            dispatch(actions.stopDrugging())
         }
     })
 
