@@ -8,7 +8,17 @@ const Wrapper = styled.div`
   font-family: 'Relative-Book';
   color: red;
   letter-spacing: 2px;
-  font-size: 20px;
+  font-size: 15px;
+  position: relative;
+`;
+
+const InvisibleTextForSize = styled.div`
+  opacity: 0
+`;
+
+const VisibleText = styled.div`
+  opacity: 1;
+  position: absolute;
 `;
 
 type PropsType = {
@@ -20,7 +30,9 @@ const TechnologiesTextTyping: React.FC<PropsType> = ({visible}) => {
     const [text, setText] = useState<string>('');
 
     const typeText = () => {
-        setText(animatedBigSkillsStack.substring(0, text.length + 1));
+        if (text === '') {
+            setTimeout(() => setText(animatedBigSkillsStack.substring(0, text.length + 1)), 1200)
+        } else setText(animatedBigSkillsStack.substring(0, text.length + 1));
     };
     const deleteText = () => {
         if (text === '') return
@@ -29,14 +41,19 @@ const TechnologiesTextTyping: React.FC<PropsType> = ({visible}) => {
 
     useEffect(() => {
         let timer: number
-        if (visible) timer = setTimeout(() => typeText(), 20)
-        if (!visible) timer = setTimeout(() => deleteText(), 10)
+        if (visible) timer = setTimeout(() => typeText(), 15)
+        if (!visible) timer = setTimeout(() => deleteText(), 3)
         return () => clearTimeout(timer)
     });
 
     return (
         <Wrapper>
-            {text}
+            <VisibleText>
+                {text}
+            </VisibleText>
+            <InvisibleTextForSize>
+                {animatedBigSkillsStack}
+            </InvisibleTextForSize>
         </Wrapper>
     )
 }

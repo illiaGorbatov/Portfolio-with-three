@@ -95,7 +95,7 @@ const MainReducer = (state: InitialStateType = initialState, action: ActionsType
         case "REDUX/SET_INTERFACE_AVAILABILITY":
             return {
                 ...state,
-                isInterfaceAvailable: action.isAvailable
+                isInterfaceAvailable: action.isAvailable,
             }
         case "REDUX/SET_CRYSTAL_STATE":
             return {
@@ -117,7 +117,6 @@ const MainReducer = (state: InitialStateType = initialState, action: ActionsType
                 ...state,
                 isCrystalExploded: true,
                 cameraState: TRANSITION_FROM_MAIN_TO_PROJECTS,
-                /*isInterfaceAvailable: false,*/
                 scrollingState: true,
             }
         case "REDUX/TRANSITION_TO_MAIN_PAGE":

@@ -2,10 +2,8 @@ import React from 'react';
 import styled from 'styled-components/macro';
 import ProjectPresentation from "./SingleProject/ProjectPresentation";
 import {projectsInfo} from "../../../textContent/TextContent";
-import {shallowEqual, useDispatch, useSelector} from "react-redux";
+import {shallowEqual, useSelector} from "react-redux";
 import {AppStateType} from "../../../store/store";
-import CloseLook from "./CloseLook/ProjectCloseLook";
-import {actions} from "../../../store/InterfaceReducer";
 
 const AllProjectsWrapper = styled.div`
   width: 100%;
@@ -17,24 +15,16 @@ const ProjectsContainer: React.FC = () => {
 
     const druggingState = useSelector((state: AppStateType) => state.interface.druggingState, shallowEqual);
     const scrollingState = useSelector((state: AppStateType) => state.interface.scrollingState, shallowEqual);
-    const project = useSelector((state: AppStateType) => state.interface.currentlyLookedProject, shallowEqual);
-
-    const dispatch = useDispatch();
-
-    const closeProject = () => {
-        dispatch(actions.closeProject())
-    }
+    const scrollsCount = useSelector((state: AppStateType) => state.interface.scrollsCount, shallowEqual);
+    const currentlyLookedProject = useSelector((state: AppStateType) => state.interface.currentlyLookedProject, shallowEqual);
 
 
     return (
-        <>
-            <AllProjectsWrapper>
-                {projectsInfo.map((project, index) =>
-                    <ProjectPresentation key={index} projectIndex={index} project={project}
-                                         isDrugging={druggingState} isScrolling={scrollingState}/>)}
-            </AllProjectsWrapper>
-            <CloseLook closeProject={closeProject} project={project} visible={druggingState && scrollingState && project !== null}/>
-        </>
+        <AllProjectsWrapper>
+            {projectsInfo.map((project, index) =>
+                <ProjectPresentation key={index} projectIndex={index} scrollsCount={scrollsCount} currentlyLookedProject={currentlyLookedProject}
+                                     isDrugging={druggingState} isScrolling={scrollingState}/>)}
+        </AllProjectsWrapper>
     )
 }
 

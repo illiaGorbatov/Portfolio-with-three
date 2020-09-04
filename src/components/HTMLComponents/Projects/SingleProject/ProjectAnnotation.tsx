@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/macro';
+import {projectsInfo} from "../../../../textContent/TextContent";
 
 const AnnotationWrapper = styled.div`
   position: absolute;
@@ -39,21 +40,22 @@ const AnimatedDescription = styled.div<{$invisible: boolean}>`
 
 type PropsType = {
     isScrolling: boolean,
-    isDrugging: boolean
+    isDrugging: boolean,
+    projectIndex: number
 }
 
-const ProjectAnnotation: React.FC<PropsType> = ({isScrolling, isDrugging}) => {
+const ProjectAnnotation: React.FC<PropsType> = ({isScrolling, isDrugging, projectIndex}) => {
 
     return (
         <AnnotationWrapper>
             <ProjectNameWrapper>
                 <AnimatedProjectName $isScrolling={isScrolling}>
-                    Counter Big
+                    {projectsInfo[projectIndex].projectName}
                 </AnimatedProjectName>
             </ProjectNameWrapper>
             <ProjectLittleDescription>
                 <AnimatedDescription $invisible={isScrolling || isDrugging}>
-                    My Little description
+                    {projectsInfo[projectIndex].projectDescription}
                 </AnimatedDescription>
             </ProjectLittleDescription>
         </AnnotationWrapper>

@@ -96,7 +96,7 @@ const ControlCamera: React.FC = () => {
                 clamp: true,
             }
         }).then(() => {
-            dispatch(actions.stopAnyAnimation());
+            dispatch(actions.setInterfaceAvailability(true));
             dispatch(actions.setMainPageState(false));
         });
         if (cameraState === TRANSITION_TO_ABOUT_SECTION) {

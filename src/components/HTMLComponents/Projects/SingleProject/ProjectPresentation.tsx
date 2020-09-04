@@ -1,11 +1,11 @@
 import React, {useEffect, useRef} from 'react';
 import styled from 'styled-components/macro';
-import {useHover} from "react-use-gesture";
 import ProjectAnnotation from "./ProjectAnnotation";
 import {useDispatch} from "react-redux";
 import {actions} from "../../../../store/InterfaceReducer";
-import {ProjectType} from "../../../../textContent/TextContent";
 import CloseLookButton from "./CloseLookButton";
+// @ts-ignore
+import video from "../../../../assets/videos/testVid.mp4"
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -33,33 +33,39 @@ const Video = styled.video`
 
 type PropsType = {
     projectIndex: number,
-    project: ProjectType,
     isDrugging: boolean,
-    isScrolling: boolean
+    isScrolling: boolean,
+    scrollsCount: number,
+    currentlyLookedProject: number | null
 }
 
-const ProjectPresentation: React.FC<PropsType> = ({projectIndex, isDrugging, isScrolling, project}) => {
+const ProjectPresentation: React.FC<PropsType> = ({projectIndex, isDrugging, isScrolling,
+                                                      scrollsCount, currentlyLookedProject}) => {
 
     const dispatch = useDispatch();
 
     const videoRef = useRef<HTMLVideoElement>(null);
 
-    const regulation = useHover(({hovering}) => {
-        if (hovering) videoRef.current!.play();
-        if (!hovering) videoRef.current!.pause()
-    });
-
     useEffect(() => {
         dispatch(actions.setVideo(videoRef.current!, projectIndex))
-    }, [dispatch, projectIndex])
+    }, [dispatch, projectIndex]);
+
+    useEffect(() => {
+        if (scrollsCount-1 === projectIndex && !isScrolling && !isDrugging && currentlyLookedProject === null){
+            videoRef.current!.play()
+        }
+        if (scrollsCount-1 !== projectIndex || (isScrolling || isDrugging) || currentlyLookedProject !== null){
+            videoRef.current!.pause()
+        }
+    }, [scrollsCount, isDrugging, isScrolling, projectIndex, currentlyLookedProject]);
 
     return (
         <Wrapper>
-            <VideoWrapper {...regulation()}>
+            <VideoWrapper>
                 <Video muted loop ref={videoRef}>
-                    <source src='/videos/testVid.mp4' type="video/mp4"/>
+                    <source src={video} type="video/mp4"/>
                 </Video>
-                <ProjectAnnotation isDrugging={isDrugging} isScrolling={isScrolling}/>
+                <ProjectAnnotation isDrugging={isDrugging} isScrolling={isScrolling} projectIndex={projectIndex}/>
                 <CloseLookButton projectIndex={projectIndex} visible={!isScrolling && !isDrugging}/>
             </VideoWrapper>
         </Wrapper>

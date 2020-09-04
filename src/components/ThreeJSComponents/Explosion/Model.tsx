@@ -1,6 +1,5 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import * as THREE from 'three';
-import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
 import {shader} from "./shaderMaterial";
 import {BufferGeometryUtils} from "three/examples/jsm/utils/BufferGeometryUtils";
 import {useFrame} from "react-three-fiber";
@@ -10,6 +9,8 @@ import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../../store/store";
 import {Vector3Type} from "../../../utils/StringVariablesAndTypes";
 import {actions} from "../../../store/InterfaceReducer";
+// @ts-ignore
+import GLB from "../../../model/withoutAll.glb"
 
 interface CustomMesh extends THREE.Mesh {
     geometry: THREE.BufferGeometry
@@ -116,9 +117,6 @@ const processSurface = (object: CustomObject, index: number) => {
     return {surface, volume};
 };
 
-const texturesUrl = ['../textures/newsky/px.jpg', '../textures/newsky/nx.jpg', '../textures/newsky/py.jpg',
-    '../textures/newsky/ny.jpg', '../textures/newsky/pz.jpg', '../textures/newsky/nz.jpg']
-
 const sign = (number: number) => number === 0 ? 1 : number / Math.abs(number);
 
 
@@ -127,12 +125,6 @@ const Model: React.FC = () => {
     const isCrystalExploded = useSelector((state: AppStateType) => state.interface.isCrystalExploded, shallowEqual);
 
     const dispatch = useDispatch();
-
-    const textures = useMemo(() => {
-        const textures = new THREE.CubeTextureLoader().load(texturesUrl);
-        textures.minFilter = THREE.LinearFilter;
-        return textures
-    }, []);
 
     const outerShader = useMemo(() => {
         let shaderMat = shader;
@@ -144,11 +136,8 @@ const Model: React.FC = () => {
 
     useEffect(() => {
         const loader = new GLTFLoader();
-        const dracoLoader = new DRACOLoader();
-        dracoLoader.setDecoderPath('/draco-gltf/');
-        loader.setDRACOLoader(dracoLoader);
 
-        loader.load("model/ico-more.glb",
+        loader.load(GLB,
             (gltf) => {
                 let voronoiObj: THREE.Object3D[] = [];
                 gltf.scene.traverse((child) => {
@@ -244,12 +233,12 @@ const Model: React.FC = () => {
             <mesh>
                 <bufferGeometry attach="geometry" {...innerMesh}/>
                 <animated.shaderMaterial uniforms-progress-value={progress} attach="material" args={[shader]}
-                                         uniforms-tCube-value={textures}/>
+                                         />
             </mesh>
             <mesh>
                 <bufferGeometry attach="geometry" {...outerMesh}/>
                 <animated.shaderMaterial uniforms-progress-value={progress} attach="material" args={[outerShader]}
-                                         uniforms-tCube-value={textures}/>
+                                        />
             </mesh>
         </animated.group>
     )

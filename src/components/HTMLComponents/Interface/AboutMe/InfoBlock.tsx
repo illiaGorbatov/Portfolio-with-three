@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components/macro';
-import {animated, useTrail, useSprings} from 'react-spring';
+import {animated, useSprings} from 'react-spring';
 import {aboutMe} from "../../../../textContent/TextContent";
 import TextTypingTechnologies from "./TextTypingTechnologies";
 
@@ -28,6 +28,7 @@ const CommonWrapper = styled.div`
 
 const Headers = styled(animated.div)<{ $big: boolean }>`
   font-size: ${props => props.$big ? '50px' : '25px'};
+  padding-bottom: ${props => props.$big ? '3%' : '7%'};
   font-family: 'MADE Evolve Bold';
 `;
 
@@ -35,11 +36,13 @@ const AboutMe = styled(animated.div)`
   font-family: 'Relative-Book';
   font-size: 15px;
   text-align: left;
+  padding-bottom: 10px;
 `;
 
 const InfoHeaders = styled(animated.div)`
   font-family: 'MADE Evolve Bold';
   font-size: 20px;
+  padding-bottom: 5px;
 `;
 
 const Contacts = styled(animated.div)`
@@ -60,6 +63,7 @@ const InfoBlock: React.FC<PropsType> = ({visible}) => {
 
     useEffect(() => {
         if (visible) {
+            setVisibility(true)
             setSprings(i => ({
                y: '0%',
                 delay: i*200
@@ -68,13 +72,13 @@ const InfoBlock: React.FC<PropsType> = ({visible}) => {
         if (!visible) {
             setSprings(i =>({
                 y: '-100%',
-                delay: (6-i)*200
-            }))
+                delay: (5-i)*200
+            })).then(() =>setVisibility(false))
         }
     }, [visible, setSprings]);
 
     return(
-        <Wrapper $visible={visible}>
+        <Wrapper $visible={isContentVisible}>
             <InnerCentralWrapper>
                 <CommonWrapper>
                     <Headers $big={true} style={springs[0]}>

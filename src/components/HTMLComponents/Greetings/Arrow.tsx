@@ -53,12 +53,12 @@ const ArrowWrapper = styled.div<{ $visible: boolean}>`
   &:hover ${ArrowCenter}, &:hover ${ArrowLeft} {
     width: 2px
   }
-  &:hover ${AnimatedWrapper} {animation: .5s ${hoverAnimation} ease-in-out;}
+  &:hover ${AnimatedWrapper} {animation: .5s ${hoverAnimation} ease-in-out}
 `;
 
 type PropsType = {
     visible: boolean,
-    onArrowClickHandler: () => void
+    onArrowClickHandler: () => void,
 }
 
 const Arrow: React.FC<PropsType> = ({visible, onArrowClickHandler}) => {

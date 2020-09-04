@@ -12,6 +12,7 @@ import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../store/store";
 import {actions} from "../../store/InterfaceReducer";
 import InfoBlock from "./Interface/AboutMe/InfoBlock";
+import CloseLook from "./Projects/CloseLook/ProjectCloseLook";
 
 const Wrapper = styled.div`
   position: absolute;
@@ -50,17 +51,21 @@ const HTMLElementsContainer: React.FC = () => {
     }));
 
     useEffect(() => {
-        if (!isInterfaceAvailable && !isMainPageFocused && scrollsCount !== 0) setScroll({x: window.innerWidth});
-        if (isInterfaceAvailable && !isMainPageFocused && scrollsCount !== 0 && !isAboutMenuOpened) setScroll({x: 0});
+        if (!isInterfaceAvailable && !isMainPageFocused && scrollsCount !== 0) {
+            setScroll({x: window.innerWidth})
+        }
+        if (isInterfaceAvailable && !isMainPageFocused && scrollsCount !== 0 && !isAboutMenuOpened && project === null) {
+            setScroll({x: 0})
+        }
         if (isInterfaceAvailable && !isMainPageFocused && scrollsCount === 0) {
             dispatch(actions.setScrollsCount(1))
             setScroll({
                 top: 0,
             }).then(() => dispatch(actions.stopScrolling()))
         }
-    }, [isInterfaceAvailable, isAboutMenuOpened, isMainPageFocused, setScroll, dispatch, scrollsCount]);
+    }, [isInterfaceAvailable, isAboutMenuOpened, isMainPageFocused, setScroll, dispatch, scrollsCount, project]);
 
-
+console.log(isInterfaceAvailable, scrollingState)
     useWheel(({direction: [, y]}) => {
         if (scrollingState || scrollingState || project !== null || isAboutMenuOpened || druggingState) return;
         if (y > 0 && scrollsCount < projectsInfo.length) {
@@ -102,6 +107,7 @@ const HTMLElementsContainer: React.FC = () => {
                              visible={isInterfaceAvailable && !isAboutMenuOpened && project === null}
                              isDrugging={druggingState}/>
             <InfoBlock visible={isAboutMenuOpened && isInterfaceAvailable}/>
+            <CloseLook project={project} visible={!druggingState && !scrollingState && project !== null}/>
         </Wrapper>
     )
 }

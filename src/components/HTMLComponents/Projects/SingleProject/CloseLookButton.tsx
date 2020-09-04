@@ -11,6 +11,7 @@ const ButtonWrapper = styled.div`
   text-align: left;
   color: white;
   z-index: 10;
+  cursor: pointer;
 `;
 
 const Line = styled.div<{$visible: boolean}>`
