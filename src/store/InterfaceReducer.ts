@@ -7,7 +7,8 @@ import {
     GEOMETRIES_TRANSITION_FROM_ABOUT_SECTION,
     GEOMETRIES_TRANSITION_FROM_CLOSE_LOOK,
     GEOMETRIES_TRANSITION_TO_ABOUT_SECTION,
-    GEOMETRIES_TRANSITION_TO_CLOSE_LOOK, MAIN_SCENE_STATIC,
+    GEOMETRIES_TRANSITION_TO_CLOSE_LOOK,
+    MAIN_SCENE_STATIC,
     OPEN_ABOUT_ME_SECTION,
     OPEN_PROJECT,
     PROJECTS_SCROLLING,
@@ -28,7 +29,11 @@ import {
     STOP_SCROLLING,
     TRANSITION_FROM_ABOUT_SECTION_TO_PROJECTS_STATIC,
     TRANSITION_FROM_MAIN_PAGE,
-    TRANSITION_FROM_MAIN_TO_PROJECTS, TRANSITION_TO_MAIN_PAGE, TRANSITION_TO_ABOUT_SECTION, STOP_ANY_ANIMATION,
+    TRANSITION_FROM_MAIN_TO_PROJECTS,
+    TRANSITION_TO_MAIN_PAGE,
+    TRANSITION_TO_ABOUT_SECTION,
+    STOP_ANY_ANIMATION,
+    STOP_TRANSITION_TO_MAIN_PAGE,
 } from "../utils/StringVariablesAndTypes";
 
 type InitialStateType = {
@@ -115,6 +120,7 @@ const MainReducer = (state: InitialStateType = initialState, action: ActionsType
         case "REDUX/TRANSITION_FROM_MAIN_PAGE":
             return {
                 ...state,
+                isMainPageFocused: false,
                 isCrystalExploded: true,
                 cameraState: TRANSITION_FROM_MAIN_TO_PROJECTS,
                 scrollingState: true,
@@ -125,7 +131,13 @@ const MainReducer = (state: InitialStateType = initialState, action: ActionsType
                 cameraState: MAIN_SCENE_STATIC,
                 isInterfaceAvailable: false,
                 scrollingState: true,
-                scrollsCount: 0
+                scrollsCount: 0,
+            }
+        case "REDUX/STOP_TRANSITION_TO_MAIN_PAGE":
+            return {
+                ...state,
+                scrollingState: false,
+                isMainPageFocused: true
             }
         case "REDUX/OPEN_ABOUT_ME_SECTION":
             return {
@@ -161,6 +173,7 @@ const MainReducer = (state: InitialStateType = initialState, action: ActionsType
                 currentlyLookedProject: null,
                 geometriesTransition: GEOMETRIES_TRANSITION_FROM_CLOSE_LOOK,
                 cameraState: RETURNING_FROM_CLOSE_LOOK,
+                videoPlayerState: false,
                 isInterfaceAvailable: false
             }
         case "REDUX/START_SCROLLING":
@@ -183,7 +196,6 @@ const MainReducer = (state: InitialStateType = initialState, action: ActionsType
                 druggingState: true
             }
         case "REDUX/STOP_DRUGGING":
-
             return {
                 ...state,
                 cameraState: PROJECTS_STATIC,
@@ -214,6 +226,7 @@ export const actions = {
     setVideoPlayerState: (play: boolean) => ({type: SET_VIDEO_PLAYER_STATE, play}) as const,
     transitionFromMainPaige: () => ({type: TRANSITION_FROM_MAIN_PAGE}) as const,
     transitionToMainPaige: () => ({type: TRANSITION_TO_MAIN_PAGE}) as const,
+    stopTransitionToMainPaige: () => ({type: STOP_TRANSITION_TO_MAIN_PAGE}) as const,
     openAboutMeSection: () => ({type: OPEN_ABOUT_ME_SECTION}) as const,
     closeAboutMeSection: () => ({type: CLOSE_ABOUT_ME_SECTION}) as const,
     openProject: (project: number) => ({type: OPEN_PROJECT, project}) as const,
@@ -222,7 +235,8 @@ export const actions = {
     stopScrolling: () => ({type: STOP_SCROLLING}) as const,
     startDrugging: () => ({type: START_DRUGGING}) as const,
     stopDrugging: () => ({type: STOP_DRUGGING}) as const,
-    stopAnyAnimation: () => ({type: STOP_ANY_ANIMATION}) as const
+    stopAnyAnimation: () => ({type: STOP_ANY_ANIMATION}) as const,
+
 }
 
 export default MainReducer

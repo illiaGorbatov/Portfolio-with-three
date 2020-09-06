@@ -7,7 +7,6 @@ import {animated, useSpring} from 'react-spring/three';
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../../store/store";
-import {Vector3Type} from "../../../utils/StringVariablesAndTypes";
 import {actions} from "../../../store/InterfaceReducer";
 // @ts-ignore
 import GLB from "../../../model/withoutAll.glb"
@@ -120,7 +119,7 @@ const processSurface = (object: CustomObject, index: number) => {
 const sign = (number: number) => number === 0 ? 1 : number / Math.abs(number);
 
 
-const Model: React.FC = () => {
+const Crystal: React.FC = () => {
 
     const isCrystalExploded = useSelector((state: AppStateType) => state.interface.isCrystalExploded, shallowEqual);
 
@@ -187,9 +186,8 @@ const Model: React.FC = () => {
     }, []);
 
 //explosion
-    const [{progress, position}, setAnimation] = useSpring(() => ({
+    const [{progress}, setAnimation] = useSpring(() => ({
         progress: 0,
-        position: [0, 0, -310],
     }));
 
     const group = useRef<THREE.Group>(new THREE.Group());
@@ -229,19 +227,17 @@ const Model: React.FC = () => {
     });
 
     return (
-        <animated.group ref={group} position={position as unknown as Vector3Type}>
+        <group ref={group}>
             <mesh>
                 <bufferGeometry attach="geometry" {...innerMesh}/>
-                <animated.shaderMaterial uniforms-progress-value={progress} attach="material" args={[shader]}
-                                         />
+                <animated.shaderMaterial uniforms-progress-value={progress} attach="material" args={[shader]}/>
             </mesh>
             <mesh>
                 <bufferGeometry attach="geometry" {...outerMesh}/>
-                <animated.shaderMaterial uniforms-progress-value={progress} attach="material" args={[outerShader]}
-                                        />
+                <animated.shaderMaterial uniforms-progress-value={progress} attach="material" args={[outerShader]}/>
             </mesh>
-        </animated.group>
+        </group>
     )
 };
 
-export default React.memo(Model)
+export default React.memo(Crystal)

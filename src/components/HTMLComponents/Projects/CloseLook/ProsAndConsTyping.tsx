@@ -1,6 +1,5 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components/macro';
-import {projectsInfo} from "../../../../textContent/TextContent";
 
 
 const Wrapper = styled.div`

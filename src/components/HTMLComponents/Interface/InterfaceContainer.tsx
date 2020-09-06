@@ -28,7 +28,7 @@ const InterfaceContainer: React.FC = () => {
 
     return (
         <>
-            <Logo visible={isInterfaceAvailable}/>
+            <Logo visible={isInterfaceAvailable && !isAboutBlockOpened}/>
             <LeftContextButton closeInformation={closeInformation} openInformation={openInformation}
                                visible={isInterfaceAvailable}
                                isAboutBlockOpened={isAboutBlockOpened} closeProject={closeProject}

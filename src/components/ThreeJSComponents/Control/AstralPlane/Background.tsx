@@ -20,7 +20,7 @@ const Background: React.FC<PropsType> = ({opened}) => {
     })
 
     return(
-        <mesh position={[0, 0, -300]}>
+        <mesh position={[0, 0, 0]}>
             <boxBufferGeometry attach="geometry" args={[700, 700, 700]}/>
             <animated.meshBasicMaterial attach="material" color={color} side={THREE.BackSide}/>
         </mesh>

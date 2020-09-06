@@ -64,7 +64,7 @@ const BordersArray: React.FC = () => {
                 config: {duration: undefined}
             })))
         }
-    }, [transition]);
+    }, [transition, setSprings]);
 
     return (
         <>

@@ -27,21 +27,21 @@ const CommonWrapper = styled.div`
 `;
 
 const Headers = styled(animated.div)<{ $big: boolean }>`
-  font-size: ${props => props.$big ? '50px' : '25px'};
+  font-size: ${props => props.$big ? '60px' : '35px'};
   padding-bottom: ${props => props.$big ? '3%' : '7%'};
   font-family: 'MADE Evolve Bold';
 `;
 
 const AboutMe = styled(animated.div)`
   font-family: 'Relative-Book';
-  font-size: 15px;
+  font-size: 20px;
   text-align: left;
   padding-bottom: 10px;
 `;
 
 const InfoHeaders = styled(animated.div)`
   font-family: 'MADE Evolve Bold';
-  font-size: 20px;
+  font-size: 30px;
   padding-bottom: 5px;
 `;
 

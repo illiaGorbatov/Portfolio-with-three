@@ -4,8 +4,8 @@ import styled, {css, keyframes} from 'styled-components/macro';
 
 const hoverAnimation = keyframes`
   0% {left: 0}
-  50% {left: 100%}
-  51% {left: -100%}
+  50% {left: -100%}
+  51% {left: 100%}
   100% {left: 0}
 `;
 
@@ -19,7 +19,7 @@ const MenuButton = styled.div<{$visible: boolean, $isAboutBlockOpened: boolean}>
   font-family: 'Relative-Book';
 `;
 
-const complexMixin = css`&:hover ${MenuButton}{animation: .4s ${hoverAnimation} ease-in-out}`
+const complexMixin = css`&:hover ${MenuButton}{animation: .4s ${hoverAnimation} ease-in-out }`
 
 const MenuButtonWrapper = styled.div<{$visible: boolean}>`
   position: absolute;

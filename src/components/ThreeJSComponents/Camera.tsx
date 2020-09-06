@@ -22,7 +22,7 @@ export const cameraPosition = {
     staticProjects: [0, 0, 15] as Vector3Type,
     scrollProjects: [0, 0, 35] as Vector3Type,
     closeLook: [-10, 5, 65] as Vector3Type,
-    aboutMe: [0, 0, -240] as Vector3Type
+    aboutMe: [0, 0, -160] as Vector3Type
 };
 
 const cameraLookAt = {
@@ -31,7 +31,7 @@ const cameraLookAt = {
 }
 
 
-const ControlCamera: React.FC = () => {
+const Camera: React.FC = () => {
 
     const cameraState = useSelector((state: AppStateType) => state.interface.cameraState, shallowEqual);
 
@@ -42,7 +42,7 @@ const ControlCamera: React.FC = () => {
 
     useEffect(() => {
         setDefaultCamera(ref.current!);
-    }, []);
+    }, [setDefaultCamera]);
 
     const [{position, lookAt}, setCameraPosition] = useSpring(() => ({
         position: cameraPosition.mainDisplay,
@@ -55,21 +55,46 @@ const ControlCamera: React.FC = () => {
 
     useEffect(() => {
         if (cameraState === MAIN_SCENE_STATIC) {
-            setCameraPosition({position: cameraPosition.mainDisplay}).then(() => dispatch(actions.stopAnyAnimation()));
+            setCameraPosition({position: cameraPosition.mainDisplay}).then(() => dispatch(actions.stopTransitionToMainPaige()));
             setTimeout(() => dispatch(actions.setCrystalExplosionState(false)), 300)
         }
-        if (cameraState === PROJECTS_STATIC) setCameraPosition({position: cameraPosition.staticProjects});
+        if (cameraState === TRANSITION_FROM_MAIN_TO_PROJECTS) setCameraPosition({
+            position: cameraPosition.staticProjects,
+            config: {
+                mass: 100,
+                tension: 400,
+                friction: 400,
+                clamp: true,
+            }
+        }).then(() => {
+            dispatch(actions.setInterfaceAvailability(true));
+        });
+        if (cameraState === PROJECTS_STATIC) setCameraPosition({
+            position: cameraPosition.staticProjects,
+            fov: 50,
+            config: {
+                mass: 1,
+                tension: 170,
+                friction: 26,
+                clamp: true,
+            }
+        });
         if (cameraState === PROJECTS_SCROLLING) setCameraPosition({
             position: cameraPosition.scrollProjects,
             fov: 80,
-            onRest: () => setCameraPosition({fov: 50})
+            config: {
+                mass: 1,
+                tension: 170,
+                friction: 40,
+                clamp: true,
+            }
         });
         if (cameraState === CLOSE_LOOK) setCameraPosition({
             position: cameraPosition.closeLook,
             lookAt: cameraLookAt.lookAtProject,
             config: {
                 mass: 100,
-                tension: 300,
+                tension: 350,
                 friction: 300,
                 clamp: true,
             }
@@ -83,22 +108,11 @@ const ControlCamera: React.FC = () => {
             config: {
                 mass: 100,
                 tension: 400,
-                friction: 400,
+                friction: 300,
                 clamp: true,
-            }
+            },
+            delay: 500
         }).then(() => dispatch(actions.stopAnyAnimation()));
-        if (cameraState === TRANSITION_FROM_MAIN_TO_PROJECTS) setCameraPosition({
-            position: cameraPosition.staticProjects,
-            config: {
-                mass: 100,
-                tension: 400,
-                friction: 400,
-                clamp: true,
-            }
-        }).then(() => {
-            dispatch(actions.setInterfaceAvailability(true));
-            dispatch(actions.setMainPageState(false));
-        });
         if (cameraState === TRANSITION_TO_ABOUT_SECTION) {
             setCameraPosition({
                 position: cameraPosition.aboutMe,
@@ -107,7 +121,8 @@ const ControlCamera: React.FC = () => {
                     tension: 400,
                     friction: 400,
                     clamp: true,
-                }
+                },
+                delay: 1000
             }).then(() => dispatch(actions.stopAnyAnimation()));
             setTimeout(() => dispatch(actions.setCrystalExplosionState(false)), 300)
         }
@@ -127,4 +142,4 @@ const ControlCamera: React.FC = () => {
     return <animated.perspectiveCamera ref={ref} position={position}/>
 }
 
-export default React.memo(ControlCamera)
+export default React.memo(Camera)

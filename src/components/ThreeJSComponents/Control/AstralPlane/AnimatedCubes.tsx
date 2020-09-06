@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef} from "react";
+import React, {useEffect, useMemo} from "react";
 import * as THREE from 'three';
 import {shallowEqual, useSelector} from "react-redux";
 import {AppStateType} from "../../../../store/store";
@@ -27,7 +27,7 @@ const AnimatedCubes: React.FC = () => {
                 const position: Vector3Type = [
                     (i - xGrid / 2) * xSize,
                     (j - yGrid / 2) * ySize + 2,
-                    30 - Math.random()*2
+                    30 - Math.random() * 2 + 310
                 ];
                 positions.push(position)
             }
@@ -40,7 +40,7 @@ const AnimatedCubes: React.FC = () => {
         for (let i = 0; i < xGrid * yGrid; i++) {
             const x = Math.random() * 20 - 10;
             const y = Math.random() * 13 - 6.5;
-            const z = i * zDistance + 0.7 * zDistance * Math.random();
+            const z = i * zDistance + 0.7 * zDistance * Math.random() + 310;
             positions.push([x, y, z])
         }
         return positions
@@ -53,7 +53,7 @@ const AnimatedCubes: React.FC = () => {
             const row = i % 5;
             const column = Math.ceil(i / 5) - 1;
             const x = THREE.MathUtils.lerp(-28.75, 28.75, row / 4);
-            const z = THREE.MathUtils.lerp(-431.25, -488.75, column / 4);
+            const z = THREE.MathUtils.lerp(-29, 29, column / 4);
             positionsInAstralPlane.push([x, -200, z]);
 
             const scaleX = Math.random() * 4 + (column === 2 && row === 2 ? 95 :
@@ -85,30 +85,21 @@ const AnimatedCubes: React.FC = () => {
         }
     }));
 
-    const cancelsForAnimations = useRef<(() => void)[]>([]);
-
     useEffect(() => {
         if (transition === GEOMETRIES_TRANSITION_TO_ABOUT_SECTION) {
-            cancelsForAnimations.current.forEach(cancel => cancel());
-            cancelsForAnimations.current = [];
             setAnimation(i => ({
-                cancel: true
+                cancel: true,
+                loop: false
             })).then(() => setAnimation(i => ({
                 to: async (next) => {
                     await next({
-                        position: [projectsObservationPositions[i][0],projectsObservationPositions[i][1], -170],
-                        config: {duration: 400 + Math.random()*300}
-                    });
-                    await next({
-                        position: [i, -100, -200],
-                        rotation: [0, 0, Math.PI / 2],
-                        config: config.default
+                        position: [projectsObservationPositions[i][0], projectsObservationPositions[i][1], 50],
+                        config: config.default,
+                        delay: 300
                     });
                     await next({
                         position: positionsInAstralPlane[i],
-                        immediate: true
-                    });
-                    await next({
+                        rotation: [0, 0, Math.PI / 2],
                         scale: [0.3, scaleInAstralPlane[i][1], scaleInAstralPlane[i][2]],
                         immediate: true
                     });
@@ -123,19 +114,15 @@ const AnimatedCubes: React.FC = () => {
 
                 const scaleX = scaleInAstralPlane[i][0] + Math.random() * 8;
 
-                let cancelled = false;
-                const cancel = () => cancelled = true;
-                cancelsForAnimations.current.push(cancel)
-
                 return {
                     to: async (next) => {
-                        !cancelled && await next({
+                        await next({
                             scale: [scaleInAstralPlane[i][0], scaleInAstralPlane[i][1], scaleInAstralPlane[i][2]],
                             config: {duration: 1600 + Math.random() * 2000},
                             delay: 500 + Math.random() * 1000,
 
                         });
-                        !cancelled && await next({
+                        await next({
                             scale: [scaleX, scaleInAstralPlane[i][1], scaleInAstralPlane[i][2]],
                             config: {duration: 1600 + Math.random() * 2000},
                             delay: Math.random() * 500
@@ -146,23 +133,23 @@ const AnimatedCubes: React.FC = () => {
             }))
         }
         if (transition === GEOMETRIES_TRANSITION_FROM_CLOSE_LOOK) {
-            cancelsForAnimations.current.forEach(cancel => cancel());
-            cancelsForAnimations.current = [];
             setAnimation(i => ({
                 cancel: true,
+                loop: false
             })).then(() => setAnimation(i => ({
                 position: projectsObservationPositions[i],
                 scale: [0.7, 0.7, 0.7],
                 rotation: rotationDirections[i],
+                config: {
+                    tension: 90,
+                    friction: 45
+                },
             }))).then(() => setAnimation(i => {
-                let cancelled = false;
-                const cancel = () => cancelled = true;
-                cancelsForAnimations.current.push(cancel)
                 return {
                     to: async next => {
-                        !cancelled && await next ({rotation: rotationDirections[i]})
-                        !cancelled && await next ({rotation: rotationDirections[i].map(item => item + 2*Math.PI)})
-                        !cancelled && await next ({rotation: rotationDirections[i], immediate: true})
+                        await next({rotation: rotationDirections[i]})
+                        await next({rotation: rotationDirections[i].map(item => item + 2 * Math.PI)})
+                        await next({rotation: rotationDirections[i], immediate: true})
                     },
                     loop: true,
                     config: (prop) =>
@@ -171,10 +158,9 @@ const AnimatedCubes: React.FC = () => {
             }))
         }
         if (transition === GEOMETRIES_TRANSITION_FROM_ABOUT_SECTION) {
-            cancelsForAnimations.current.forEach(cancel => cancel());
-            cancelsForAnimations.current = [];
             setAnimation(i => ({
                 cancel: true,
+                loop: false
             })).then(() => setAnimation(i => ({
                 scale: [0.7, scaleInAstralPlane[i][1], scaleInAstralPlane[i][2]],
                 config: config.default
@@ -184,28 +170,27 @@ const AnimatedCubes: React.FC = () => {
             }))).then(() => setAnimation(i => ({
                 to: async (next) => {
                     await next({
-                        position: [projectsObservationPositions[i][0], projectsObservationPositions[i][1], -170],
+                        position: [projectsObservationPositions[i][0], projectsObservationPositions[i][1], 0],
                         scale: [0.7, 0.7, 0.7],
                         rotation: rotationDirections[i],
                         config: {duration: 400 + Math.random() * 300}
                     });
                     await next({
                         position: projectsObservationPositions[i],
-                        config: {duration: 400 + Math.random() * 300}
+                        rotation: rotationDirections[i],
+                        config: {
+                            mass: 1,
+                            tension: 150,
+                            friction: 40
+                        }
                     });
                 }
-            }))).then(() => setAnimation(i => ({
-                position: projectsObservationPositions[i],
-                rotation: rotationDirections[i],
             }))).then(() => setAnimation(i => {
-                let cancelled = false;
-                const cancel = () => cancelled = true;
-                cancelsForAnimations.current.push(cancel)
                 return {
                     to: async next => {
-                        !cancelled && await next ({rotation: rotationDirections[i]})
-                        !cancelled && await next ({rotation: rotationDirections[i].map(item => item + 2*Math.PI)})
-                        !cancelled && await next ({rotation: rotationDirections[i], immediate: true})
+                        await next({rotation: rotationDirections[i]})
+                        await next({rotation: rotationDirections[i].map(item => item + 2 * Math.PI)})
+                        await next({rotation: rotationDirections[i], immediate: true})
                     },
                     loop: true,
                     config: (prop) =>
@@ -214,58 +199,54 @@ const AnimatedCubes: React.FC = () => {
             }))
         }
         if (transition === GEOMETRIES_TRANSITION_TO_CLOSE_LOOK) {
-            cancelsForAnimations.current.forEach(cancel => cancel());
-            cancelsForAnimations.current = [];
             setAnimation(i => ({
-                cancel: true
+                cancel: true,
+                loop: false
             })).then(() => setAnimation(i => ({
                 position: closeLookPositions[i],
                 scale: [1, 1, 1],
                 rotation: [0, 0, 0],
                 config: (prop) =>
-                    prop !== 'rotation' ? {
+                    prop === 'rotation' ? {
                         mass: 1,
-                        tension: 214,
-                        friction: 120,
+                        tension: 100,
+                        friction: 40 + (xGrid * yGrid - i),
                         clamp: true,
                     } : {
                         mass: 1,
-                        tension: 70 + 50 * Math.random(),
-                        friction: 40,
+                        tension: 170,
+                        friction: 30,
                         clamp: true,
-                    }
-            }))).then(() => {
-
-                setAnimation(i => ({
-                    to: async (next) => {
-                        let cancelled = false;
-                        const cancel = () => cancelled = true;
-                        cancelsForAnimations.current.push(cancel)
-                        !cancelled && await next({
-                            position: [closeLookPositions[i][0], closeLookPositions[i][1], closeLookPositions[i][2] + Math.random()*3],
-                            config: {duration: 200 + Math.random() * 300},
-                            delay: Math.random() * 500
-                        });
-                        !cancelled && await next({
-                            position: [closeLookPositions[i][0], closeLookPositions[i][1], closeLookPositions[i][2] +Math.random()*3],
-                            config: {duration: 200 + Math.random() * 300},
-                            delay: Math.random() * 500
-                        })
                     },
-                    loop: true
-                }))
+                delay: (prop) =>
+                    prop === 'rotation' ? 0 : 1000 + (xGrid * yGrid - i) * 100
+            }))).then(() => {
+                setAnimation(i => {
+                    return {
+                        to: async (next) => {
+                            await next({
+                                position: [closeLookPositions[i][0], closeLookPositions[i][1], closeLookPositions[i][2] + Math.random() * 3],
+                                config: {duration: 200 + Math.random() * 300},
+                                delay: Math.random() * 500
+                            });
+                            await next({
+                                position: [closeLookPositions[i][0], closeLookPositions[i][1], closeLookPositions[i][2] + Math.random() * 3],
+                                config: {duration: 200 + Math.random() * 300},
+                                delay: Math.random() * 500
+                            })
+                        },
+                        loop: true
+                    }
+                })
             });
         }
         if (transition === null) {
             setAnimation(i => {
-                let cancelled = false;
-                const cancel = () => cancelled = true;
-                cancelsForAnimations.current.push(cancel)
                 return {
                     to: async next => {
-                        !cancelled && await next ({rotation: rotationDirections[i]})
-                        !cancelled && await next ({rotation: rotationDirections[i].map(item => item + 2*Math.PI)})
-                        !cancelled && await next ({rotation: rotationDirections[i], immediate: true})
+                        await next({rotation: rotationDirections[i]});
+                        await next({rotation: rotationDirections[i].map(item => item + 2 * Math.PI)});
+                        await next({rotation: rotationDirections[i], immediate: true});
                     },
                     loop: true,
                     config: (prop) =>
@@ -273,7 +254,8 @@ const AnimatedCubes: React.FC = () => {
                 }
             })
         }
-    }, [transition]);
+    }, [transition, setAnimation, closeLookPositions, positionsInAstralPlane, rotationDirections,
+        scaleInAstralPlane, projectsObservationPositions]);
 
     return (
         <>
@@ -282,7 +264,8 @@ const AnimatedCubes: React.FC = () => {
                                scale={scale as unknown as Vector3Type}
                                rotation={rotation as unknown as Vector3Type}>
                     <boxBufferGeometry attach="geometry" args={[xSize, ySize, ySize, 5, 5, 5]}/>
-                    <meshStandardMaterial attach="material" color="#6a040f" roughness={0.7} shadowSide={THREE.FrontSide}/>
+                    <meshStandardMaterial attach="material" color="#6a040f" roughness={0.7}
+                                          shadowSide={THREE.FrontSide}/>
                 </animated.mesh>
             )}
         </>

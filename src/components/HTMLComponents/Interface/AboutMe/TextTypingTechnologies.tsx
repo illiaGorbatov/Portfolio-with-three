@@ -8,7 +8,8 @@ const Wrapper = styled.div`
   font-family: 'Relative-Book';
   color: red;
   letter-spacing: 2px;
-  font-size: 15px;
+  font-size: 20px;
+  padding-bottom: 5px;
   position: relative;
 `;
 

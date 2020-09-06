@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {createGlobalStyle} from "styled-components";
 import styled from "styled-components/macro";
 import InitialCanvas from "./components/ThreeJSComponents/InitialCanvas";
@@ -38,6 +38,12 @@ const Wrapper = styled.div`
 `;
 
 const App = () => {
+
+    useEffect(() => {
+        const reloadFunction = () => document.location.reload()
+        window.addEventListener("orientationchange", reloadFunction)
+        return () => window.removeEventListener("orientationchange", reloadFunction)
+    }, []);
 
     return (
         <>

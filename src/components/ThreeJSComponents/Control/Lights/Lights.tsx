@@ -12,9 +12,8 @@ const Lights: React.FC = () => {
     return (
         <>
             <spotLight shadow-mapSize-width={2048} shadow-mapSize-height={2048} distance={200} angle={0.4}
-                       penumbra={0.3} castShadow color={"#ff0000"} position={[0, 0, -310]}/>
-            <animated.pointLight color={"#ff0000"} position={[0, 1, -310]} intensity={1}
-                                 distance={distance} decay={0.5}/>
+                       penumbra={0.3} castShadow color={"#ff0000"}/>
+            <animated.pointLight color={"#ff0000"} intensity={1} distance={distance} decay={0.5}/>
         </>
     );
 }

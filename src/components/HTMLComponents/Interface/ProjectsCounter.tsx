@@ -11,7 +11,6 @@ const Wrapper = styled(animated.div)`
   top: 10%;
   right: 6%;
   height: 80%;
-  width: 80px;
 `;
 
 const ProgressLine = styled.div<{$visible: boolean}>`
@@ -25,20 +24,6 @@ const ProgressLine = styled.div<{$visible: boolean}>`
   transition: ${props => props.$visible ? 'height .3s .3s' : 'height .3s'};
 `;
 
-const ProgressBlock = styled(animated.div)<{$visible: boolean}>`
-  top: ${props => props.$visible ? '0px' : '-500px'};
-  position: absolute;
-  width: 88px;
-  height: 88px;
-  background-color: black;
-  color: white;
-  cursor: grab;
-  transition: ${props => props.$visible ? 'top .3s' : 'top .3s .3s'};
-  &:active {
-    cursor: grabbing
-  }
-`;
-
 const CurrentProject = styled.div`
   position: absolute;
   font-size: 17px;
@@ -46,6 +31,7 @@ const CurrentProject = styled.div`
   left: 25%;
   top: 50%;
   transform: translateY(-100%);
+  transition: left .3s, transform .3s;
 `;
 
 const AllProjects = styled(CurrentProject)`
@@ -59,9 +45,34 @@ const Border = styled.div`
   height: 1px;
   top: 50%;
   left: 50%;
-  transform-origin: 50%;
   transform: translateX(-50%) translateY(-50%) rotate(-45deg);
   background-color: white;
+  transition: transform .3s;
+`;
+
+const ProgressBlock = styled(animated.div)<{$visible: boolean}>`
+  top: ${props => props.$visible ? '0px' : '-500px'};
+  position: relative;
+  width: 88px;
+  height: 88px;
+  background-color: black;
+  color: white;
+  cursor: grab;
+  transition: ${props => props.$visible ? 'top .3s' : 'top .3s .3s'};
+  &:active {
+    cursor: grabbing
+  }
+  &:hover ${CurrentProject}, &:active ${CurrentProject}{
+      left: 0;
+      transform: translateY(-50%) translateX(40%);
+  }
+  &:hover ${AllProjects}, &:active ${AllProjects}{
+      left: 100%;
+      transform: translateY(-50%) translateX(-140%);
+  }
+  &:hover ${Border}, &:active ${Border}{
+      transform: rotate(0deg) translateX(-50%) translateY(-50%);
+  }
 `;
 
 type PropsType = {

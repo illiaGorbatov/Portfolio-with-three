@@ -61,11 +61,11 @@ const HTMLElementsContainer: React.FC = () => {
             dispatch(actions.setScrollsCount(1))
             setScroll({
                 top: 0,
-            }).then(() => dispatch(actions.stopScrolling()))
+            });
+            setTimeout(() => dispatch(actions.stopScrolling()), 300)
         }
     }, [isInterfaceAvailable, isAboutMenuOpened, isMainPageFocused, setScroll, dispatch, scrollsCount, project]);
 
-console.log(isInterfaceAvailable, scrollingState)
     useWheel(({direction: [, y]}) => {
         if (scrollingState || scrollingState || project !== null || isAboutMenuOpened || druggingState) return;
         if (y > 0 && scrollsCount < projectsInfo.length) {

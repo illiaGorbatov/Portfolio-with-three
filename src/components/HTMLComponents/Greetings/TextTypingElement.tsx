@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import styled, {keyframes} from 'styled-components/macro';
+import styled, {css, keyframes} from 'styled-components/macro';
 import {animatedSkillsStack} from "../../../textContent/TextContent";
 
 const blink = keyframes`
@@ -17,13 +17,7 @@ const blink = keyframes`
   }
 `;
 
-const Wrapper = styled.div`
-  text-align:center;
-  font-family: 'Relative-Book';
-  color: red;
-  letter-spacing: 2px;
-  font-size: 20px;
-  &::after {
+const complexMixin = css`&::after {
       content: '';
       display: inline-block;
       margin-left: 3px;
@@ -33,7 +27,16 @@ const Wrapper = styled.div`
       animation-iteration-count: infinite;
       height: 24px;
       width: 8px;
-  }
+  }`;
+
+const Wrapper = styled.div<{$visible: boolean}>`
+  text-align:center;
+  font-family: 'Relative-Book';
+  font-weight: bold;
+  color: red;
+  letter-spacing: 2px;
+  font-size: 25px;
+  ${props => props.$visible && complexMixin}
 `;
 
 type PropsType = {
@@ -48,7 +51,6 @@ const TextTypingElement: React.FC<PropsType> = ({visible}) => {
     const [isDeleting, setDeleting] = useState<boolean>(false);
     const [loopNumber, setLoopNumber] = useState<number>(0);
     const [typingSpeed, setTypingSpeed] = useState<number>(150);
-    const [invisible, setInvisible] = useState<boolean>(false);
 
     const handleType = () => {
         const i = loopNumber % textArray.length;
@@ -72,23 +74,22 @@ const TextTypingElement: React.FC<PropsType> = ({visible}) => {
         } else {
             setText(fullText.substring(0, text.length - 1));
             setTypingSpeed(30)
-            if (text === '') setInvisible(true)
+            if (text === '') return
         }
     };
 
     useEffect(() => {
         let timer: number
-        if (!invisible) timer = setTimeout(() => handleType(), typingSpeed)
+        timer = setTimeout(() => handleType(), typingSpeed)
         return () => clearTimeout(timer)
     });
 
-    if (invisible) return null
 
     return (
-        <Wrapper>
+        <Wrapper $visible={visible}>
             {text}
         </Wrapper>
     )
 }
 
-export default TextTypingElement
+export default React.memo(TextTypingElement)

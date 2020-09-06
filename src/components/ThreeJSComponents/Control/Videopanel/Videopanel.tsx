@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import * as THREE from 'three';
 import {shallowEqual, useSelector} from "react-redux";
 import {AppStateType} from "../../../../store/store";
@@ -16,35 +16,37 @@ const VideoPanel: React.FC = () => {
 
     const ref = useRef<THREE.Group>(new THREE.Group());
 
+    const [projectMemo, setProjectMemo] = useState<number>(0);
+
     const videoMaterial = useMemo(() => {
-        if (project !== null) {
-            const texture = new THREE.VideoTexture(videos.find(item => item.projectIndex === project)!.video);
-            texture.minFilter = THREE.LinearFilter;
-            texture.magFilter = THREE.LinearFilter;
-            texture.format = THREE.RGBFormat;
-            const material = new THREE.MeshBasicMaterial({color: 0xffffff, map: texture});
-            material.transparent = false;
-            return material
-        } else return new THREE.MeshBasicMaterial({color: 0xffffff})
-    }, [project]);
+        const texture = new THREE.VideoTexture(videos.find(item => item.projectIndex === projectMemo)!.video);
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.format = THREE.RGBFormat;
+        const material = new THREE.MeshBasicMaterial({color: 0xffffff, map: texture});
+        material.transparent = false;
+        return material
+    }, [videos, projectMemo]);
 
     const [{position}, setAnimation] = useSpring(() => ({
-        position: [80, 0, 100]
+        position: [20, 2.5, 60]
     }));
 
-    const projectMemo = useRef<null | number>(null);
+    useEffect(() => {
+        if (project !== null) setProjectMemo(project)
+    }, [project])
 
     useEffect(() => {
-        if (videoPlayerState && project !== null) {
-            setAnimation({position: [3, 0, 45]})
-            videos[project].video.play();
-            projectMemo.current = project
+        if (videoPlayerState) {
+            setAnimation({position: [3, 2.5, 45]}).then(() => {
+                videos[projectMemo!].video.play();
+            })
         }
-        if (videoPlayerState && project === null) {
-            setAnimation({position: [80, 0, 100]})
-            videos[projectMemo.current!].video.pause()
+        if (!videoPlayerState && projectMemo !== null) {
+            setAnimation({position: [20, 2.5, 60]})
+            videos[projectMemo!].video.pause()
         }
-    }, [videoPlayerState, project]);
+    }, [videoPlayerState, setAnimation, videos, projectMemo]);
 
     useFrame(() => {
         ref.current.lookAt(...[-10, 5, 65] as Vector3Type)

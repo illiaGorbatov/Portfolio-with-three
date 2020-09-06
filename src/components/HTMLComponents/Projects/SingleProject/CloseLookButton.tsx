@@ -1,7 +1,14 @@
 import React from 'react';
-import styled from 'styled-components/macro';
+import styled, {css, keyframes} from 'styled-components/macro';
 import {useDispatch} from "react-redux";
 import {actions} from "../../../../store/InterfaceReducer";
+
+const hoverAnimation = keyframes`
+  0% {right: 0}
+  50% {right: 100%}
+  51% {right: -100%}
+  100% {right: 0}
+`;
 
 const ButtonWrapper = styled.div`
   position: absolute;
@@ -25,19 +32,23 @@ const Line = styled.div<{$visible: boolean}>`
   transform: translateY(-120%);
 `;
 
-const Button = styled.div`
-  font-family: 'Relative-Book';
-  letter-spacing: 2px;
-  font-size: 20px;
-  text-transform: uppercase;
-  overflow: hidden;
-`;
-
 const AnimatedText = styled.div<{$visible: boolean}>`
   position: relative;
   transform: translateY(${props => props.$visible ? 0 : -100}%);
   transition: transform ${props => props.$visible ? '.4s .3s' : '.2s'};
 `;
+
+const complexMixin = css`&:hover ${AnimatedText}{animation: .4s ${hoverAnimation} ease-in-out}`;
+
+const Button = styled.div<{$visible: boolean}>`
+  font-family: 'Relative-Book';
+  letter-spacing: 2px;
+  font-size: 17px;
+  text-transform: uppercase;
+  overflow: hidden;
+  ${props => props.$visible && complexMixin}
+`;
+
 
 type PropsType = {
     projectIndex: number,
@@ -55,7 +66,7 @@ const CloseLookButton: React.FC<PropsType> = ({projectIndex, visible}) => {
     return (
         <ButtonWrapper>
             <Line $visible={visible}/>
-            <Button onClick={lookAtProject}>
+            <Button onClick={lookAtProject} $visible={visible}>
                 <AnimatedText $visible={visible}>
                     About project
                 </AnimatedText>

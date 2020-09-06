@@ -47,7 +47,7 @@ export const projectsInfo: ProjectType[] = [
     }];
 
 export const aboutMe = [
-    "I'm a simple guy who loves to create unusual things.",
+    "I'm a simple guy who likes to create unusual things.",
     "New experiences and challenges are my current objectives.",
     "No matter the circumstances, I get my way."
 ]

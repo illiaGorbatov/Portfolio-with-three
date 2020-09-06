@@ -21,15 +21,16 @@ const Sun = () => {
             tension: 400,
             friction: 400,
             clamp: true,
-        }
+        },
+        delay: isCrystalExploded ? 0 : 700
     });
 
     useLayoutEffect(() => {
         setTimeout(() => dispatch(actions.setSun(sunRef.current)), 50)
-    }, [])
+    }, [dispatch])
 
     return (
-        <animated.mesh ref={sunRef} position={[0, 0, -310]} scale={scale as unknown as Vector3Type}>
+        <animated.mesh ref={sunRef} scale={scale as unknown as Vector3Type}>
             <sphereBufferGeometry attach="geometry" args={[5, 10, 10]}/>
             <meshBasicMaterial attach="material" color={"#FF0000"} />
         </animated.mesh>

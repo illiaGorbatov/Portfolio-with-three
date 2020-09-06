@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, {keyframes} from 'styled-components/macro';
+import styled, {css, keyframes} from 'styled-components/macro';
 
 const hoverAnimation = keyframes`
   0% {top: 0}
@@ -41,6 +41,8 @@ const AnimatedWrapper = styled.div<{ $visible: boolean}>`
   top: ${props => !props.$visible ? '100%' : 0}
 `;
 
+const complexMixin = css`&:hover ${AnimatedWrapper} {animation: .5s ${hoverAnimation} ease-in-out}`;
+
 const ArrowWrapper = styled.div<{ $visible: boolean}>`
   position: absolute;
   left: 50%;
@@ -53,7 +55,7 @@ const ArrowWrapper = styled.div<{ $visible: boolean}>`
   &:hover ${ArrowCenter}, &:hover ${ArrowLeft} {
     width: 2px
   }
-  &:hover ${AnimatedWrapper} {animation: .5s ${hoverAnimation} ease-in-out}
+  ${props => props.$visible && complexMixin}
 `;
 
 type PropsType = {

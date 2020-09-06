@@ -11,13 +11,13 @@ const Room: React.FC = () => {
 
     const {extrudeShape, extrudeSettings} = useMemo(() => {
 
-        let extrudeShape = new THREE.Shape();
+        const extrudeShape = new THREE.Shape();
         extrudeShape.moveTo(-51.2, -19.2);
         extrudeShape.lineTo(51.2, -19.2);
         extrudeShape.lineTo(51.2, 19.2);
         extrudeShape.lineTo(-51.2, 19.2);
 
-        let hole = new THREE.Path();
+        const hole = new THREE.Path();
         hole.moveTo(-32, -12.8);
         hole.lineTo(32, -12.8);
         hole.lineTo(32, 12.8);
@@ -64,10 +64,30 @@ const Room: React.FC = () => {
                 }
             }
         });
-        if (project === null) setSprings(i => ({
-
-        }))
-    }, [project])
+        if (project === null) setSprings(i => {
+            if (i === 0) return {
+            to: async (next) => {
+                await next({
+                    scale: [0.3, 1, 1],
+                });
+                await next({
+                    scale: [0.6, 1, 1],
+                })
+            }
+        }
+        return {
+            to: async (next) => {
+                await next({
+                    scale: [0.4, 1, 2],
+                    delay: 1500
+                });
+                await next({
+                    scale: [0.6, 1, 2],
+                })
+            }
+        }
+        })
+    }, [project, setSprings])
 
     return (
         <>
