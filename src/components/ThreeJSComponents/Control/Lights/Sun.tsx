@@ -1,39 +1,40 @@
 import React, {useLayoutEffect, useRef} from 'react';
 import * as THREE from 'three';
-import {shallowEqual, useDispatch, useSelector} from "react-redux";
-import {animated, useSpring} from 'react-spring/three';
-import {AppStateType} from "../../../../store/store";
+import {useDispatch} from "react-redux";
+import {animated, SpringValue, useSpring} from 'react-spring/three';
 import {Vector3Type} from "../../../../utils/StringVariablesAndTypes";
 import {actions} from "../../../../store/InterfaceReducer";
+import {projectsInfo} from "../../../../textAndPrijectsInfo/TextContent";
 
+type PropsType = {
+    scale: SpringValue<number[]>,
+    intensity: SpringValue<number>,
+    distance: SpringValue<number>,
+    scrollsCount: number
+}
 
-const Sun = () => {
+const Sun: React.FC<PropsType> = ({scale, distance, intensity, scrollsCount}) => {
 
-    const isCrystalExploded = useSelector((state: AppStateType) => state.interface.isCrystalExploded, shallowEqual);
     const dispatch = useDispatch();
 
-    const sunRef  = useRef<THREE.Mesh>(new THREE.Mesh())
+    const {color} = useSpring({
+        color: scrollsCount === 0 ? "#ff0000" : projectsInfo[scrollsCount-1].color
+    })
 
-    const {scale} = useSpring({
-        scale: isCrystalExploded ? [15, 15, 15] : [0.1, 0.1, 0.1],
-        config: {
-            mass: 100,
-            tension: 400,
-            friction: 400,
-            clamp: true,
-        },
-        delay: isCrystalExploded ? 0 : 700
-    });
+    const sunRef = useRef<THREE.Mesh>(new THREE.Mesh());
 
     useLayoutEffect(() => {
         setTimeout(() => dispatch(actions.setSun(sunRef.current)), 50)
-    }, [dispatch])
+    }, [dispatch]);
 
     return (
-        <animated.mesh ref={sunRef} scale={scale as unknown as Vector3Type}>
-            <sphereBufferGeometry attach="geometry" args={[5, 10, 10]}/>
-            <meshBasicMaterial attach="material" color={"#FF0000"} />
-        </animated.mesh>
+        <>
+            <animated.mesh ref={sunRef} scale={scale as unknown as Vector3Type}>
+                <sphereBufferGeometry attach="geometry" args={[5, 10, 10]}/>
+                <animated.meshBasicMaterial attach="material" color={color}/>
+            </animated.mesh>
+            <animated.pointLight color={color} intensity={intensity} distance={distance} decay={0.5}/>
+        </>
     );
 };
 

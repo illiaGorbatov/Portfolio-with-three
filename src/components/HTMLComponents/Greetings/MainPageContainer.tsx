@@ -1,11 +1,9 @@
-import React, {useCallback} from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components/macro';
 import TextTypingElement from "./TextTypingElement";
 import Arrow from "./Arrow";
-import {shallowEqual, useDispatch, useSelector} from "react-redux";
-import {AppStateType} from "../../../store/store";
-import {actions} from "../../../store/InterfaceReducer";
 import BigLogo from './BigLogo';
+import Preloader from "../preloader/Preloader";
 
 const MainPageWrapper = styled.div`
   width: 100vw;
@@ -19,27 +17,24 @@ const MyInfoWrapper = styled.div`
   position: relative;
 `;
 
+type PropsType = {
+    loadedState: boolean,
+    isMainPageFocused: boolean,
+    onArrowClickHandler: () => void
+}
 
-const MainPageContainer: React.FC = () => {
-
-    const isMainPageFocused = useSelector((state: AppStateType) => state.interface.isMainPageFocused, shallowEqual);
-
-    const dispatch = useDispatch();
-
-    const onArrowClickHandler = useCallback(() => {
-        dispatch(actions.transitionFromMainPaige())
-    }, [dispatch]);
+const MainPageContainer: React.FC<PropsType> = ({loadedState, isMainPageFocused, onArrowClickHandler}) => {
 
     return (
         <MainPageWrapper>
             <MyInfoWrapper>
-                <BigLogo visible={isMainPageFocused}/>
-                <TextTypingElement visible={isMainPageFocused}/>
+                <BigLogo visible={isMainPageFocused && loadedState}/>
+                <TextTypingElement visible={isMainPageFocused && loadedState}/>
             </MyInfoWrapper>
-            <Arrow visible={isMainPageFocused} onArrowClickHandler={onArrowClickHandler}/>
+            <Arrow visible={isMainPageFocused && loadedState} onArrowClickHandler={onArrowClickHandler}/>
         </MainPageWrapper>
 
     )
 }
 
-export default MainPageContainer
+export default React.memo(MainPageContainer)

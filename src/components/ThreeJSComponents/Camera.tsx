@@ -55,8 +55,15 @@ const Camera: React.FC = () => {
 
     useEffect(() => {
         if (cameraState === MAIN_SCENE_STATIC) {
-            setCameraPosition({position: cameraPosition.mainDisplay}).then(() => dispatch(actions.stopTransitionToMainPaige()));
-            setTimeout(() => dispatch(actions.setCrystalExplosionState(false)), 300)
+            setCameraPosition({
+                position: cameraPosition.mainDisplay,
+                config: {
+                    mass: 100,
+                    tension: 400,
+                    friction: 400,
+                    clamp: true,
+                }
+            }).then(() => dispatch(actions.stopTransitionToMainPaige()));
         }
         if (cameraState === TRANSITION_FROM_MAIN_TO_PROJECTS) setCameraPosition({
             position: cameraPosition.staticProjects,
@@ -85,7 +92,7 @@ const Camera: React.FC = () => {
             config: {
                 mass: 1,
                 tension: 170,
-                friction: 40,
+                friction: 50,
                 clamp: true,
             }
         });
@@ -122,14 +129,12 @@ const Camera: React.FC = () => {
                     friction: 400,
                     clamp: true,
                 },
-                delay: 1000
+                delay: 1200
             }).then(() => dispatch(actions.stopAnyAnimation()));
-            setTimeout(() => dispatch(actions.setCrystalExplosionState(false)), 300)
         }
         if (cameraState === TRANSITION_FROM_ABOUT_SECTION_TO_PROJECTS_STATIC) {
             setCameraPosition({position: cameraPosition.staticProjects})
                 .then(() => dispatch(actions.stopAnyAnimation()))
-            setTimeout(() => dispatch(actions.setCrystalExplosionState(true)), 300)
         }
         console.log(cameraState)
     }, [cameraState, setCameraPosition, dispatch]);

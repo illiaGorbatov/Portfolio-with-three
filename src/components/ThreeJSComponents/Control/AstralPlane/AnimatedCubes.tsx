@@ -111,49 +111,22 @@ const AnimatedCubes: React.FC = () => {
                 const row = (i + 1) % 5;
                 const column = Math.ceil((i + 1) / 5) - 1;
                 if (row === 2 && column === 2) return {to: false};
-
                 const scaleX = scaleInAstralPlane[i][0] + Math.random() * 8;
-
                 return {
                     to: async (next) => {
                         await next({
                             scale: [scaleInAstralPlane[i][0], scaleInAstralPlane[i][1], scaleInAstralPlane[i][2]],
-                            config: {duration: 1600 + Math.random() * 2000},
+                            config: {duration: 1000 + Math.random() * 2000},
                             delay: 500 + Math.random() * 1000,
 
                         });
                         await next({
                             scale: [scaleX, scaleInAstralPlane[i][1], scaleInAstralPlane[i][2]],
-                            config: {duration: 1600 + Math.random() * 2000},
+                            config: {duration: 1000 + Math.random() * 2000},
                             delay: Math.random() * 500
                         });
                     },
                     loop: true,
-                }
-            }))
-        }
-        if (transition === GEOMETRIES_TRANSITION_FROM_CLOSE_LOOK) {
-            setAnimation(i => ({
-                cancel: true,
-                loop: false
-            })).then(() => setAnimation(i => ({
-                position: projectsObservationPositions[i],
-                scale: [0.7, 0.7, 0.7],
-                rotation: rotationDirections[i],
-                config: {
-                    tension: 90,
-                    friction: 45
-                },
-            }))).then(() => setAnimation(i => {
-                return {
-                    to: async next => {
-                        await next({rotation: rotationDirections[i]})
-                        await next({rotation: rotationDirections[i].map(item => item + 2 * Math.PI)})
-                        await next({rotation: rotationDirections[i], immediate: true})
-                    },
-                    loop: true,
-                    config: (prop) =>
-                        prop === 'rotation' ? {duration: 10000} : {}
                 }
             }))
         }
@@ -239,6 +212,33 @@ const AnimatedCubes: React.FC = () => {
                     }
                 })
             });
+        }
+        if (transition === GEOMETRIES_TRANSITION_FROM_CLOSE_LOOK) {
+            setAnimation(i => ({
+                cancel: true,
+                loop: false
+            })).then(() => setAnimation(i => ({
+                position: closeLookPositions[i]
+            }))).then(() => setAnimation(i => ({
+                position: projectsObservationPositions[i],
+                scale: [0.7, 0.7, 0.7],
+                rotation: rotationDirections[i],
+                config: {
+                    tension: 100,
+                    friction: 60
+                },
+            }))).then(() => setAnimation(i => {
+                return {
+                    to: async next => {
+                        await next({rotation: rotationDirections[i]})
+                        await next({rotation: rotationDirections[i].map(item => item + 2 * Math.PI)})
+                        await next({rotation: rotationDirections[i], immediate: true})
+                    },
+                    loop: true,
+                    config: (prop) =>
+                        prop === 'rotation' ? {duration: 10000} : {}
+                }
+            }))
         }
         if (transition === null) {
             setAnimation(i => {

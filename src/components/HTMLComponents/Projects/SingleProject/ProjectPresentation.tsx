@@ -6,6 +6,10 @@ import {actions} from "../../../../store/InterfaceReducer";
 import CloseLookButton from "./CloseLookButton";
 // @ts-ignore
 import video from "../../../../assets/videos/testVid.mp4"
+// @ts-ignore
+import counter from "../../../../assets/videos/counter.mp4"
+// @ts-ignore
+import todoList from "../../../../assets/videos/toDoList.mp4"
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -18,7 +22,7 @@ const VideoWrapper = styled.div`
   top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
-  width: 70%;
+  width: 60%;
   max-width: 1000px;
   height: auto;
   display: grid;
@@ -39,6 +43,8 @@ type PropsType = {
     currentlyLookedProject: number | null
 }
 
+const videos = [counter, todoList, video];
+
 const ProjectPresentation: React.FC<PropsType> = ({projectIndex, isDrugging, isScrolling,
                                                       scrollsCount, currentlyLookedProject}) => {
 
@@ -51,6 +57,9 @@ const ProjectPresentation: React.FC<PropsType> = ({projectIndex, isDrugging, isS
     }, [dispatch, projectIndex]);
 
     useEffect(() => {
+        if (scrollsCount-1 === projectIndex && (isScrolling || isDrugging) && currentlyLookedProject === null) {
+            videoRef.current!.currentTime = 0;
+        }
         if (scrollsCount-1 === projectIndex && !isScrolling && !isDrugging && currentlyLookedProject === null){
             videoRef.current!.play()
         }
@@ -63,7 +72,7 @@ const ProjectPresentation: React.FC<PropsType> = ({projectIndex, isDrugging, isS
         <Wrapper>
             <VideoWrapper>
                 <Video muted loop ref={videoRef}>
-                    <source src={video} type="video/mp4"/>
+                    <source src={videos[projectIndex]} type="video/mp4"/>
                 </Video>
                 <ProjectAnnotation isDrugging={isDrugging} isScrolling={isScrolling} projectIndex={projectIndex}/>
                 <CloseLookButton projectIndex={projectIndex} visible={!isScrolling && !isDrugging}/>

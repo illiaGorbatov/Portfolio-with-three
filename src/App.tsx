@@ -6,6 +6,7 @@ import HTMLElementsContainer from "./components/HTMLComponents/HTMLElementsConta
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {far} from "@fortawesome/free-regular-svg-icons";
 import {fas} from "@fortawesome/free-solid-svg-icons";
+import Preloader from "./components/HTMLComponents/preloader/Preloader";
 
 library.add(far, fas);
 
@@ -48,6 +49,7 @@ const App = () => {
     return (
         <>
             <GlobalStyles/>
+            <Preloader/>
             <HTMLElementsContainer/>
             <Wrapper>
                 <InitialCanvas/>

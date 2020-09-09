@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components/macro';
-import {animatedBigSkillsStack} from "../../../../textContent/TextContent";
+import {animatedBigSkillsStack} from "../../../../textAndPrijectsInfo/TextContent";
 
 
 const Wrapper = styled.div`

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/macro';
 import ProjectPresentation from "./SingleProject/ProjectPresentation";
-import {projectsInfo} from "../../../textContent/TextContent";
+import {projectsInfo} from "../../../textAndPrijectsInfo/TextContent";
 import {shallowEqual, useSelector} from "react-redux";
 import {AppStateType} from "../../../store/store";
 

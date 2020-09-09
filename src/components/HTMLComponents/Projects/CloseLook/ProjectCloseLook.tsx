@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import styled from "styled-components/macro";
-import {projectsInfo, ProjectType} from "../../../../textContent/TextContent";
+import {projectsInfo, ProjectType} from "../../../../textAndPrijectsInfo/TextContent";
 import {animated, useSprings} from 'react-spring';
 import ProsAndConsTyping from "./ProsAndConsTyping";
 

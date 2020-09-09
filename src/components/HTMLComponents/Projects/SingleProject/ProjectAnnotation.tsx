@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/macro';
-import {projectsInfo} from "../../../../textContent/TextContent";
+import {projectsInfo} from "../../../../textAndPrijectsInfo/TextContent";
 
 const AnnotationWrapper = styled.div`
   position: absolute;

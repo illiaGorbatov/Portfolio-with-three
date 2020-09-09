@@ -6,11 +6,12 @@ import {animated, useSpring} from "react-spring/three";
 import {Vector3Type} from "../../../../utils/StringVariablesAndTypes";
 import VideoPlaneLight from "./VideoPlaneLight";
 import {useFrame} from "react-three-fiber";
+import isEqual from "react-fast-compare";
 
 
 const VideoPanel: React.FC = () => {
 
-    const videos = useSelector((state: AppStateType) => state.interface.videos, shallowEqual);
+    const videos = useSelector((state: AppStateType) => state.interface.videos, isEqual);
     const project = useSelector((state: AppStateType) => state.interface.currentlyLookedProject, shallowEqual);
     const videoPlayerState = useSelector((state: AppStateType) => state.interface.videoPlayerState, shallowEqual);
 
@@ -23,7 +24,7 @@ const VideoPanel: React.FC = () => {
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
         texture.format = THREE.RGBFormat;
-        const material = new THREE.MeshBasicMaterial({color: 0xffffff, map: texture});
+        const material = new THREE.MeshBasicMaterial({map: texture});
         material.transparent = false;
         return material
     }, [videos, projectMemo]);
@@ -32,9 +33,20 @@ const VideoPanel: React.FC = () => {
         position: [20, 2.5, 60]
     }));
 
+    const mouseX = useRef(0);
+    const mouseY = useRef(0);
+
     useEffect(() => {
-        if (project !== null) setProjectMemo(project)
-    }, [project])
+        const onMouseMoveHandler = (e: MouseEvent) => {
+            mouseX.current = e.clientX;
+            mouseY.current = e.clientY;
+        }
+        if (project !== null) {
+            setProjectMemo(project);
+            window.addEventListener('mousemove', onMouseMoveHandler);
+        }
+        return () => window.removeEventListener('mousemove', onMouseMoveHandler)
+    }, [project]);
 
     useEffect(() => {
         if (videoPlayerState) {
@@ -49,14 +61,20 @@ const VideoPanel: React.FC = () => {
     }, [videoPlayerState, setAnimation, videos, projectMemo]);
 
     useFrame(() => {
-        ref.current.lookAt(...[-10, 5, 65] as Vector3Type)
+        if (project !== null) {
+            const mouseXPercentage = mouseX.current / window.innerWidth;
+            const mouseYPercentage = mouseY.current / window.innerHeight;
+            const x = THREE.MathUtils.lerp(-10, 3, mouseXPercentage);
+            const y = THREE.MathUtils.lerp(7, -3, mouseYPercentage);
+            ref.current.lookAt(...[x, y, 65] as Vector3Type);
+        }
     })
 
     return (
         <animated.group position={position as unknown as Vector3Type} ref={ref}>
             {videoPlayerState && <VideoPlaneLight/>}
-            <mesh material={videoMaterial}>
-                <planeBufferGeometry attach="geometry" args={[14, 7]}/>
+            <mesh material={videoMaterial} scale={[1.2, 1.2, 1.2]}>
+                <planeBufferGeometry attach="geometry" args={[12.2, 7.40]}/>
             </mesh>
         </animated.group>
     )

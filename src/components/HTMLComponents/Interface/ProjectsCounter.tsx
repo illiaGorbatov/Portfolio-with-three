@@ -2,7 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import styled from 'styled-components/macro';
 import {animated, SpringStartFn, useSpring} from 'react-spring';
 import {useDrag} from "react-use-gesture";
-import {projectsInfo} from "../../../textContent/TextContent";
+import {projectsInfo} from "../../../textAndPrijectsInfo/TextContent";
 import {useDispatch} from "react-redux";
 import {actions} from "../../../store/InterfaceReducer";
 

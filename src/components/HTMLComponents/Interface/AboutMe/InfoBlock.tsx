@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components/macro';
 import {animated, useSprings} from 'react-spring';
-import {aboutMe} from "../../../../textContent/TextContent";
+import {aboutMe} from "../../../../textAndPrijectsInfo/TextContent";
 import TextTypingTechnologies from "./TextTypingTechnologies";
 
 const Wrapper = styled.div<{$visible: boolean}>`
@@ -19,7 +19,7 @@ const InnerCentralWrapper = styled.div`
   transform: translateY(-50%) translateX(-50%);
   width: 80%;
   text-align: left;
-  color: black;
+  color: white;
 `;
 
 const CommonWrapper = styled.div`

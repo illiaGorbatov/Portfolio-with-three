@@ -9,10 +9,10 @@ const hoverAnimation = keyframes`
   100% {left: 0}
 `;
 
-const MenuButton = styled.div<{$visible: boolean, $isAboutBlockOpened: boolean}>`
+const MenuButton = styled.div<{$visible: boolean}>`
   position: relative;
   transform-origin: 0 50%;
-  color: ${props => props.$isAboutBlockOpened ? 'black' : 'white'};
+  color: white;
   font-size: 20px;
   left: ${props => props.$visible ? '0' : '100%'};
   transition: left .4s;
@@ -46,6 +46,7 @@ const LeftContextButton: React.FC<PropsType> = ({
                                                 }) => {
 
     const [memoizedText, setText] = useState<string>('About Me');
+
     useEffect(() => {
         if (isAboutBlockOpened && visible) setText('Close');
         if (currentProject !== null && visible) setText('Back');
@@ -55,7 +56,7 @@ const LeftContextButton: React.FC<PropsType> = ({
     return (
         <MenuButtonWrapper $visible={visible}
             onClick={!visible ? undefined : currentProject !== null ? closeProject : !isAboutBlockOpened ? openInformation : closeInformation}>
-            <MenuButton $visible={visible} $isAboutBlockOpened={isAboutBlockOpened}>
+            <MenuButton $visible={visible}>
                 {memoizedText}
             </MenuButton>
         </MenuButtonWrapper>

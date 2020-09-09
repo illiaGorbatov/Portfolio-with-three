@@ -14,9 +14,6 @@ import {
     PROJECTS_SCROLLING,
     PROJECTS_STATIC,
     RETURNING_FROM_CLOSE_LOOK,
-    SET_ABOUT_MENU_STATE,
-    SET_CAMERA_STATE,
-    SET_CRYSTAL_STATE,
     SET_INTERFACE_AVAILABILITY,
     SET_MAIN_PAGE_STATE,
     SET_SCROLLS,
@@ -34,9 +31,13 @@ import {
     TRANSITION_TO_ABOUT_SECTION,
     STOP_ANY_ANIMATION,
     STOP_TRANSITION_TO_MAIN_PAGE,
+    SET_LOADED_STATE,
+    GEOMETRIES_TRANSITION_FROM_MAIN_PAGE,
+    GEOMETRIES_TRANSITION_TO_MAIN_PAGE,
 } from "../utils/StringVariablesAndTypes";
 
 type InitialStateType = {
+    loadedState: boolean,
     scrollsCount: number,
     explosionProgress: number,
     cameraState: string | null,
@@ -54,6 +55,7 @@ type InitialStateType = {
 };
 
 const initialState = {
+    loadedState: true,
     scrollsCount: 0,
     explosionProgress: 0,
     sun: null,
@@ -72,15 +74,15 @@ const initialState = {
 
 const MainReducer = (state: InitialStateType = initialState, action: ActionsTypes): InitialStateType => {
     switch (action.type) {
+        case "REDUX/SET_LOADED_STATE":
+            return {
+                ...state,
+                loadedState: true
+            }
         case 'REDUX/SET_SUN':
             return {
                 ...state,
                 sun: action.sun
-            }
-        case 'REDUX/SET_CAMERA_STATE':
-            return {
-                ...state,
-                cameraState: action.cameraState
             }
         case 'REDUX/SET_SCROLLS':
             return {
@@ -102,16 +104,6 @@ const MainReducer = (state: InitialStateType = initialState, action: ActionsType
                 ...state,
                 isInterfaceAvailable: action.isAvailable,
             }
-        case "REDUX/SET_CRYSTAL_STATE":
-            return {
-                ...state,
-                isCrystalExploded: action.exploded
-            }
-        case "REDUX/SET_ABOUT_MENU_STATE":
-            return {
-                ...state,
-                isAboutMenuOpened: action.state
-            }
         case "REDUX/SET_VIDEO_PLAYER_STATE":
             return {
                 ...state,
@@ -121,13 +113,14 @@ const MainReducer = (state: InitialStateType = initialState, action: ActionsType
             return {
                 ...state,
                 isMainPageFocused: false,
-                isCrystalExploded: true,
+                geometriesTransition: GEOMETRIES_TRANSITION_FROM_MAIN_PAGE,
                 cameraState: TRANSITION_FROM_MAIN_TO_PROJECTS,
                 scrollingState: true,
             }
         case "REDUX/TRANSITION_TO_MAIN_PAGE":
             return {
                 ...state,
+                geometriesTransition: GEOMETRIES_TRANSITION_TO_MAIN_PAGE,
                 cameraState: MAIN_SCENE_STATIC,
                 isInterfaceAvailable: false,
                 scrollingState: true,
@@ -215,14 +208,12 @@ const MainReducer = (state: InitialStateType = initialState, action: ActionsType
 type ActionsTypes = InferActionTypes<typeof actions>;
 
 export const actions = {
+    setLoadedState: () => ({type: SET_LOADED_STATE}) as const,
     setSun: (sun: THREE.Mesh | null) => ({type: SET_SUN, sun}) as const,
-    setCameraState: (cameraState: string) => ({type: SET_CAMERA_STATE, cameraState}) as const,
     setScrollsCount: (scrollsCount: number) => ({type: SET_SCROLLS, scrollsCount}) as const,
     setVideo: (video: HTMLVideoElement, projectIndex: number) => ({type: SET_VIDEO, video, projectIndex}) as const,
     setMainPageState: (isFocused: boolean) => ({type: SET_MAIN_PAGE_STATE, isFocused}) as const,
     setInterfaceAvailability: (isAvailable: boolean) => ({type: SET_INTERFACE_AVAILABILITY, isAvailable}) as const,
-    setCrystalExplosionState: (exploded: boolean) => ({type: SET_CRYSTAL_STATE, exploded}) as const,
-    setAboutMenuState: (state: boolean) => ({type: SET_ABOUT_MENU_STATE, state}) as const,
     setVideoPlayerState: (play: boolean) => ({type: SET_VIDEO_PLAYER_STATE, play}) as const,
     transitionFromMainPaige: () => ({type: TRANSITION_FROM_MAIN_PAGE}) as const,
     transitionToMainPaige: () => ({type: TRANSITION_TO_MAIN_PAGE}) as const,
@@ -236,7 +227,6 @@ export const actions = {
     startDrugging: () => ({type: START_DRUGGING}) as const,
     stopDrugging: () => ({type: STOP_DRUGGING}) as const,
     stopAnyAnimation: () => ({type: STOP_ANY_ANIMATION}) as const,
-
 }
 
 export default MainReducer

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import MainPageContainer from "./Greetings/MainPageContainer";
 import ProjectsContainer from "./Projects/ProjectsContainer";
 import Interface from "./Interface/InterfaceContainer";
@@ -6,7 +6,7 @@ import styled from "styled-components/macro";
 import {animated, useSpring} from "react-spring";
 import {useDrag, useWheel} from 'react-use-gesture';
 import {isMobile} from 'react-device-detect'
-import {projectsInfo} from "../../textContent/TextContent";
+import {projectsInfo} from "../../textAndPrijectsInfo/TextContent";
 import ProjectsCounter from "./Interface/ProjectsCounter";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../store/store";
@@ -38,6 +38,7 @@ const HTMLElementsContainer: React.FC = () => {
     const isMainPageFocused = useSelector((state: AppStateType) => state.interface.isMainPageFocused, shallowEqual);
     const druggingState = useSelector((state: AppStateType) => state.interface.druggingState, shallowEqual);
     const scrollingState = useSelector((state: AppStateType) => state.interface.scrollingState, shallowEqual);
+    const loadedState = useSelector((state: AppStateType) => state.interface.loadedState, shallowEqual);
 
     const dispatch = useDispatch();
 
@@ -49,6 +50,10 @@ const HTMLElementsContainer: React.FC = () => {
         x: 0,
         config: {tension: 100, friction: 25, clamp: true},
     }));
+
+    const onArrowClickHandler = useCallback(() => {
+        dispatch(actions.transitionFromMainPaige())
+    }, [dispatch]);
 
     useEffect(() => {
         if (!isInterfaceAvailable && !isMainPageFocused && scrollsCount !== 0) {
@@ -67,7 +72,7 @@ const HTMLElementsContainer: React.FC = () => {
     }, [isInterfaceAvailable, isAboutMenuOpened, isMainPageFocused, setScroll, dispatch, scrollsCount, project]);
 
     useWheel(({direction: [, y]}) => {
-        if (scrollingState || scrollingState || project !== null || isAboutMenuOpened || druggingState) return;
+        if (scrollingState || scrollingState || project !== null || isAboutMenuOpened || druggingState || !loadedState) return;
         if (y > 0 && scrollsCount < projectsInfo.length) {
             if (scrollsCount === 0) {
                 dispatch(actions.transitionFromMainPaige());
@@ -92,13 +97,14 @@ const HTMLElementsContainer: React.FC = () => {
     }, {domTarget: window});
 
     useDrag(({swipe: [, y]}) => {
-        if (!isMobile || project !== null) return;
+        if (!isMobile || project !== null || !loadedState) return;
 
     }, {domTarget: window, filterTaps: true, eventOptions: {passive: false}});
 
     return (
         <Wrapper>
-            <MainPageContainer/>
+            <MainPageContainer onArrowClickHandler={onArrowClickHandler} isMainPageFocused={isMainPageFocused}
+                               loadedState={loadedState}/>
             <ScrollableWrapper style={animation} ref={wrapperRef}>
                 <ProjectsContainer/>
             </ScrollableWrapper>

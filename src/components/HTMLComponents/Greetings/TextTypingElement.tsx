@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import styled, {css, keyframes} from 'styled-components/macro';
-import {animatedSkillsStack} from "../../../textContent/TextContent";
+import {animatedSkillsStack} from "../../../textAndPrijectsInfo/TextContent";
 
 const blink = keyframes`
   0% {
@@ -21,7 +21,7 @@ const complexMixin = css`&::after {
       content: '';
       display: inline-block;
       margin-left: 3px;
-      background-color: red;
+      background-color: black;
       animation-name: ${blink};
       animation-duration: 0.5s;
       animation-iteration-count: infinite;
@@ -33,7 +33,7 @@ const Wrapper = styled.div<{$visible: boolean}>`
   text-align:center;
   font-family: 'Relative-Book';
   font-weight: bold;
-  color: red;
+  color: black;
   letter-spacing: 2px;
   font-size: 25px;
   ${props => props.$visible && complexMixin}

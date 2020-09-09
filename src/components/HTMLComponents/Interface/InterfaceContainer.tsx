@@ -26,9 +26,13 @@ const InterfaceContainer: React.FC = () => {
         dispatch(actions.closeProject())
     }, [dispatch]);
 
+    const returnOnMainPage = useCallback(() => {
+        dispatch(actions.transitionToMainPaige())
+    }, [dispatch])
+
     return (
         <>
-            <Logo visible={isInterfaceAvailable && !isAboutBlockOpened}/>
+            <Logo visible={isInterfaceAvailable && !isAboutBlockOpened} returnOnMainPage={returnOnMainPage}/>
             <LeftContextButton closeInformation={closeInformation} openInformation={openInformation}
                                visible={isInterfaceAvailable}
                                isAboutBlockOpened={isAboutBlockOpened} closeProject={closeProject}

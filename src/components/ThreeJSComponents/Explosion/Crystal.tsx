@@ -1,13 +1,10 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import * as THREE from 'three';
-import {shader} from "./shaderMaterial";
+import {innerShader, outerShader} from "./shaderMaterial";
 import {BufferGeometryUtils} from "three/examples/jsm/utils/BufferGeometryUtils";
 import {useFrame} from "react-three-fiber";
-import {animated, useSpring} from 'react-spring/three';
+import {animated, SpringValue} from 'react-spring/three';
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
-import {shallowEqual, useDispatch, useSelector} from "react-redux";
-import {AppStateType} from "../../../store/store";
-import {actions} from "../../../store/InterfaceReducer";
 // @ts-ignore
 import GLB from "../../../model/withoutAll.glb"
 
@@ -30,7 +27,6 @@ const processSurface = (object: CustomObject, index: number) => {
         new THREE.Matrix4().makeTranslation(coords.x, coords.y, coords.z)
     );
     let volume = object.children[1].geometry.clone().applyMatrix4(new THREE.Matrix4().makeTranslation(coords.x, coords.y, coords.z));
-
     let surfaceLength = object.children[0].geometry.attributes.position.array.length / 3;
     let volumeLength = object.children[1].geometry.attributes.position.array.length / 3;
     //  id
@@ -39,13 +35,11 @@ const processSurface = (object: CustomObject, index: number) => {
         "offset",
         new THREE.BufferAttribute(new Float32Array(offset), 1)
     );
-
     let offset1 = new Array(volumeLength).fill(index / 100);
     volume.setAttribute(
         "offset",
         new THREE.BufferAttribute(new Float32Array(offset1), 1)
     );
-
     // axis
     let getRandomAxis = () => {
         return new THREE.Vector3(
@@ -54,7 +48,6 @@ const processSurface = (object: CustomObject, index: number) => {
             Math.random() - 0.5
         ).normalize();
     };
-
     let axis = getRandomAxis();
     let axes = new Array(surfaceLength * 3).fill(0);
     let axes1 = new Array(volumeLength * 3).fill(0);
@@ -118,18 +111,11 @@ const processSurface = (object: CustomObject, index: number) => {
 
 const sign = (number: number) => number === 0 ? 1 : number / Math.abs(number);
 
+type PropsType = {
+    progress: SpringValue<number>
+}
 
-const Crystal: React.FC = () => {
-
-    const isCrystalExploded = useSelector((state: AppStateType) => state.interface.isCrystalExploded, shallowEqual);
-
-    const dispatch = useDispatch();
-
-    const outerShader = useMemo(() => {
-        let shaderMat = shader;
-        shaderMat.uniforms.inside.value = 1;
-        return shaderMat
-    }, []);
+const Crystal: React.FC<PropsType> = ({progress}) => {
 
     const [{innerMesh, outerMesh}, setS] = useState<StateType>({innerMesh: null, outerMesh: null});
 
@@ -186,33 +172,19 @@ const Crystal: React.FC = () => {
     }, []);
 
 //explosion
-    const [{progress}, setAnimation] = useSpring(() => ({
-        progress: 0,
-    }));
-
     const group = useRef<THREE.Group>(new THREE.Group());
-
-    useEffect(() => {
-        if (!isCrystalExploded) setAnimation({progress: 0});
-        if (isCrystalExploded) setAnimation({
-            progress: 5,
-            onRest: () => dispatch(actions.setMainPageState(false))
-        });
-    }, [isCrystalExploded, dispatch, setAnimation]);
 
     //mouseEvent
     const mouseCoords = useRef<number[]>([0, 0]);
     const mouseX = useRef(0);
     const mouseY = useRef(0);
+
     useEffect(() => {
         const onMouseMoveHandler = (e: MouseEvent) => mouseCoords.current = [e.clientX, e.clientY];
-        if (!isCrystalExploded) {
-            window.addEventListener('mousemove', onMouseMoveHandler);
-        }
-        return (() => {
-                window.removeEventListener('mousemove', onMouseMoveHandler)
-        })
-    }, [isCrystalExploded]);
+        window.addEventListener('mousemove', onMouseMoveHandler);
+
+        return () => window.removeEventListener('mousemove', onMouseMoveHandler)
+    }, []);
 
     useFrame(() => {
         let targetMouseX = 2 * (mouseCoords.current[0] - window.innerWidth / 2) / window.innerWidth;
@@ -230,7 +202,7 @@ const Crystal: React.FC = () => {
         <group ref={group}>
             <mesh>
                 <bufferGeometry attach="geometry" {...innerMesh}/>
-                <animated.shaderMaterial uniforms-progress-value={progress} attach="material" args={[shader]}/>
+                <animated.shaderMaterial uniforms-progress-value={progress} attach="material" args={[innerShader]}/>
             </mesh>
             <mesh>
                 <bufferGeometry attach="geometry" {...outerMesh}/>

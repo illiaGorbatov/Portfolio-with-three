@@ -1,15 +1,15 @@
 import React from 'react';
-import {animated, useSpring} from "react-spring/three";
+import {animated, useSpring, SpringValue} from "react-spring/three";
 import * as THREE from 'three';
 
 type PropsType = {
-    opened: boolean
+    color: SpringValue<string>
 }
 
-const Background: React.FC<PropsType> = ({opened}) => {
+const Background: React.FC<PropsType> = ({color}) => {
 
-    const {color} = useSpring({
-        color: opened ? '#EAE6E5' : '#000B11',
+   /* const {color} = useSpring({
+        color: /!*opened ? '#EAE6E5' :*!/ '#000B11',
         config: {
             mass: 100,
             tension: 400,
@@ -17,7 +17,7 @@ const Background: React.FC<PropsType> = ({opened}) => {
             clamp: true
         },
         delay: opened ? 1000 : 0
-    })
+    })*/
 
     return(
         <mesh position={[0, 0, 0]}>

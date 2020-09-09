@@ -31,13 +31,14 @@ const LogoWrapper = styled.div<{ $visible: boolean }>`
 `;
 
 type PropsType = {
-    visible: boolean
+    visible: boolean,
+    returnOnMainPage: () => void
 }
 
-const Logo: React.FC<PropsType> = ({visible}) => {
+const Logo: React.FC<PropsType> = ({visible, returnOnMainPage}) => {
 
     return (
-        <LogoWrapper $visible={visible}>
+        <LogoWrapper $visible={visible} onClick={visible ? returnOnMainPage : undefined}>
             <AnimatedLogo $visible={visible}>
                 Gorbatov Illia
             </AnimatedLogo>
