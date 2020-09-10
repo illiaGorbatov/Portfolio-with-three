@@ -24,7 +24,7 @@ const Sun: React.FC<PropsType> = ({scale, distance, intensity, scrollsCount}) =>
     const sunRef = useRef<THREE.Mesh>(new THREE.Mesh());
 
     useLayoutEffect(() => {
-        setTimeout(() => dispatch(actions.setSun(sunRef.current)), 50)
+        setTimeout(() => dispatch(actions.setSun(sunRef.current)), 80)
     }, [dispatch]);
 
     return (

@@ -6,7 +6,9 @@ import HTMLElementsContainer from "./components/HTMLComponents/HTMLElementsConta
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {far} from "@fortawesome/free-regular-svg-icons";
 import {fas} from "@fortawesome/free-solid-svg-icons";
-import Preloader from "./components/HTMLComponents/preloader/Preloader";
+import Preloader from "./components/HTMLComponents/preloaderAndErrorScreen/Preloader";
+import {isMobile} from "react-device-detect";
+import Error from "./components/HTMLComponents/preloaderAndErrorScreen/Error";
 
 library.add(far, fas);
 
@@ -45,6 +47,9 @@ const App = () => {
         window.addEventListener("orientationchange", reloadFunction)
         return () => window.removeEventListener("orientationchange", reloadFunction)
     }, []);
+
+    let orientation = window.screen.orientation.type;
+    if (isMobile && (orientation === "portrait-secondary" || orientation === "portrait-primary")) return(<Error/>)
 
     return (
         <>

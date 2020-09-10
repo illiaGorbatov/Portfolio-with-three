@@ -5,8 +5,7 @@ import {BufferGeometryUtils} from "three/examples/jsm/utils/BufferGeometryUtils"
 import {useFrame} from "react-three-fiber";
 import {animated, SpringValue} from 'react-spring/three';
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
-// @ts-ignore
-import GLB from "../../../model/withoutAll.glb"
+import GLB from "../../../assets/model/withoutAll.glb"
 
 interface CustomMesh extends THREE.Mesh {
     geometry: THREE.BufferGeometry

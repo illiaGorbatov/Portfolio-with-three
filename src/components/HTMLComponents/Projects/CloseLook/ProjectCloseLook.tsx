@@ -3,6 +3,7 @@ import styled from "styled-components/macro";
 import {projectsInfo, ProjectType} from "../../../../textAndPrijectsInfo/TextContent";
 import {animated, useSprings} from 'react-spring';
 import ProsAndConsTyping from "./ProsAndConsTyping";
+import {SingleContact} from "../../Interface/AboutMe/InfoBlock";
 
 const CloseLookWrapper = styled.div<{ $visible: boolean }>`
   display: ${props => props.$visible ? 'block' : 'none'};
@@ -27,13 +28,21 @@ const ProjectLittleDescription = styled(animated.div)`
   letter-spacing: 2px;
   font-size: 20px;
   text-transform: uppercase;
-  padding-bottom: 7%;
+  padding-bottom: 3%;
 `;
 
 const ProjectName = styled(animated.div)`
   font-family: 'MADE Evolve Bold';
   font-size: 50px;
   padding-bottom: 10%;
+`;
+
+const References = styled(animated.div)`
+  padding-bottom: 7%;
+`;
+
+const SingleRef = styled(SingleContact)`
+  margin-right: 5%;
 `;
 
 const ProjectDetailedDescription = styled(animated.div)`
@@ -57,7 +66,7 @@ type PropsType = {
 
 const CloseLook: React.FC<PropsType> = ({project, visible}) => {
 
-    const [springs, setSprings] = useSprings(5, i => ({
+    const [springs, setSprings] = useSprings(6, i => ({
         x: '-50vw'
     }));
 
@@ -79,7 +88,7 @@ const CloseLook: React.FC<PropsType> = ({project, visible}) => {
         if (!visible) {
             setSprings(i => ({
                 x: '-50vw',
-                delay: (4-i) * 200
+                delay: (5-i) * 200
             })).then(() => setVisibility(false))
         }
     }, [visible, setSprings]);
@@ -93,14 +102,22 @@ const CloseLook: React.FC<PropsType> = ({project, visible}) => {
                 <ProjectLittleDescription style={springs[1]}>
                     {memoizedProject?.projectDescription}
                 </ProjectLittleDescription>
-                <ProjectDetailedDescription style={springs[2]}>
+                <References style={springs[2]}>
+                    <SingleRef href={memoizedProject?.refToProject}>
+                        github-pages
+                    </SingleRef>
+                    <SingleRef href={memoizedProject?.refToGit}>
+                        source code
+                    </SingleRef>
+                </References>
+                <ProjectDetailedDescription style={springs[3]}>
                     {memoizedProject?.detailedDescription}
                 </ProjectDetailedDescription>
-                <ProsAndCons style={springs[3]}>
+                <ProsAndCons style={springs[4]}>
                     Pros
                 </ProsAndCons>
                 <ProsAndConsTyping visible={visible} currentText={memoizedProject?.pros || ''} role={'pros'}/>
-                <ProsAndCons style={springs[4]}>
+                <ProsAndCons style={springs[5]}>
                     Cons
                 </ProsAndCons>
                 <ProsAndConsTyping visible={visible} currentText={memoizedProject?.cons || ''} role={'cons'}/>

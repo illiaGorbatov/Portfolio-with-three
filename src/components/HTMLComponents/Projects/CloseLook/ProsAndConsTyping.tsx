@@ -42,8 +42,8 @@ const ProsAndConsTyping: React.FC<PropsType> = ({visible, currentText, role}) =>
 
     useEffect(() => {
         let timer: number
-        if (visible) timer = setTimeout(() => typeText(), 10)
-        if (!visible) timer = setTimeout(() => deleteText(), 2)
+        if (visible) timer = window.setTimeout(() => typeText(), 10)
+        if (!visible) timer = window.setTimeout(() => deleteText(), 2)
         return () => clearTimeout(timer)
     });
 

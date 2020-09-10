@@ -42,8 +42,8 @@ const TechnologiesTextTyping: React.FC<PropsType> = ({visible}) => {
 
     useEffect(() => {
         let timer: number
-        if (visible) timer = setTimeout(() => typeText(), 15)
-        if (!visible) timer = setTimeout(() => deleteText(), 3)
+        if (visible) timer = window.setTimeout(() => typeText(), 15)
+        if (!visible) timer = window.setTimeout(() => deleteText(), 3)
         return () => clearTimeout(timer)
     });
 

@@ -136,7 +136,6 @@ const Camera: React.FC = () => {
             setCameraPosition({position: cameraPosition.staticProjects})
                 .then(() => dispatch(actions.stopAnyAnimation()))
         }
-        console.log(cameraState)
     }, [cameraState, setCameraPosition, dispatch]);
 
     useFrame(() => {

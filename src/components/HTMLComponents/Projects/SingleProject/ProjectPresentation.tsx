@@ -4,12 +4,8 @@ import ProjectAnnotation from "./ProjectAnnotation";
 import {useDispatch} from "react-redux";
 import {actions} from "../../../../store/InterfaceReducer";
 import CloseLookButton from "./CloseLookButton";
-// @ts-ignore
-import video from "../../../../assets/videos/testVid.mp4"
-// @ts-ignore
-import counter from "../../../../assets/videos/counter.mp4"
-// @ts-ignore
-import todoList from "../../../../assets/videos/toDoList.mp4"
+import {projectsInfo} from "../../../../textAndPrijectsInfo/TextContent";
+
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -43,8 +39,6 @@ type PropsType = {
     currentlyLookedProject: number | null
 }
 
-const videos = [counter, todoList, video];
-
 const ProjectPresentation: React.FC<PropsType> = ({projectIndex, isDrugging, isScrolling,
                                                       scrollsCount, currentlyLookedProject}) => {
 
@@ -72,7 +66,7 @@ const ProjectPresentation: React.FC<PropsType> = ({projectIndex, isDrugging, isS
         <Wrapper>
             <VideoWrapper>
                 <Video muted loop ref={videoRef}>
-                    <source src={videos[projectIndex]} type="video/mp4"/>
+                    <source src={projectsInfo[projectIndex].video} type="video/mp4"/>
                 </Video>
                 <ProjectAnnotation isDrugging={isDrugging} isScrolling={isScrolling} projectIndex={projectIndex}/>
                 <CloseLookButton projectIndex={projectIndex} visible={!isScrolling && !isDrugging}/>

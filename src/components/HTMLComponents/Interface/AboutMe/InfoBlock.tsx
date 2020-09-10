@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components/macro';
 import {animated, useSprings} from 'react-spring';
-import {aboutMe} from "../../../../textAndPrijectsInfo/TextContent";
+import {aboutMe, contacts} from "../../../../textAndPrijectsInfo/TextContent";
 import TextTypingTechnologies from "./TextTypingTechnologies";
 
-const Wrapper = styled.div<{$visible: boolean}>`
+const Wrapper = styled.div<{ $visible: boolean }>`
   display: ${props => props.$visible ? 'block' : 'none'};
   position: absolute;
   width: 50vw;
@@ -42,11 +42,40 @@ const AboutMe = styled(animated.div)`
 const InfoHeaders = styled(animated.div)`
   font-family: 'MADE Evolve Bold';
   font-size: 30px;
+  padding-top: 4%;
   padding-bottom: 5px;
 `;
 
 const Contacts = styled(animated.div)`
-  
+  padding-top: 4%;
+  display: flex;
+  justify-items: left;
+  width: 60%;
+  max-width: 300px;
+  justify-content: space-between;
+`;
+
+export const SingleContact = styled.a`
+  display: inline-block;
+  font-size: 20px;
+  font-family: 'Relative-Book';
+  text-align: left;
+  position: relative;
+  opacity: 0.6;
+  transition: opacity .2s ease-in-out;
+  text-decoration: none;
+  color: white;
+  &:before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    height: 1px;
+    width: 0;
+    background-color: white;
+    transition: width .2s ease-in-out;
+  }
+  &:hover:before {width: 100%};
+  &:hover {opacity: 1}
 `;
 
 type PropsType = {
@@ -55,7 +84,7 @@ type PropsType = {
 
 const InfoBlock: React.FC<PropsType> = ({visible}) => {
 
-    const [springs, setSprings] = useSprings(6, i =>({
+    const [springs, setSprings] = useSprings(7, i => ({
         y: '-100%',
     }));
 
@@ -65,19 +94,19 @@ const InfoBlock: React.FC<PropsType> = ({visible}) => {
         if (visible) {
             setVisibility(true)
             setSprings(i => ({
-               y: '0%',
-                delay: i*200
-           }))
+                y: '0%',
+                delay: i < 6 ? i * 200 : 3200
+            }))
         }
         if (!visible) {
-            setSprings(i =>({
+            setSprings(i => ({
                 y: '-100%',
-                delay: (5-i)*200
-            })).then(() =>setVisibility(false))
+                delay: (6 - i) * 200
+            })).then(() => setVisibility(false))
         }
     }, [visible, setSprings]);
 
-    return(
+    return (
         <Wrapper $visible={isContentVisible}>
             <InnerCentralWrapper>
                 <CommonWrapper>
@@ -92,7 +121,7 @@ const InfoBlock: React.FC<PropsType> = ({visible}) => {
                 </CommonWrapper>
                 {aboutMe.map((textContent, i) =>
                     <CommonWrapper key={i}>
-                        <AboutMe style={springs[i+2]}>
+                        <AboutMe style={springs[i + 2]}>
                             {textContent}
                         </AboutMe>
                     </CommonWrapper>
@@ -103,6 +132,15 @@ const InfoBlock: React.FC<PropsType> = ({visible}) => {
                     </InfoHeaders>
                 </CommonWrapper>
                 <TextTypingTechnologies visible={visible}/>
+                <CommonWrapper>
+                    <Contacts style={springs[6]}>
+                        {contacts.map((item, i) =>
+                            <SingleContact href={item.href} key={i}>
+                                {item.header}
+                            </SingleContact>
+                        )}
+                    </Contacts>
+                </CommonWrapper>
             </InnerCentralWrapper>
         </Wrapper>
     )

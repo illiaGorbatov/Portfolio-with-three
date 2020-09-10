@@ -80,7 +80,7 @@ const TextTypingElement: React.FC<PropsType> = ({visible}) => {
 
     useEffect(() => {
         let timer: number
-        timer = setTimeout(() => handleType(), typingSpeed)
+        timer = window.setTimeout(() => handleType(), typingSpeed)
         return () => clearTimeout(timer)
     });
 

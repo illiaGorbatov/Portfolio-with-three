@@ -11,7 +11,6 @@ type PropsType = {
 const GodRays = forwardRef<null, PropsType>(({ sun }, forwardRef) => {
 
     const { camera } = useThree();
-    console.log('render', sun)
     const effect = useMemo(() => {
         return new GodRaysEffect(camera, sun, {
             height: 300,

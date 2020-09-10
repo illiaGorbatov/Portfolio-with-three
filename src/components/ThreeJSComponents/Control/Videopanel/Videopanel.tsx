@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import * as THREE from 'three';
 import {shallowEqual, useSelector} from "react-redux";
 import {AppStateType} from "../../../../store/store";
@@ -24,29 +24,48 @@ const VideoPanel: React.FC = () => {
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
         texture.format = THREE.RGBFormat;
-        const material = new THREE.MeshBasicMaterial({map: texture});
-        material.transparent = false;
-        return material
+        texture.encoding = THREE.sRGBEncoding;
+        texture.anisotropy = 16;
+        return new THREE.MeshBasicMaterial({map: texture, transparent: false})
     }, [videos, projectMemo]);
 
-    const [{position}, setAnimation] = useSpring(() => ({
-        position: [20, 2.5, 60]
+    const [{position, lookAtPosition, scale}, setAnimation] = useSpring(() => ({
+        position: [20, 2.5, 60],
+        lookAtPosition: [-10, 7, 65],
+        scale: [1, 1, 1]
     }));
 
-    const mouseX = useRef(0);
-    const mouseY = useRef(0);
+    const mouseMoveHandler = useCallback((e: MouseEvent) => {
+        const mouseXPercentage = e.clientX / window.innerWidth;
+        const mouseYPercentage = e.clientY / window.innerHeight;
+        const x = THREE.MathUtils.lerp(-10, 3, mouseXPercentage);
+        const y = THREE.MathUtils.lerp(7, -3, mouseYPercentage);
+        setAnimation({lookAtPosition: [x, y, 65]})
+    }, [setAnimation]);
+
+    const memoizedDeltaY = useRef<number>(0);
+    const wheelHandler = useCallback((e: WheelEvent) => {
+        if (e.deltaY > 0 && memoizedDeltaY.current < 500) {
+            memoizedDeltaY.current = memoizedDeltaY.current + e.deltaY;
+            setAnimation({scale: new Array(3).fill(memoizedDeltaY.current/1000 + 1)})
+        }
+        if (e.deltaY < 0 && memoizedDeltaY.current > 0) {
+            memoizedDeltaY.current = memoizedDeltaY.current + e.deltaY;
+            setAnimation({scale: new Array(3).fill(memoizedDeltaY.current/1000 + 1)})
+        }
+    }, [setAnimation])
 
     useEffect(() => {
-        const onMouseMoveHandler = (e: MouseEvent) => {
-            mouseX.current = e.clientX;
-            mouseY.current = e.clientY;
-        }
         if (project !== null) {
             setProjectMemo(project);
-            window.addEventListener('mousemove', onMouseMoveHandler);
+            window.addEventListener('mousemove', mouseMoveHandler);
+            window.addEventListener('wheel', wheelHandler);
         }
-        return () => window.removeEventListener('mousemove', onMouseMoveHandler)
-    }, [project]);
+        return () => {
+            window.removeEventListener('mousemove', mouseMoveHandler)
+            window.removeEventListener('wheel', wheelHandler)
+        }
+    }, [project, mouseMoveHandler, wheelHandler]);
 
     useEffect(() => {
         if (videoPlayerState) {
@@ -55,23 +74,21 @@ const VideoPanel: React.FC = () => {
             })
         }
         if (!videoPlayerState && projectMemo !== null) {
-            setAnimation({position: [20, 2.5, 60]})
+            setAnimation({position: [20, 2.5, 60], scale: [1, 1, 1]})
             videos[projectMemo!].video.pause()
         }
     }, [videoPlayerState, setAnimation, videos, projectMemo]);
 
     useFrame(() => {
         if (project !== null) {
-            const mouseXPercentage = mouseX.current / window.innerWidth;
-            const mouseYPercentage = mouseY.current / window.innerHeight;
-            const x = THREE.MathUtils.lerp(-10, 3, mouseXPercentage);
-            const y = THREE.MathUtils.lerp(7, -3, mouseYPercentage);
-            ref.current.lookAt(...[x, y, 65] as Vector3Type);
+            ref.current.lookAt(...lookAtPosition.get() as unknown as Vector3Type);
         }
+
     })
 
     return (
-        <animated.group position={position as unknown as Vector3Type} ref={ref}>
+        <animated.group position={position as unknown as Vector3Type} ref={ref}
+                        scale={scale as unknown as Vector3Type}>
             {videoPlayerState && <VideoPlaneLight/>}
             <mesh material={videoMaterial} scale={[1.2, 1.2, 1.2]}>
                 <planeBufferGeometry attach="geometry" args={[12.2, 7.40]}/>

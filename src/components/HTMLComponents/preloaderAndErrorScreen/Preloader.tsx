@@ -1,6 +1,6 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import styled from 'styled-components/macro';
-import { useSprings, animated, useSpring } from 'react-spring';
+import {animated, useSpring, useSprings} from 'react-spring';
 import {useDispatch} from "react-redux";
 import {actions} from "../../../store/InterfaceReducer";
 
@@ -47,7 +47,7 @@ const Preloader: React.FC = () => {
         y: '-100%',
     }));
 
-    const [wrapperAnimation, setWrapperAnimation] = useSpring(()=> ({
+    const [wrapperAnimation, setWrapperAnimation] = useSpring(() => ({
         height: '100vh'
     }));
 
@@ -55,17 +55,17 @@ const Preloader: React.FC = () => {
         if (document.readyState === 'complete') {
             setSprings(i => ({
                 cancel: true,
-            })).then(() => setSprings(i =>({
+            })).then(() => setSprings(i => ({
                 y: '0%',
-                delay: i*200
+                delay: i * 200
             }))).then(() => setWrapperAnimation({
                 height: '0vh', delay: 1200
             })).then(() => dispatch(actions.setLoadedState()))
         } else setSprings(i => ({
             to: async next => {
-                await next({y: '0%', delay: i*200});
+                await next({y: '0%', delay: i * 200});
                 await next({y: '100%', delay: 900});
-                await next({y: '-100%', immediate: true, delay: (7-i)*200});
+                await next({y: '-100%', immediate: true, delay: (7 - i) * 200});
             },
         })).then(() => loadStateCheck())
     }, [setWrapperAnimation, setSprings, dispatch]);
@@ -74,14 +74,14 @@ const Preloader: React.FC = () => {
     useEffect(() => {
         setSprings(i => ({
             to: async next => {
-                await next({y: '0%', delay: i*200});
+                await next({y: '0%', delay: i * 200});
                 await next({y: '100%', delay: 900});
-                await next({y: '-100%', immediate: true, delay: (7-i)*200});
+                await next({y: '-100%', immediate: true, delay: (7 - i) * 200});
             },
         })).then(() => loadStateCheck())
     }, [setSprings, loadStateCheck])
 
-    return(
+    return (
         <Wrapper style={wrapperAnimation}>
             <LettersWrapper>
                 {springs.map((spring, i) =>

@@ -1,9 +1,8 @@
-import React, {useState} from 'react';
+import React from 'react';
 import styled from 'styled-components/macro';
 import TextTypingElement from "./TextTypingElement";
 import Arrow from "./Arrow";
 import BigLogo from './BigLogo';
-import Preloader from "../preloader/Preloader";
 
 const MainPageWrapper = styled.div`
   width: 100vw;
