@@ -32,7 +32,7 @@ const InterfaceContainer: React.FC = () => {
 
     return (
         <>
-            <Logo visible={isInterfaceAvailable && !isAboutBlockOpened} returnOnMainPage={returnOnMainPage}/>
+            <Logo visible={isInterfaceAvailable && !isAboutBlockOpened && currentProject === null} returnOnMainPage={returnOnMainPage}/>
             <LeftContextButton closeInformation={closeInformation} openInformation={openInformation}
                                visible={isInterfaceAvailable}
                                isAboutBlockOpened={isAboutBlockOpened} closeProject={closeProject}

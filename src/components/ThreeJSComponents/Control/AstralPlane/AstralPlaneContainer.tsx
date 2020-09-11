@@ -117,7 +117,7 @@ const AstralPlaneContainer: React.FC = () => {
                 config: (prop) => prop === 'progress' ?
                     {tension: 150, friction: 40} : {mass: 1, tension: 200, friction: 30, clamp: true},
                 delay: (prop) => prop === 'progress' ? 300 : 0,
-            })).then(() => setAnimation({
+            })).then(() => setTimeout(() => setAnimation({
                 to: async next => {
                     await next({
                         progress: 0.035,
@@ -137,8 +137,8 @@ const AstralPlaneContainer: React.FC = () => {
                         config: {tension: 200, friction: 40}
                     });
                 },
-                loop: true
-            }))
+                loop: true,
+            }), 1500))
         }
         if (geometriesTransition === GEOMETRIES_TRANSITION_FROM_ABOUT_SECTION ||
             geometriesTransition === GEOMETRIES_TRANSITION_FROM_MAIN_PAGE) {

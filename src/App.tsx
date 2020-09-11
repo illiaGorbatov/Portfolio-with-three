@@ -54,7 +54,7 @@ const App = () => {
     return (
         <>
             <GlobalStyles/>
-            <Preloader/>
+            {/*<Preloader/>*/}
             <HTMLElementsContainer/>
             <Wrapper>
                 <InitialCanvas/>

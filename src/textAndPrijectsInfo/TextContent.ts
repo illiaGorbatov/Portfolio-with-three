@@ -44,7 +44,7 @@ export const projectsInfo: ProjectType[] = [
             " Design inspired by Apple's Neumorphism",
         pros: "There are animations and transitions for almost any user action. Data will be sent only when the user accepts the changes that can be canceled. " +
             "Changes are made by comparing the original state with the edited one.",
-        cons: "Due to the large number of animations and event handlers, performance issues can be observed on slower devices" +
+        cons: "Due to the large number of animations and event handlers, performance issues can be observed on slower devices. " +
             "The function of comparing states and sending data is difficult to understand for an unprepared person. ",
         technologies: "TypeScript React Redux styled-components react-spring thunk",
         color: '#EAE8DE',

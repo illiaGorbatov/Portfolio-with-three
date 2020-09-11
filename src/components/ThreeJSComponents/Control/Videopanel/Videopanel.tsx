@@ -4,9 +4,10 @@ import {shallowEqual, useSelector} from "react-redux";
 import {AppStateType} from "../../../../store/store";
 import {animated, useSpring} from "react-spring/three";
 import {Vector3Type} from "../../../../utils/StringVariablesAndTypes";
-import VideoPlaneLight from "./VideoPlaneLight";
 import {useFrame} from "react-three-fiber";
 import isEqual from "react-fast-compare";
+import BasicFont from "./BasicFont";
+import {isMobile} from "react-device-detect";
 
 
 const VideoPanel: React.FC = () => {
@@ -30,7 +31,7 @@ const VideoPanel: React.FC = () => {
     }, [videos, projectMemo]);
 
     const [{position, lookAtPosition, scale}, setAnimation] = useSpring(() => ({
-        position: [20, 2.5, 60],
+        position: [20, 2, 60],
         lookAtPosition: [-10, 7, 65],
         scale: [1, 1, 1]
     }));
@@ -47,11 +48,11 @@ const VideoPanel: React.FC = () => {
     const wheelHandler = useCallback((e: WheelEvent) => {
         if (e.deltaY > 0 && memoizedDeltaY.current < 500) {
             memoizedDeltaY.current = memoizedDeltaY.current + e.deltaY;
-            setAnimation({scale: new Array(3).fill(memoizedDeltaY.current/1000 + 1)})
+            setAnimation({scale: new Array(3).fill(memoizedDeltaY.current / 1000 + 1)})
         }
         if (e.deltaY < 0 && memoizedDeltaY.current > 0) {
             memoizedDeltaY.current = memoizedDeltaY.current + e.deltaY;
-            setAnimation({scale: new Array(3).fill(memoizedDeltaY.current/1000 + 1)})
+            setAnimation({scale: new Array(3).fill(memoizedDeltaY.current / 1000 + 1)})
         }
     }, [setAnimation])
 
@@ -69,12 +70,12 @@ const VideoPanel: React.FC = () => {
 
     useEffect(() => {
         if (videoPlayerState) {
-            setAnimation({position: [3, 2.5, 45]}).then(() => {
+            setAnimation({position: [2, 2, 47]}).then(() => {
                 videos[projectMemo!].video.play();
             })
         }
         if (!videoPlayerState && projectMemo !== null) {
-            setAnimation({position: [20, 2.5, 60], scale: [1, 1, 1]})
+            setAnimation({position: [20, 2, 60], scale: [1, 1, 1]})
             videos[projectMemo!].video.pause()
         }
     }, [videoPlayerState, setAnimation, videos, projectMemo]);
@@ -89,7 +90,7 @@ const VideoPanel: React.FC = () => {
     return (
         <animated.group position={position as unknown as Vector3Type} ref={ref}
                         scale={scale as unknown as Vector3Type}>
-            {videoPlayerState && <VideoPlaneLight/>}
+            <BasicFont text={!isMobile ? 'scroll to zoom' : 'pinch to zoom'}/>
             <mesh material={videoMaterial} scale={[1.2, 1.2, 1.2]}>
                 <planeBufferGeometry attach="geometry" args={[12.2, 7.40]}/>
             </mesh>

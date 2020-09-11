@@ -13,6 +13,7 @@ import {AppStateType} from "../../store/store";
 import {actions} from "../../store/InterfaceReducer";
 import InfoBlock from "./Interface/AboutMe/InfoBlock";
 import CloseLook from "./Projects/CloseLook/ProjectCloseLook";
+import {GEOMETRIES_TRANSITION_TO_MAIN_PAGE} from "../../utils/StringVariablesAndTypes";
 
 const Wrapper = styled.div`
   position: absolute;
@@ -39,6 +40,7 @@ const HTMLElementsContainer: React.FC = () => {
     const druggingState = useSelector((state: AppStateType) => state.interface.druggingState, shallowEqual);
     const scrollingState = useSelector((state: AppStateType) => state.interface.scrollingState, shallowEqual);
     const loadedState = useSelector((state: AppStateType) => state.interface.loadedState, shallowEqual);
+    const geometriesTransition = useSelector((state: AppStateType) => state.interface.geometriesTransition, shallowEqual);
 
     const dispatch = useDispatch();
 
@@ -69,7 +71,12 @@ const HTMLElementsContainer: React.FC = () => {
             });
             setTimeout(() => dispatch(actions.stopScrolling()), 300)
         }
-    }, [isInterfaceAvailable, isAboutMenuOpened, isMainPageFocused, setScroll, dispatch, scrollsCount, project]);
+        if (geometriesTransition === GEOMETRIES_TRANSITION_TO_MAIN_PAGE) {
+            setScroll({
+                top: window.innerHeight,
+            });
+        }
+    }, [isInterfaceAvailable, isAboutMenuOpened, isMainPageFocused, setScroll, dispatch, scrollsCount, project, geometriesTransition]);
 
     useWheel(({direction: [, y]}) => {
         if (scrollingState || scrollingState || project !== null || isAboutMenuOpened || druggingState || !loadedState) return;
