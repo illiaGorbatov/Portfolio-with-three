@@ -2,7 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import styled from 'styled-components/macro';
 import {animated, SpringStartFn, useSpring} from 'react-spring';
 import {useDrag} from "react-use-gesture";
-import {projectsInfo} from "../../../textAndPrijectsInfo/TextContent";
+import {projectsInfo} from "../../../textAndPrijectsInfo/TextAndProjectsSettings";
 import {useDispatch} from "react-redux";
 import {actions} from "../../../store/InterfaceReducer";
 
@@ -95,6 +95,28 @@ const ProjectsCounter: React.FC<PropsType> = ({setScroll, visible, isDrugging,
         translateY: '-50%'
     }));
 
+    //resize
+    const mutatedHidingState = useRef<boolean>(true);
+    useEffect(() => {
+        let isMounted = true;
+        let timeoutId: number | undefined = undefined;
+        const resizeListener = () => {
+            if (isMounted) {
+                clearTimeout(timeoutId);
+                timeoutId = window.setTimeout(() => {
+                    setAnimation({
+                    x: mutatedHidingState.current ? window.innerWidth/2 : 0
+                    })
+                }, 150);
+            }
+        };
+        window.addEventListener('resize', resizeListener);
+        return () => {
+            isMounted = false;
+            window.removeEventListener('resize', resizeListener);
+        }
+    }, [setAnimation]);
+
     useEffect(() => {
         if (!isDrugging) {
             const currentPercent = (scrollsCount - 1) / (projectsInfo.length - 1);
@@ -107,6 +129,7 @@ const ProjectsCounter: React.FC<PropsType> = ({setScroll, visible, isDrugging,
     useEffect(() => {
         if (!visible && !isMainPageFocused) setAnimation({x: window.innerWidth/2});
         if (visible && !isMainPageFocused) setAnimation({x: 0});
+        mutatedHidingState.current = !visible && !isMainPageFocused
     }, [visible, setAnimation, isMainPageFocused]);
 
     const currentY = useRef<number>(0);
@@ -115,9 +138,13 @@ const ProjectsCounter: React.FC<PropsType> = ({setScroll, visible, isDrugging,
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     const onDrugHandler = useDrag(({delta: [, y], active, down, first}) => {
-        if (down && first) {
+        if (!isDrugging) {
             currentTop.current = -scrollsCount * (window.innerHeight * 0.3) + (scrollsCount - 1) * (window.innerHeight * 0.3);
-            setScroll({scale: 0.7});
+            const currentPercent = currentY.current / wrapperRef.current!.offsetHeight;
+            setScroll({
+                scale: 0.7,
+                top: currentTop.current - window.innerHeight * (projectsInfo.length-1) * 0.7 * currentPercent
+            });
             dispatch(actions.startDrugging())
         }
         if (active) {
@@ -139,7 +166,7 @@ const ProjectsCounter: React.FC<PropsType> = ({setScroll, visible, isDrugging,
             setAnimation({y: staticY});
             dispatch(actions.stopDrugging())
         }
-    })
+    }, {filterTaps: true});
 
     return (
         <Wrapper ref={wrapperRef} style={{x}}>

@@ -6,13 +6,13 @@ import styled from "styled-components/macro";
 import {animated, useSpring} from "react-spring";
 import {useDrag, useWheel} from 'react-use-gesture';
 import {isMobile} from 'react-device-detect'
-import {projectsInfo} from "../../textAndPrijectsInfo/TextContent";
+import {projectsInfo} from "../../textAndPrijectsInfo/TextAndProjectsSettings";
 import ProjectsCounter from "./Interface/ProjectsCounter";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../store/store";
 import {actions} from "../../store/InterfaceReducer";
 import InfoBlock from "./Interface/AboutMe/InfoBlock";
-import CloseLook from "./Projects/CloseLook/ProjectCloseLook";
+import {CloseLook, MobileCloseLook} from "./Projects/CloseLook/ProjectCloseLook";
 import {GEOMETRIES_TRANSITION_TO_MAIN_PAGE} from "../../utils/StringVariablesAndTypes";
 
 const Wrapper = styled.div`
@@ -53,6 +53,28 @@ const HTMLElementsContainer: React.FC = () => {
         config: {tension: 100, friction: 25, clamp: true},
     }));
 
+    //resize
+    const mutatedScrollsCount = useRef<number>(0);
+    useEffect(() => {
+        let isMounted = true;
+        let timeoutId: number | undefined = undefined;
+        const resizeListener = () => {
+            if (isMounted) {
+                clearTimeout(timeoutId);
+                timeoutId = window.setTimeout(() => {
+                    setScroll({
+                        top: window.innerHeight * (1 - mutatedScrollsCount.current)
+                    })
+                }, 150);
+            }
+        };
+        window.addEventListener('resize', resizeListener);
+        return () => {
+            isMounted = false;
+            window.removeEventListener('resize', resizeListener);
+        }
+    }, [setScroll]);
+
     const onArrowClickHandler = useCallback(() => {
         dispatch(actions.transitionFromMainPaige())
     }, [dispatch]);
@@ -76,10 +98,11 @@ const HTMLElementsContainer: React.FC = () => {
                 top: window.innerHeight,
             });
         }
+        mutatedScrollsCount.current = scrollsCount
     }, [isInterfaceAvailable, isAboutMenuOpened, isMainPageFocused, setScroll, dispatch, scrollsCount, project, geometriesTransition]);
 
     useWheel(({direction: [, y]}) => {
-        if (scrollingState || scrollingState || project !== null || isAboutMenuOpened || druggingState || !loadedState) return;
+        if (scrollingState || project !== null || isAboutMenuOpened || druggingState || !loadedState) return;
         if (y > 0 && scrollsCount < projectsInfo.length) {
             if (scrollsCount === 0) {
                 dispatch(actions.transitionFromMainPaige());
@@ -104,9 +127,31 @@ const HTMLElementsContainer: React.FC = () => {
     }, {domTarget: window});
 
     useDrag(({swipe: [, y]}) => {
-        if (!isMobile || project !== null || !loadedState) return;
-
-    }, {domTarget: window, filterTaps: true, eventOptions: {passive: false}});
+        if (isMobile && y < 0 && document.fullscreenElement === null) document.documentElement.requestFullscreen();
+        if (isMobile && y > 0 && document.fullscreenElement !== null) document.exitFullscreen();
+        if (!isMobile || scrollingState || project !== null || isAboutMenuOpened || druggingState || !loadedState) return;
+        if (y < 0 && scrollsCount < projectsInfo.length) {
+            if (scrollsCount === 0) {
+                dispatch(actions.transitionFromMainPaige());
+            } else {
+                dispatch(actions.startScrolling(true));
+                setScroll({
+                    top: -(scrollsCount + 1) * window.innerHeight + window.innerHeight,
+                }).then(() => dispatch(actions.stopScrolling()))
+            }
+        }
+        if (y > 0 && scrollsCount !== 0) {
+            if (scrollsCount === 1) {
+                dispatch(actions.transitionToMainPaige());
+                setScroll({top: window.innerHeight})
+            } else {
+                dispatch(actions.startScrolling(false));
+                setScroll({
+                    top: -(scrollsCount - 1) * window.innerHeight + window.innerHeight,
+                }).then(() => dispatch(actions.stopScrolling()))
+            }
+        }
+    }, {domTarget: window, filterTaps: true});
 
     return (
         <Wrapper>
@@ -120,7 +165,8 @@ const HTMLElementsContainer: React.FC = () => {
                              visible={isInterfaceAvailable && !isAboutMenuOpened && project === null}
                              isDrugging={druggingState}/>
             <InfoBlock visible={isAboutMenuOpened && isInterfaceAvailable}/>
-            <CloseLook project={project} visible={!druggingState && !scrollingState && project !== null}/>
+            {isMobile ? <MobileCloseLook project={project} visible={!druggingState && !scrollingState && project !== null}/> :
+                <CloseLook project={project} visible={!druggingState && !scrollingState && project !== null}/>}
         </Wrapper>
     )
 }

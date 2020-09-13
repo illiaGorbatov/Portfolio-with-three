@@ -4,7 +4,7 @@ import ProjectAnnotation from "./ProjectAnnotation";
 import {useDispatch} from "react-redux";
 import {actions} from "../../../../store/InterfaceReducer";
 import CloseLookButton from "./CloseLookButton";
-import {projectsInfo} from "../../../../textAndPrijectsInfo/TextContent";
+import {projectsInfo} from "../../../../textAndPrijectsInfo/TextAndProjectsSettings";
 
 
 const Wrapper = styled.div`
@@ -18,11 +18,15 @@ const VideoWrapper = styled.div`
   top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
-  width: 60%;
-  max-width: 1000px;
-  height: auto;
+  height: 70%;
+  width: auto;
   display: grid;
   place-items: center;
+  @media (min-device-height: 500px) {
+     width: 60%;
+     max-width: 1000px;
+     height: auto;
+  }
 `;
 
 const Video = styled.video`

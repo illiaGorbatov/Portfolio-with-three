@@ -16,6 +16,7 @@ library.add(far, fas);
 const GlobalStyles = createGlobalStyle`
     * {
       box-sizing: border-box;
+      touch-action: none;
     };
     body {
       margin: 0;
@@ -25,10 +26,10 @@ const GlobalStyles = createGlobalStyle`
       
     };
     &::-webkit-scrollbar { 
-        display: none;
-        };
+      display: none;
+    };
     html {
-        -ms-overflow-style: none; 
+      -ms-overflow-style: none; 
     }
 `;
 
@@ -44,7 +45,7 @@ const App = () => {
 
     useEffect(() => {
         const reloadFunction = () => document.location.reload()
-        window.addEventListener("orientationchange", reloadFunction)
+        window.addEventListener("orientationchange", reloadFunction);
         return () => window.removeEventListener("orientationchange", reloadFunction)
     }, []);
 
@@ -54,7 +55,7 @@ const App = () => {
     return (
         <>
             <GlobalStyles/>
-            {/*<Preloader/>*/}
+            <Preloader/>
             <HTMLElementsContainer/>
             <Wrapper>
                 <InitialCanvas/>

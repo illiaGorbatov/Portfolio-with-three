@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import Pyramid from "./Pyramid";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../../../store/store";
@@ -15,6 +15,7 @@ import {
 import Crystal from "../../Explosion/Crystal";
 import Sun from "../Lights/Sun";
 import {actions} from "../../../../store/InterfaceReducer";
+import {projectsInfo} from "../../../../textAndPrijectsInfo/TextAndProjectsSettings";
 
 const AstralPlaneContainer: React.FC = () => {
 
@@ -24,6 +25,11 @@ const AstralPlaneContainer: React.FC = () => {
     const isInterfaceAvailable = useSelector((state: AppStateType) => state.interface.isInterfaceAvailable, shallowEqual);
 
     const dispatch = useDispatch();
+
+    const currentProject = useRef(0);
+    useEffect(() => {
+        currentProject.current = scrollsCount-1
+    }, [scrollsCount]);
 
     //group rotation
     const [{position, rotation}, setSpring] = useSpring(() => ({
@@ -176,6 +182,7 @@ const AstralPlaneContainer: React.FC = () => {
                         progress: 0.5,
                         intensity: 2,
                         distance: 500,
+                        color: projectsInfo[currentProject.current].backgroundColor,
                         config: {tension: 280, friction: 60, clamp: true}
                     })
                     await next({
@@ -183,6 +190,7 @@ const AstralPlaneContainer: React.FC = () => {
                         progress: 0,
                         intensity: 0.05,
                         distance: 200,
+                        color: '#000B11',
                         config: {tension: 280, friction: 100, clamp: true}
                     })
                 },

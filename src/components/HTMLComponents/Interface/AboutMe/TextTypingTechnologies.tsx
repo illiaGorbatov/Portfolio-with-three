@@ -1,16 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components/macro';
-import {animatedBigSkillsStack} from "../../../../textAndPrijectsInfo/TextContent";
+import {animatedBigSkillsStack} from "../../../../textAndPrijectsInfo/TextAndProjectsSettings";
 
 
 const Wrapper = styled.div`
   text-align: left;
   font-family: 'Relative-Book';
+  font-size: 15px;
+  letter-spacing: 0;
   color: red;
-  letter-spacing: 2px;
-  font-size: 20px;
   padding-bottom: 5px;
   position: relative;
+  @media (min-device-height: 500px) {
+     letter-spacing: 2px;
+     font-size: 20px;
+  }
 `;
 
 const InvisibleTextForSize = styled.div`

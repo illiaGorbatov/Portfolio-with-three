@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components/macro';
-import {projectsInfo} from "../../../../textAndPrijectsInfo/TextContent";
+import {projectsInfo} from "../../../../textAndPrijectsInfo/TextAndProjectsSettings";
 
-const AnnotationWrapper = styled.div`
+const AnnotationWrapper = styled.div<{$color: string}>`
   position: absolute;
   top: 50%;
   left: -10%;
@@ -10,6 +10,7 @@ const AnnotationWrapper = styled.div`
   text-align: left;
   color: white;
   z-index: 10;
+  color: ${props => props.$color};
 `;
 
 const ProjectNameWrapper = styled.div`
@@ -47,7 +48,7 @@ type PropsType = {
 const ProjectAnnotation: React.FC<PropsType> = ({isScrolling, isDrugging, projectIndex}) => {
 
     return (
-        <AnnotationWrapper>
+        <AnnotationWrapper $color={projectsInfo[projectIndex].fontColor}>
             <ProjectNameWrapper>
                 <AnimatedProjectName $isScrolling={isScrolling}>
                     {projectsInfo[projectIndex].projectName}

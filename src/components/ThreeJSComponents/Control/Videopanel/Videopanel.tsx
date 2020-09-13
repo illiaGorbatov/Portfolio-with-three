@@ -8,6 +8,7 @@ import {useFrame} from "react-three-fiber";
 import isEqual from "react-fast-compare";
 import BasicFont from "./BasicFont";
 import {isMobile} from "react-device-detect";
+import {usePinch} from "react-use-gesture";
 
 
 const VideoPanel: React.FC = () => {
@@ -26,7 +27,7 @@ const VideoPanel: React.FC = () => {
         texture.magFilter = THREE.LinearFilter;
         texture.format = THREE.RGBFormat;
         texture.encoding = THREE.sRGBEncoding;
-        texture.anisotropy = 16;
+        texture.anisotropy = isMobile ? 1 : 16;
         return new THREE.MeshBasicMaterial({map: texture, transparent: false})
     }, [videos, projectMemo]);
 
@@ -54,17 +55,21 @@ const VideoPanel: React.FC = () => {
             memoizedDeltaY.current = memoizedDeltaY.current + e.deltaY;
             setAnimation({scale: new Array(3).fill(memoizedDeltaY.current / 1000 + 1)})
         }
-    }, [setAnimation])
+    }, [setAnimation]);
 
     useEffect(() => {
         if (project !== null) {
             setProjectMemo(project);
-            window.addEventListener('mousemove', mouseMoveHandler);
-            window.addEventListener('wheel', wheelHandler);
+            if (!isMobile) {
+                window.addEventListener('mousemove', mouseMoveHandler);
+                window.addEventListener('wheel', wheelHandler)
+            }
         }
         return () => {
-            window.removeEventListener('mousemove', mouseMoveHandler)
-            window.removeEventListener('wheel', wheelHandler)
+            if (!isMobile) {
+                window.removeEventListener('mousemove', mouseMoveHandler)
+                window.removeEventListener('wheel', wheelHandler)
+            }
         }
     }, [project, mouseMoveHandler, wheelHandler]);
 
@@ -80,15 +85,20 @@ const VideoPanel: React.FC = () => {
         }
     }, [videoPlayerState, setAnimation, videos, projectMemo]);
 
+    const pinchHandler = usePinch(({da: [d]}) => {
+        setAnimation({
+            scale: new Array(3).fill(d/300 + 1 > 1.5 ? 1.5 : d/300 + 1 < 1 ? 1 : d/300 + 1)
+        })
+    })
+
     useFrame(() => {
         if (project !== null) {
             ref.current.lookAt(...lookAtPosition.get() as unknown as Vector3Type);
         }
-
     })
 
     return (
-        <animated.group position={position as unknown as Vector3Type} ref={ref}
+        <animated.group position={position as unknown as Vector3Type} ref={ref} {...isMobile && pinchHandler()}
                         scale={scale as unknown as Vector3Type}>
             <BasicFont text={!isMobile ? 'scroll to zoom' : 'pinch to zoom'}/>
             <mesh material={videoMaterial} scale={[1.2, 1.2, 1.2]}>

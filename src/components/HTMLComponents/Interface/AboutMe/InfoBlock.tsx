@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components/macro';
 import {animated, useSprings} from 'react-spring';
-import {aboutMe, contacts} from "../../../../textAndPrijectsInfo/TextContent";
+import {aboutMe, contacts} from "../../../../textAndPrijectsInfo/TextAndProjectsSettings";
 import TextTypingTechnologies from "./TextTypingTechnologies";
+import {isMobile} from "react-device-detect";
 
 const Wrapper = styled.div<{ $visible: boolean }>`
   display: ${props => props.$visible ? 'block' : 'none'};
@@ -27,23 +28,32 @@ const CommonWrapper = styled.div`
 `;
 
 const Headers = styled(animated.div)<{ $big: boolean }>`
-  font-size: ${props => props.$big ? '60px' : '35px'};
+  font-size: ${props => props.$big ? '45px' : '30px'};
   padding-bottom: ${props => props.$big ? '3%' : '7%'};
   font-family: 'MADE Evolve Bold';
+  @media (min-device-height: 500px) {
+     font-size: ${props => props.$big ? '60px' : '35px'};
+  }
 `;
 
 const AboutMe = styled(animated.div)`
   font-family: 'Relative-Book';
-  font-size: 20px;
+  font-size: 15px;
   text-align: left;
   padding-bottom: 10px;
+  @media (min-device-height: 500px) {
+     font-size: 20px;
+  }
 `;
 
 const InfoHeaders = styled(animated.div)`
   font-family: 'MADE Evolve Bold';
-  font-size: 30px;
+  font-size: 20px;
   padding-top: 4%;
   padding-bottom: 5px;
+  @media (min-device-height: 500px) {
+     font-size: 30px;
+  }
 `;
 
 const Contacts = styled(animated.div)`
@@ -57,7 +67,7 @@ const Contacts = styled(animated.div)`
 
 export const SingleContact = styled.a`
   display: inline-block;
-  font-size: 20px;
+  font-size: 15px;
   font-family: 'Relative-Book';
   text-align: left;
   position: relative;
@@ -75,7 +85,10 @@ export const SingleContact = styled.a`
     transition: width .2s ease-in-out;
   }
   &:hover:before {width: 100%};
-  &:hover {opacity: 1}
+  &:hover {opacity: 1};
+  @media (min-device-height: 500px) {
+     font-size: 20px;
+  }
 `;
 
 type PropsType = {
@@ -119,7 +132,7 @@ const InfoBlock: React.FC<PropsType> = ({visible}) => {
                         Is it me you're looking for?
                     </Headers>
                 </CommonWrapper>
-                {aboutMe.map((textContent, i) =>
+                {!isMobile && aboutMe.map((textContent, i) =>
                     <CommonWrapper key={i}>
                         <AboutMe style={springs[i + 2]}>
                             {textContent}
@@ -127,13 +140,13 @@ const InfoBlock: React.FC<PropsType> = ({visible}) => {
                     </CommonWrapper>
                 )}
                 <CommonWrapper>
-                    <InfoHeaders style={springs[5]}>
+                    <InfoHeaders style={springs[isMobile ? 2 : 5]}>
                         Technologies
                     </InfoHeaders>
                 </CommonWrapper>
                 <TextTypingTechnologies visible={visible}/>
                 <CommonWrapper>
-                    <Contacts style={springs[6]}>
+                    <Contacts style={springs[isMobile ? 3 : 6]}>
                         {contacts.map((item, i) =>
                             <SingleContact href={item.href} key={i}>
                                 {item.header}

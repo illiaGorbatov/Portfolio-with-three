@@ -19,7 +19,10 @@ const MenuButton = styled.div<{$visible: boolean}>`
   font-family: 'Relative-Book';
 `;
 
-const complexMixin = css`&:hover ${MenuButton}{animation: .4s ${hoverAnimation} ease-in-out }`
+const complexMixin = css`&:hover ${MenuButton}{
+  animation: .4s ${hoverAnimation} ease-in-out;
+  opacity: 1; 
+}`
 
 const MenuButtonWrapper = styled.div<{$visible: boolean}>`
   position: absolute;
@@ -28,6 +31,7 @@ const MenuButtonWrapper = styled.div<{$visible: boolean}>`
   cursor: ${props => props.$visible ? 'pointer' : 'inherit'};
   overflow: hidden;
   transform: rotateZ(-90deg);
+  opacity: 0.8;
   ${props => props.$visible && complexMixin}
 `;
 

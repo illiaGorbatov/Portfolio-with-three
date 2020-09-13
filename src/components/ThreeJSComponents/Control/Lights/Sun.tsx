@@ -4,7 +4,7 @@ import {useDispatch} from "react-redux";
 import {animated, SpringValue, useSpring} from 'react-spring/three';
 import {Vector3Type} from "../../../../utils/StringVariablesAndTypes";
 import {actions} from "../../../../store/InterfaceReducer";
-import {projectsInfo} from "../../../../textAndPrijectsInfo/TextContent";
+import {projectsInfo} from "../../../../textAndPrijectsInfo/TextAndProjectsSettings";
 
 type PropsType = {
     scale: SpringValue<number[]>,

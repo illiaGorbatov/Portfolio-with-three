@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import styled from 'styled-components/macro';
 import {animated} from 'react-spring';
-import {errorMessage} from "../../../textAndPrijectsInfo/TextContent";
+import {errorMessage} from "../../../textAndPrijectsInfo/TextAndProjectsSettings";
 
 const Wrapper = styled(animated.div)`
   background-color: #353535;
