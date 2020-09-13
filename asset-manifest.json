@@ -1,27 +1,27 @@
 {
   "files": {
     "main.css": "/Portfolio-with-three/static/css/main.2c5afd10.chunk.css",
-    "main.js": "/Portfolio-with-three/static/js/main.ed4311db.chunk.js",
-    "main.js.map": "/Portfolio-with-three/static/js/main.ed4311db.chunk.js.map",
+    "main.js": "/Portfolio-with-three/static/js/main.649009cc.chunk.js",
+    "main.js.map": "/Portfolio-with-three/static/js/main.649009cc.chunk.js.map",
     "runtime-main.js": "/Portfolio-with-three/static/js/runtime-main.4bf34684.js",
     "runtime-main.js.map": "/Portfolio-with-three/static/js/runtime-main.4bf34684.js.map",
-    "static/js/2.0819be89.chunk.js": "/Portfolio-with-three/static/js/2.0819be89.chunk.js",
-    "static/js/2.0819be89.chunk.js.map": "/Portfolio-with-three/static/js/2.0819be89.chunk.js.map",
+    "static/js/2.8282c642.chunk.js": "/Portfolio-with-three/static/js/2.8282c642.chunk.js",
+    "static/js/2.8282c642.chunk.js.map": "/Portfolio-with-three/static/js/2.8282c642.chunk.js.map",
     "index.html": "/Portfolio-with-three/index.html",
-    "precache-manifest.939965720906f0e8742f94a291c946f7.js": "/Portfolio-with-three/precache-manifest.939965720906f0e8742f94a291c946f7.js",
+    "precache-manifest.646fc2fe0494bd3989728361785181f7.js": "/Portfolio-with-three/precache-manifest.646fc2fe0494bd3989728361785181f7.js",
     "service-worker.js": "/Portfolio-with-three/service-worker.js",
     "static/css/main.2c5afd10.chunk.css.map": "/Portfolio-with-three/static/css/main.2c5afd10.chunk.css.map",
-    "static/js/2.0819be89.chunk.js.LICENSE.txt": "/Portfolio-with-three/static/js/2.0819be89.chunk.js.LICENSE.txt",
+    "static/js/2.8282c642.chunk.js.LICENSE.txt": "/Portfolio-with-three/static/js/2.8282c642.chunk.js.LICENSE.txt",
     "static/media/App.css": "/Portfolio-with-three/static/media/garamond.eda852ee.ttf",
     "static/media/counter.mp4": "/Portfolio-with-three/static/media/counter.bf3ccc00.mp4",
-    "static/media/testVid.mp4": "/Portfolio-with-three/static/media/testVid.13fb315a.mp4",
+    "static/media/portfolio.mp4": "/Portfolio-with-three/static/media/portfolio.6ce55e28.mp4",
     "static/media/toDoList.mp4": "/Portfolio-with-three/static/media/toDoList.aab83fa4.mp4",
     "static/media/withoutAll.glb": "/Portfolio-with-three/static/media/withoutAll.958adb38.glb"
   },
   "entrypoints": [
     "static/js/runtime-main.4bf34684.js",
-    "static/js/2.0819be89.chunk.js",
+    "static/js/2.8282c642.chunk.js",
     "static/css/main.2c5afd10.chunk.css",
-    "static/js/main.ed4311db.chunk.js"
+    "static/js/main.649009cc.chunk.js"
   ]
 }
