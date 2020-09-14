@@ -59,10 +59,9 @@ const InfoHeaders = styled(animated.div)`
 const Contacts = styled(animated.div)`
   padding-top: 4%;
   display: flex;
-  justify-items: left;
-  width: 60%;
-  max-width: 300px;
-  justify-content: space-between;
+  width: 100%;
+  max-width: 500px;
+  justify-content: space-around;
 `;
 
 export const SingleContact = styled.a`

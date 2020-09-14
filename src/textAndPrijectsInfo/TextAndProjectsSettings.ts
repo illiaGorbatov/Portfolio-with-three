@@ -32,7 +32,7 @@ export const projectsInfo: ProjectType[] = [
         pros: "The project is responsive and has a nice appearance. There are two display modes. " +
             "It also has advanced input validation with a set of messages for each error.",
         cons: "Slight short-term performance degradation may occur when switching modes. The validation logic is quite bulky",
-        technologies: "JavaScript React Redux SASS",
+        technologies: "JavaScript  React  Redux  SASS",
         color: '#847EA0',
         backgroundColor: '#2E2B3B',
         refToProject: 'https://illiagorbatov.github.io/counter/',
@@ -45,12 +45,12 @@ export const projectsInfo: ProjectType[] = [
         projectDescription: "An application with many interactions",
         detailedDescription: "My second project. Connected to the server API, kindly provided to me by IT-incubator. " +
             "When developing, the main task was to create a beautiful and responsive application with a huge number of all kinds of user interactions. " +
-            " Design inspired by Apple's Neumorphism",
+            " Design inspired by Apple's Neumorphism.",
         pros: "There are animations and transitions for almost any user action. Data will be sent only when the user accepts the changes that can be canceled. " +
             "Changes are made by comparing the original state with the edited one.",
         cons: "Due to the large number of animations and event handlers, performance issues can be observed on slower devices. " +
             "The function of comparing states and sending data is difficult to understand for an unprepared person. ",
-        technologies: "TypeScript React Redux styled-components react-spring thunk",
+        technologies: "TypeScript  React  Redux  styled-components  react-spring  thunk",
         color: '#EAE8DE',
         backgroundColor: '#282519',
         refToProject: 'https://illiagorbatov.github.io/ToDoList/',
@@ -65,7 +65,7 @@ export const projectsInfo: ProjectType[] = [
             "At least After I got acquainted with this library, I had no doubts about it. " +
             "Even if you don't have expensive and beautiful 3d models, you can surprise users with your creativity.",
         pros: "Main advantage of this project is animated canvas in the background that keeps track" +
-            " of what you are watching and changes accordingly to it.",
+            " of what you are watching and changes accordingly to it. There are also non-standard user interactions here.",
         cons: "Possible performance degradation on devices with weak 3d accelerator",
         technologies: "TypeScript React Redux styled-components react-spring Three.js",
         color: "#ff0000",
@@ -83,8 +83,8 @@ export const aboutMe = [
 ];
 
 export const contacts = [
-    {header: 'Linked', href: ''},
+    {header: 'Linked', href: 'https://www.linkedin.com/in/illia-gorbatov-b961271b6/'},
     {header: 'GitHub', href: 'https://github.com/illiaGorbatov'},
-    {header: 'vk', href: 'https://vk.com/mur0mec'},
-    {header: 'telegram', href: 'https://vk.com/mur0mec'},
+    {header: 'vkontakte', href: 'https://vk.com/mur0mec'},
+    {header: 'telegram', href: 'https://t.me/mur0mec'},
 ]

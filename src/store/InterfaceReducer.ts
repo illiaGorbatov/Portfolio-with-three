@@ -55,7 +55,7 @@ type InitialStateType = {
 };
 
 const initialState = {
-    loadedState: true,
+    loadedState: false,
     scrollsCount: 0,
     explosionProgress: 0,
     sun: null,
