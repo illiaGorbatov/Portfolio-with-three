@@ -12,7 +12,7 @@ import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {AppStateType} from "../../store/store";
 import {actions} from "../../store/InterfaceReducer";
 import InfoBlock from "./Interface/AboutMe/InfoBlock";
-import {CloseLook, MobileCloseLook} from "./Projects/CloseLook/ProjectCloseLook";
+import CloseLook from "./Projects/CloseLook/ProjectCloseLook";
 import {GEOMETRIES_TRANSITION_TO_MAIN_PAGE} from "../../utils/StringVariablesAndTypes";
 
 const Wrapper = styled.div`
@@ -128,7 +128,6 @@ const HTMLElementsContainer: React.FC = () => {
 
     useDrag(({swipe: [, y]}) => {
         if (isMobile && y < 0 && document.fullscreenElement === null) document.documentElement.requestFullscreen();
-        if (isMobile && y > 0 && document.fullscreenElement !== null) document.exitFullscreen();
         if (!isMobile || scrollingState || project !== null || isAboutMenuOpened || druggingState || !loadedState) return;
         if (y < 0 && scrollsCount < projectsInfo.length) {
             if (scrollsCount === 0) {
@@ -165,8 +164,7 @@ const HTMLElementsContainer: React.FC = () => {
                              visible={isInterfaceAvailable && !isAboutMenuOpened && project === null}
                              isDrugging={druggingState}/>
             <InfoBlock visible={isAboutMenuOpened && isInterfaceAvailable}/>
-            {isMobile ? <MobileCloseLook project={project} visible={!druggingState && !scrollingState && project !== null}/> :
-                <CloseLook project={project} visible={!druggingState && !scrollingState && project !== null}/>}
+            <CloseLook project={project} visible={!druggingState && !scrollingState && project !== null}/>
         </Wrapper>
     )
 }

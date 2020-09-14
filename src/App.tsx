@@ -44,7 +44,7 @@ const Wrapper = styled.div`
 const App = () => {
 
     useEffect(() => {
-        const reloadFunction = () => document.location.reload()
+        const reloadFunction = () => document.location.reload();
         window.addEventListener("orientationchange", reloadFunction);
         return () => window.removeEventListener("orientationchange", reloadFunction)
     }, []);

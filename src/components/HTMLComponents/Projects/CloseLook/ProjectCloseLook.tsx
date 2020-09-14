@@ -4,35 +4,26 @@ import {projectsInfo, ProjectType} from "../../../../textAndPrijectsInfo/TextAnd
 import {animated, useSprings, useSpring} from 'react-spring';
 import ProsAndConsTyping from "./ProsAndConsTyping";
 import {SingleContact} from "../../Interface/AboutMe/InfoBlock";
-import { useDrag } from 'react-use-gesture';
+import {useDrag, useWheel} from 'react-use-gesture';
+import {isMobile} from "react-device-detect";
 
-const CloseLookWrapper = styled.div<{ $visible: boolean }>`
+const CloseLookWrapper = styled.div<{ $visible: boolean, $isOverflowed: boolean }>`
   display: ${props => props.$visible ? 'block' : 'none'};
   width: 50vw;
-  height: 80vh;
-  top: 10%;
+  height: ${props => props.$isOverflowed ? `80vh` : `100vh`};
+  top: ${props => props.$isOverflowed ? `10%` : 0};
   position: absolute;
   color: white;
   text-align: left;
   overflow: hidden;
-  @media (min-device-height: 500px) {
-     height: 100vh;
-     top: 0
-  }
 `;
 
-const CenteringWrapper = styled(animated.div)`
+const CenteringWrapper = styled(animated.div)<{$needTransform: boolean}>`
   width: 80%;
   position: absolute;
-  top: 0;
-  left: 20%;
-  @media (min-device-height: 500px) {
-      width: 80%;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translateY(-50%) translateX(-50%);
-  }
+  top: ${props => props.$needTransform ? `50%` : 0};
+  left: ${props => props.$needTransform ? `50%` : `20%`};
+  transform: ${props => props.$needTransform && `translateY(-50%) translateX(-50%)`};
 `;
 
 const ProjectLittleDescription = styled(animated.div)`
@@ -86,12 +77,14 @@ const ScrollBarWrapper = styled.div`
   height: 100%;
 `;
 
-const ScrollBar = styled(animated.div)<{$height: number}>`
+const ScrollBar = styled(animated.div)<{$height: number, $visible: boolean}>`
   position: absolute;
   left: 50%;
   width: 4px;
   height: ${props => props.$height}%;
   background-color: white;
+  opacity: ${props => props.$visible ? 1 : 0};
+  transition: opacity .4s ${props => props.$visible ? `1s` : `0s`};
 `;
 
 type PropsType = {
@@ -99,98 +92,39 @@ type PropsType = {
     visible: boolean
 }
 
-export const CloseLook: React.FC<PropsType> = React.memo(({project, visible}) => {
 
-    const [springs, setSprings] = useSprings(7, i => ({
-        x: '-50vw'
-    }));
-
-    const [memoizedProject, setProject] = useState<ProjectType>();
-    useEffect(() => {
-        if (project !== null) setProject(projectsInfo[project])
-    }, [project]);
-
-    const [visibility, setVisibility] = useState<boolean>(false);
-
-    useEffect(() => {
-        if (visible) {
-            setVisibility(true);
-            setSprings(i => ({
-                x: '0vw',
-                delay: i * 200
-            }))
-        }
-        if (!visible) {
-            setSprings(i => ({
-                x: '-50vw',
-                delay: (6-i) * 200
-            })).then(() => setVisibility(false))
-        }
-    }, [visible, setSprings]);
-
-    return (
-        <CloseLookWrapper $visible={visibility}>
-            <CenteringWrapper>
-                <ProjectName style={springs[0]}>
-                    {memoizedProject?.projectName}
-                </ProjectName>
-                <ProjectLittleDescription style={springs[1]}>
-                    {memoizedProject?.projectDescription}
-                </ProjectLittleDescription>
-                <Technologies style={springs[2]}>
-                    {memoizedProject?.technologies}
-                </Technologies>
-                <References style={springs[3]}>
-                    <SingleRef href={memoizedProject?.refToProject}>
-                        github-pages
-                    </SingleRef>
-                    <SingleRef href={memoizedProject?.refToGit}>
-                        source code
-                    </SingleRef>
-                </References>
-                <ProjectDetailedDescription style={springs[4]}>
-                    {memoizedProject?.detailedDescription}
-                </ProjectDetailedDescription>
-                <ProsAndCons style={springs[5]}>
-                    Pros
-                </ProsAndCons>
-                <ProsAndConsTyping visible={visible} currentText={memoizedProject?.pros || ''} role={'pros'}/>
-                <ProsAndCons style={springs[6]}>
-                    Cons
-                </ProsAndCons>
-                <ProsAndConsTyping visible={visible} currentText={memoizedProject?.cons || ''} role={'cons'}/>
-            </CenteringWrapper>
-        </CloseLookWrapper>
-    )
-})
-
-export const MobileCloseLook: React.FC<PropsType> = React.memo(({project, visible}) => {
+const CloseLook: React.FC<PropsType> = React.memo(({project, visible}) => {
 
     const ref = useRef<HTMLDivElement>(null);
     const scrolledY = useRef<number>(0);
     const scrolledPercent = useRef<number>(0);
 
-    const [rerender, forceRerender] = useState<number>(0)
+    const [rerender, forceRerender] = useState<number>(0);
     const [scrollBarHeight, setScrollBarHeight] = useState<number>(0);
-
-    useEffect(() => {
-        forceRerender(Math.random())
-    }, [visible]);
-    useEffect(() => {
-        setScrollBarHeight(window.innerHeight*0.8 / ref.current!.offsetHeight * 100)
-    }, [rerender])
-
-    const [springs, setSprings] = useSprings(7, i => ({
-        x: '-50vw'
-    }));
 
     const [{top, y}, setScroll] = useSpring(() => ({
         top: `${0}%`,
         y: 0
     }));
 
+    useEffect(() => {
+        if (visible) forceRerender(Math.random());
+        if (!visible) {
+            setScroll({y: 0,top: `${0}%`, delay: 1500});
+            scrolledY.current = 0;
+            scrolledPercent.current = 0
+        }
+    }, [visible, setScroll]);
+    useEffect(() => {
+        setScrollBarHeight(window.innerHeight*0.8 / ref.current!.offsetHeight * 100)
+    }, [rerender]);
+
+    const [springs, setSprings] = useSprings(7, i => ({
+        x: '-50vw'
+    }));
+
     const drugHandler = useDrag(({delta: [, y], active}) => {
-        if (!visible) return;
+        if (!visible || !isMobile || scrollBarHeight > 100) return;
         const border = ref.current!.offsetHeight - window.innerHeight*0.8;
         if (active) {
             const posY = -y*1.5;
@@ -204,6 +138,21 @@ export const MobileCloseLook: React.FC<PropsType> = React.memo(({project, visibl
         });
     });
 
+    useWheel(({delta: [, y], active}) => {
+        if (!visible || scrollBarHeight > 100) return;
+        const border = ref.current!.offsetHeight - window.innerHeight*0.8;
+        if (active) {
+            const posY = y*1.5;
+            scrolledY.current = scrolledY.current + posY < border && scrolledY.current + posY > 0 ? scrolledY.current + posY
+                : scrolledY.current + posY <= 0 ? 0 : border;
+        }
+        scrolledPercent.current = scrolledY.current / border * (100 - scrollBarHeight);
+        setScroll({
+            y: -scrolledY.current,
+            top: `${scrolledPercent.current}%`
+        });
+    }, {domTarget: window})
+
     const [memoizedProject, setProject] = useState<ProjectType>();
     useEffect(() => {
         if (project !== null) setProject(projectsInfo[project])
@@ -228,8 +177,9 @@ export const MobileCloseLook: React.FC<PropsType> = React.memo(({project, visibl
     }, [visible, setSprings]);
 
     return (
-        <CloseLookWrapper $visible={visibility}>
-            <CenteringWrapper {...drugHandler()} ref={ref} style={{y}}>
+        <CloseLookWrapper $visible={visibility} $isOverflowed={scrollBarHeight < 100}>
+            <CenteringWrapper {...drugHandler()} ref={ref} style={scrollBarHeight < 100 ? {y} : {}}
+                              $needTransform={scrollBarHeight > 100}>
                 <ProjectName style={springs[0]}>
                     {memoizedProject?.projectName}
                 </ProjectName>
@@ -260,8 +210,10 @@ export const MobileCloseLook: React.FC<PropsType> = React.memo(({project, visibl
                 <ProsAndConsTyping visible={visible} currentText={memoizedProject?.cons || ''} role={'cons'}/>
             </CenteringWrapper>
             <ScrollBarWrapper>
-                <ScrollBar $height={scrollBarHeight} style={{top}}/>
+                <ScrollBar $height={scrollBarHeight} style={{top}} $visible={visible && scrollBarHeight < 100}/>
             </ScrollBarWrapper>
         </CloseLookWrapper>
     )
 })
+
+export default CloseLook

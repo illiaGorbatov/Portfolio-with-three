@@ -66,7 +66,7 @@ export const projectsInfo: ProjectType[] = [
             "Even if you don't have expensive and beautiful 3d models, you can surprise users with your creativity.",
         pros: "Main advantage of this project is animated canvas in the background that keeps track" +
             " of what you are watching and changes accordingly to it. There are also non-standard user interactions here.",
-        cons: "Possible performance degradation on devices with weak 3d accelerator",
+        cons: "Possible performance degradation on devices with weak 3d accelerator. Also some bugs on mobile devices are possible.",
         technologies: "TypeScript React Redux styled-components react-spring Three.js",
         color: "#ff0000",
         backgroundColor: '#490000',

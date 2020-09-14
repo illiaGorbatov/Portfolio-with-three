@@ -27,7 +27,7 @@ const VideoPanel: React.FC = () => {
         texture.magFilter = THREE.LinearFilter;
         texture.format = THREE.RGBFormat;
         texture.encoding = THREE.sRGBEncoding;
-        texture.anisotropy = isMobile ? 1 : 16;
+        if (!isMobile) texture.anisotropy = 16;
         return new THREE.MeshBasicMaterial({map: texture, transparent: false})
     }, [videos, projectMemo]);
 
@@ -60,14 +60,14 @@ const VideoPanel: React.FC = () => {
     useEffect(() => {
         if (project !== null) {
             setProjectMemo(project);
+            window.addEventListener('mousemove', mouseMoveHandler);
             if (!isMobile) {
-                window.addEventListener('mousemove', mouseMoveHandler);
                 window.addEventListener('wheel', wheelHandler)
             }
         }
         return () => {
+            window.removeEventListener('mousemove', mouseMoveHandler)
             if (!isMobile) {
-                window.removeEventListener('mousemove', mouseMoveHandler)
                 window.removeEventListener('wheel', wheelHandler)
             }
         }
@@ -85,20 +85,20 @@ const VideoPanel: React.FC = () => {
         }
     }, [videoPlayerState, setAnimation, videos, projectMemo]);
 
-    const pinchHandler = usePinch(({da: [d]}) => {
+    usePinch(({offset: [d]}) => {
         setAnimation({
             scale: new Array(3).fill(d/300 + 1 > 1.5 ? 1.5 : d/300 + 1 < 1 ? 1 : d/300 + 1)
         })
-    })
+    }, {domTarget: window});
 
     useFrame(() => {
         if (project !== null) {
             ref.current.lookAt(...lookAtPosition.get() as unknown as Vector3Type);
         }
-    })
+    });
 
     return (
-        <animated.group position={position as unknown as Vector3Type} ref={ref} {...isMobile && pinchHandler()}
+        <animated.group position={position as unknown as Vector3Type} ref={ref}
                         scale={scale as unknown as Vector3Type}>
             <BasicFont text={!isMobile ? 'scroll to zoom' : 'pinch to zoom'}/>
             <mesh material={videoMaterial} scale={[1.2, 1.2, 1.2]}>
