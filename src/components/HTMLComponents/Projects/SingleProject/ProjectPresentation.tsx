@@ -69,7 +69,7 @@ const ProjectPresentation: React.FC<PropsType> = ({projectIndex, isDrugging, isS
     return (
         <Wrapper>
             <VideoWrapper>
-                <Video muted loop ref={videoRef}>
+                <Video muted loop preload={'auto'} ref={videoRef}>
                     <source src={projectsInfo[projectIndex].video} type="video/mp4"/>
                 </Video>
                 <ProjectAnnotation isDrugging={isDrugging} isScrolling={isScrolling} projectIndex={projectIndex}/>
